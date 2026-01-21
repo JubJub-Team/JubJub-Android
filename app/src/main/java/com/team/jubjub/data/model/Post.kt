@@ -25,6 +25,8 @@ data class Post(
     val images: List<String> = emptyList(), // 이미지 URL 목록
     val status: PostStatus = PostStatus.AVAILABLE, // 게시글 상태 (판매중/예약중/완료)
 
+    val keywords: List<String> = emptyList(), // 검색용 키워드 리스트(AI 분석 + 매퍼 결과)
+
     val createdAt: Date? = null, // 작성 일시
     val scrapCount: Int = 0, // 스크랩 수
     val commentCount: Int = 0, // 댓글 수
