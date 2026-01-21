@@ -11,11 +11,14 @@
         android:id="@+id/img_home_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="34dp"
+        android:layout_marginStart="45dp"
         android:layout_marginTop="41dp"
+        android:layout_marginEnd="47dp"
         android:src="@drawable/jubjub_korean_logo"
+        app:layout_constraintEnd_toStartOf="@+id/searchCard"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@null"/>
 
     <!--검색-->
     <com.google.android.material.card.MaterialCardView
@@ -27,7 +30,7 @@
         app:cardBackgroundColor="@color/search"
         app:cardCornerRadius="14dp"
         app:cardElevation="6dp"
-        app:layout_constraintEnd_toStartOf="@+id/imgbtn_alarm"
+        app:layout_constraintEnd_toStartOf="@+id/btn_alarm"
         app:layout_constraintTop_toTopOf="parent"
         app:strokeWidth="0dp">
 
@@ -36,14 +39,13 @@
             android:layout_height="match_parent">
 
             <EditText
-                android:id="@+id/txtSearch"
+                android:id="@+id/txt_search"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="8sp"
                 android:background="@android:color/transparent"
                 android:hint="Search"
-                android:textColorHint="#808080"
                 android:imeOptions="actionSearch"
                 android:singleLine="true"
                 android:textColor="#000000"
@@ -71,7 +73,7 @@
 
     <!--알림 버튼-->
     <ImageButton
-        android:id="@+id/imgbtn_alarm"
+        android:id="@+id/btn_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="45dp"
@@ -79,29 +81,31 @@
         android:backgroundTint="#00FFFFFF"
         android:padding="0dp"
         android:src="@drawable/notification"
-        app:layout_constraintEnd_toStartOf="@+id/imgbtn_profile"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/btn_profile"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="알림" />
 
     <!--프로필 버튼-->
     <ImageButton
-        android:id="@+id/imgbtn_profile"
+        android:id="@+id/btn_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="45dp"
-        android:layout_marginEnd="28dp"
+        android:layout_marginEnd="45dp"
         android:backgroundTint="#00FFFFFF"
         android:padding="0dp"
         android:src="@drawable/profile"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="프로필" />
 
     <TextView
         android:id="@+id/tv_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="35dp"
+        android:layout_marginStart="46dp"
         android:layout_marginTop="100dp"
-        android:text="캠퍼스에서 발견한 분실물과\n 나눔 물품을 공유하는 공간, 줍줍"
+        android:text="@string/jubjub_explanation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -110,11 +114,13 @@
         android:id="@+id/share_card"
         android:layout_width="318dp"
         android:layout_height="265dp"
-        android:layout_marginStart="31dp"
+        android:layout_marginStart="45dp"
         android:layout_marginTop="162dp"
+        android:layout_marginEnd="45dp"
         app:cardBackgroundColor="@color/search"
         app:cardCornerRadius="12dp"
         app:cardElevation="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:strokeWidth="0dp">
@@ -127,7 +133,7 @@
                 android:id="@+id/tv_share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="8sp"
                 android:layout_marginTop="10dp"
                 android:text="나눔/기부"
                 android:textStyle="bold"
@@ -144,9 +150,10 @@
                 android:padding="0dp"
                 android:src="@drawable/ic_add"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="나눔/기부 게시판 더보기" />
 
-            <!--게시물 1 (기존 lastboard -> firstboard)-->
+            <!--게시물 1-->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/firstboard"
                 android:layout_width="300dp"
@@ -167,41 +174,43 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView"
+                        android:id="@+id/img_firstboard_profile"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="11dp"
-                        android:paddingLeft="2dp"
-                        android:paddingTop="2dp"
+                        android:paddingStart="2dp"
+                        android:paddingEnd="2dp"
                         android:src="@drawable/profile"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:contentDescription="@null"/>
 
                     <ImageView
-                        android:id="@+id/imageView2"
+                        android:id="@+id/img_firstboard_body"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="35dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@tools:sample/backgrounds/scenic" />
+                        tools:src="@tools:sample/backgrounds/scenic"
+                        android:contentDescription="@null"  />
 
                     <TextView
-                        android:id="@+id/user_name"
+                        android:id="@+id/tv_firstboard_user_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="1dp"
                         android:layout_marginTop="11dp"
                         android:gravity="center"
                         android:text="닉네임"
-                        android:textSize="8dp"
-                        app:layout_constraintStart_toEndOf="@+id/imageView"
+                        android:textSize="8sp"
+                        app:layout_constraintStart_toEndOf="@+id/img_firstboard_profile"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/tv_lart_board_title"
+                        android:id="@+id/tv_first_board_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
@@ -209,11 +218,11 @@
                         android:text="제목이 들어올 자리입니당"
                         android:textSize="8sp"
                         android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/imageView2"
+                        app:layout_constraintStart_toEndOf="@+id/img_firstboard_body"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/tv_last_board_body_text"
+                        android:id="@+id/tv_first_board_body_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
@@ -221,11 +230,11 @@
                         android:text="본문 자리입니다"
                         android:textColor="#B3B3B3"
                         android:textSize="8sp"
-                        app:layout_constraintStart_toEndOf="@+id/imageView2"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_lart_board_title" />
+                        app:layout_constraintStart_toEndOf="@+id/img_firstboard_body"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_first_board_title" />
 
                     <TextView
-                        android:id="@+id/tv_last_board_time"
+                        android:id="@+id/tv_first_board_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
@@ -233,11 +242,11 @@
                         android:text="01/16  12:19"
                         android:textSize="8sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/imageView2" />
+                        app:layout_constraintStart_toEndOf="@+id/img_firstboard_body" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!--게시물 2 (firstboard 아래 8dp)-->
+            <!--게시물 2-->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/secondboard"
                 android:layout_width="300dp"
@@ -258,26 +267,28 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView_second_1"
+                        android:id="@+id/img_secondboard_profile"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="11dp"
-                        android:paddingLeft="2dp"
-                        android:paddingTop="2dp"
+                        android:paddingStart="2dp"
+                        android:paddingEnd="2dp"
                         android:src="@drawable/profile"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:contentDescription="@null"/>
 
                     <ImageView
-                        android:id="@+id/imageView_second_2"
+                        android:id="@+id/img_secondboard_body"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="35dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@tools:sample/backgrounds/scenic" />
+                        tools:src="@tools:sample/backgrounds/scenic"
+                        android:contentDescription="@null"/>
 
                     <TextView
                         android:id="@+id/user_name_second"
@@ -287,8 +298,8 @@
                         android:layout_marginTop="11dp"
                         android:gravity="center"
                         android:text="닉네임"
-                        android:textSize="8dp"
-                        app:layout_constraintStart_toEndOf="@+id/imageView_second_1"
+                        android:textSize="8sp"
+                        app:layout_constraintStart_toEndOf="@+id/img_secondboard_profile"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
@@ -300,7 +311,7 @@
                         android:text="제목이 들어올 자리입니당"
                         android:textSize="8sp"
                         android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/imageView_second_2"
+                        app:layout_constraintStart_toEndOf="@+id/img_secondboard_body"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
@@ -312,7 +323,7 @@
                         android:text="본문 자리입니다"
                         android:textColor="#B3B3B3"
                         android:textSize="8sp"
-                        app:layout_constraintStart_toEndOf="@+id/imageView_second_2"
+                        app:layout_constraintStart_toEndOf="@+id/img_secondboard_body"
                         app:layout_constraintTop_toBottomOf="@+id/tv_second_board_title" />
 
                     <TextView
@@ -324,7 +335,7 @@
                         android:text="01/16  12:19"
                         android:textSize="8sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/imageView_second_2" />
+                        app:layout_constraintStart_toEndOf="@+id/img_secondboard_body" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -336,11 +347,13 @@
         android:id="@+id/lost_found_card"
         android:layout_width="318dp"
         android:layout_height="265dp"
-        android:layout_marginStart="31dp"
+        android:layout_marginStart="45dp"
         android:layout_marginTop="441dp"
+        android:layout_marginEnd="45dp"
         app:cardBackgroundColor="@color/search"
         app:cardCornerRadius="12dp"
         app:cardElevation="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:strokeWidth="0dp">
@@ -372,7 +385,8 @@
                 android:padding="0dp"
                 android:src="@drawable/ic_add"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="분실물 게시글 더보기" />
 
             <!--게시물 3-->
             <com.google.android.material.card.MaterialCardView
@@ -395,26 +409,28 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView_third_1"
+                        android:id="@+id/img_thirdboard_profile"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="11dp"
-                        android:paddingLeft="2dp"
-                        android:paddingTop="2dp"
+                        android:paddingStart="2dp"
+                        android:paddingEnd="2dp"
                         android:src="@drawable/profile"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:contentDescription="@null"/>
 
                     <ImageView
-                        android:id="@+id/imageView_third_2"
+                        android:id="@+id/img_thirdboard_body"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="35dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@tools:sample/backgrounds/scenic" />
+                        tools:src="@tools:sample/backgrounds/scenic"
+                        android:contentDescription="@null"/>
 
                     <TextView
                         android:id="@+id/user_name_third"
@@ -424,8 +440,8 @@
                         android:layout_marginTop="11dp"
                         android:gravity="center"
                         android:text="닉네임"
-                        android:textSize="8dp"
-                        app:layout_constraintStart_toEndOf="@+id/imageView_third_1"
+                        android:textSize="8sp"
+                        app:layout_constraintStart_toEndOf="@+id/img_thirdboard_body"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
@@ -437,7 +453,7 @@
                         android:text="제목이 들어올 자리입니당"
                         android:textSize="8sp"
                         android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/imageView_third_2"
+                        app:layout_constraintStart_toEndOf="@+id/img_thirdboard_body"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
@@ -449,7 +465,7 @@
                         android:text="본문 자리입니다"
                         android:textColor="#B3B3B3"
                         android:textSize="8sp"
-                        app:layout_constraintStart_toEndOf="@+id/imageView_third_2"
+                        app:layout_constraintStart_toEndOf="@+id/img_thirdboard_body"
                         app:layout_constraintTop_toBottomOf="@+id/tv_third_board_title" />
 
                     <TextView
@@ -461,11 +477,11 @@
                         android:text="01/16  12:19"
                         android:textSize="8sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/imageView_third_2" />
+                        app:layout_constraintStart_toEndOf="@+id/img_thirdboard_body" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!--게시물 4 (thirdboard 아래 8dp)-->
+            <!--게시물 4-->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/fourthboard"
                 android:layout_width="300dp"
@@ -486,19 +502,20 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView_fourth_1"
+                        android:id="@+id/img_fourthboard_profile"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="11dp"
-                        android:paddingLeft="2dp"
-                        android:paddingTop="2dp"
+                        android:paddingStart="2dp"
+                        android:paddingEnd="2dp"
                         android:src="@drawable/profile"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:contentDescription="@null"/>
 
                     <ImageView
-                        android:id="@+id/imageView_fourth_2"
+                        android:id="@+id/img_fourthboard_body"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_marginStart="15dp"
@@ -515,8 +532,8 @@
                         android:layout_marginTop="11dp"
                         android:gravity="center"
                         android:text="닉네임"
-                        android:textSize="8dp"
-                        app:layout_constraintStart_toEndOf="@+id/imageView_fourth_1"
+                        android:textSize="8sp"
+                        app:layout_constraintStart_toEndOf="@+id/img_fourthboard_profile"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
@@ -528,7 +545,7 @@
                         android:text="제목이 들어올 자리입니당"
                         android:textSize="8sp"
                         android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/imageView_fourth_2"
+                        app:layout_constraintStart_toEndOf="@+id/img_fourthboard_body"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
@@ -540,7 +557,7 @@
                         android:text="본문 자리입니다"
                         android:textColor="#B3B3B3"
                         android:textSize="8sp"
-                        app:layout_constraintStart_toEndOf="@+id/imageView_fourth_2"
+                        app:layout_constraintStart_toEndOf="@+id/img_fourthboard_body"
                         app:layout_constraintTop_toBottomOf="@+id/tv_fourth_board_title" />
 
                     <TextView
@@ -552,7 +569,7 @@
                         android:text="01/16  12:19"
                         android:textSize="8sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/imageView_fourth_2" />
+                        app:layout_constraintStart_toEndOf="@+id/img_fourthboard_body" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
