@@ -2,7 +2,6 @@ package com.team.jubjub
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -79,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         val main = ContextCompat.getColor(this, R.color.main)
         val gray = ContextCompat.getColor(this, android.R.color.darker_gray)
 
-        val buttons = listOf<ImageButton>(
+        val buttons = listOf(
             binding.navHome,
             binding.navShare,
             binding.navLostFound,
