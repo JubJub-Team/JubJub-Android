@@ -26,7 +26,7 @@ class HomeFragment : Fragment() {
 
     private fun setupSearch() {
         // 키보드에서 "검색" 눌렀을 시 액션
-        binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
+        binding.txtSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
                 performSearch()
                 true
@@ -36,13 +36,13 @@ class HomeFragment : Fragment() {
         }
 
         // 오른쪽 돋보기 아이콘 클릭
-        binding.ivSearchRight.setOnClickListener {
+        binding.imgSearchright.setOnClickListener {
             performSearch()
         }
     }
 
     private fun performSearch() {
-        val query = binding.etSearch.text.toString().trim()
+        val query = binding.txtSearch.text.toString().trim()
         if (query.isEmpty()) return
 
         // TODO: 여기서 실제 검색 처리

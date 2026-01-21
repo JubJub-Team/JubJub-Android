@@ -43,7 +43,7 @@
                 android:layout_marginEnd="8dp"
                 android:background="@android:color/transparent"
                 android:hint="Search"
-                android:hintTextColor="#808080"
+                android:textColorHint="#808080"
                 android:imeOptions="actionSearch"
                 android:singleLine="true"
                 android:textColor="#000000"
@@ -54,7 +54,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:textColorHint="@color/white" />
 
-            <!-- 검색아이콘 -->
+            <!-- 검색 아이콘 -->
             <ImageView
                 android:id="@+id/img_searchright"
                 android:layout_width="18dp"
@@ -69,7 +69,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!--알림버튼-->
+    <!--알림 버튼-->
     <ImageButton
         android:id="@+id/imgbtn_alarm"
         android:layout_width="wrap_content"
@@ -82,7 +82,7 @@
         app:layout_constraintEnd_toStartOf="@+id/imgbtn_profile"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--프로필버튼-->
+    <!--프로필 버튼-->
     <ImageButton
         android:id="@+id/imgbtn_profile"
         android:layout_width="wrap_content"
@@ -96,7 +96,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tV_home"
+        android:id="@+id/tv_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="35dp"
