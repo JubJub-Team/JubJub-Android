@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraint_layout_share"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeFragment">
+    android:fillViewport="true"
+    tools:context=".ui.post.home.HomeFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout_share"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/img_home_logo"
@@ -14,11 +19,11 @@
         android:layout_marginStart="45dp"
         android:layout_marginTop="41dp"
         android:layout_marginEnd="47dp"
+        android:contentDescription="@null"
         android:src="@drawable/jubjub_korean_logo"
         app:layout_constraintEnd_toStartOf="@+id/searchCard"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@null"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!--검색-->
     <com.google.android.material.card.MaterialCardView
@@ -30,7 +35,7 @@
         app:cardBackgroundColor="@color/search"
         app:cardCornerRadius="14dp"
         app:cardElevation="6dp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_alarm"
+        app:layout_constraintEnd_toStartOf="@+id/imgbtn_alarm"
         app:layout_constraintTop_toTopOf="parent"
         app:strokeWidth="0dp">
 
@@ -43,26 +48,29 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
-                android:layout_marginEnd="8sp"
+                android:layout_marginEnd="8dp"
                 android:background="@android:color/transparent"
-                android:hint="Search"
+                android:hint="@string/cd_search_eng"
                 android:imeOptions="actionSearch"
                 android:singleLine="true"
                 android:textColor="#000000"
+                android:textColorHint="#FFFFFF"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/img_searchright"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:textColorHint="@color/white" />
+                tools:text="search preview"
+                android:importantForAutofill="no"
+                android:inputType="text"/>
 
-            <!-- 검색 아이콘 -->
+            <!--검색 아이콘-->
             <ImageView
                 android:id="@+id/img_searchright"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:layout_marginEnd="10dp"
-                android:contentDescription="@null"
+                android:contentDescription="@string/cd_search"
                 android:src="@drawable/ic_custom_search"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -73,7 +81,7 @@
 
     <!--알림 버튼-->
     <ImageButton
-        android:id="@+id/btn_alarm"
+        android:id="@+id/imgbtn_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="45dp"
@@ -81,13 +89,13 @@
         android:backgroundTint="#00FFFFFF"
         android:padding="0dp"
         android:src="@drawable/notification"
-        app:layout_constraintEnd_toStartOf="@+id/btn_profile"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="알림" />
+        android:contentDescription="@string/cd_alarm"
+        app:layout_constraintEnd_toStartOf="@+id/imgbtn_profile"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!--프로필 버튼-->
     <ImageButton
-        android:id="@+id/btn_profile"
+        android:id="@+id/imgbtn_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="45dp"
@@ -95,485 +103,505 @@
         android:backgroundTint="#00FFFFFF"
         android:padding="0dp"
         android:src="@drawable/profile"
+        android:contentDescription="@string/cd_profile"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="프로필" />
-
-    <TextView
-        android:id="@+id/tv_home"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="46dp"
-        android:layout_marginTop="100dp"
-        android:text="@string/jubjub_explanation"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/tv_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="46dp"
+            android:layout_marginTop="31dp"
+            android:layout_marginEnd="155dp"
+            android:text="@string/jubjub_explanation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/searchCard" />
+
     <!--나눔기부게시판-->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/share_card"
-        android:layout_width="318dp"
-        android:layout_height="265dp"
-        android:layout_marginStart="45dp"
-        android:layout_marginTop="162dp"
-        android:layout_marginEnd="45dp"
-        app:cardBackgroundColor="@color/search"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="6dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:strokeWidth="0dp">
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/share_card"
+            android:layout_width="318dp"
+            android:layout_height="265dp"
+            android:layout_marginStart="45dp"
+            android:layout_marginTop="21dp"
+            android:layout_marginEnd="45dp"
+            app:cardBackgroundColor="@color/search"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_home"
+            app:strokeWidth="0dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tv_share"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8sp"
-                android:layout_marginTop="10dp"
-                android:text="나눔/기부"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/tv_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/share_board_title"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
-                android:id="@+id/btn_more_share"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:backgroundTint="#00FFFFFF"
-                android:padding="0dp"
-                android:src="@drawable/ic_add"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="나눔/기부 게시판 더보기" />
+                <ImageButton
+                    android:id="@+id/imgbtn_more_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="#00FFFFFF"
+                    android:contentDescription="@string/cd_more_share"
+                    android:padding="0dp"
+                    android:src="@drawable/ic_add"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <!--게시물 1-->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/firstboard"
-                android:layout_width="300dp"
-                android:layout_height="96dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="47dp"
-                android:layout_marginEnd="2dp"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="6dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeWidth="0dp">
+                <!--게시물 1-->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/firstboard"
+                    android:layout_width="300dp"
+                    android:layout_height="96dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="47dp"
+                    android:layout_marginEnd="2dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="6dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeWidth="0dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
-                    <ImageView
-                        android:id="@+id/img_firstboard_profile"
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_marginStart="15dp"
-                        android:layout_marginTop="11dp"
-                        android:paddingStart="2dp"
-                        android:paddingEnd="2dp"
-                        android:src="@drawable/profile"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:contentDescription="@null"/>
+                        <ImageView
+                            android:id="@+id/img_firstboard_profile"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="11dp"
+                            android:contentDescription="@null"
+                            android:paddingStart="2dp"
+                            android:paddingEnd="2dp"
+                            android:src="@drawable/profile"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
-                        android:id="@+id/img_firstboard_body"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="15dp"
-                        android:layout_marginTop="35dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@tools:sample/backgrounds/scenic"
-                        android:contentDescription="@null"  />
+                        <ImageView
+                            android:id="@+id/img_firstboard_body"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="35dp"
+                            android:contentDescription="@null"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:src="@tools:sample/backgrounds/scenic" />
 
-                    <TextView
-                        android:id="@+id/tv_firstboard_user_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="1dp"
-                        android:layout_marginTop="11dp"
-                        android:gravity="center"
-                        android:text="닉네임"
-                        android:textSize="8sp"
-                        app:layout_constraintStart_toEndOf="@+id/img_firstboard_profile"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        <TextView
+                            android:id="@+id/tv_firstboard_user_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="1dp"
+                            android:layout_marginTop="11dp"
+                            android:gravity="center"
+                            android:text=""
+                            android:textSize="8sp"
+                            app:layout_constraintStart_toEndOf="@+id/img_firstboard_profile"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="닉네임" />
 
-                    <TextView
-                        android:id="@+id/tv_first_board_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="35dp"
-                        android:text="제목이 들어올 자리입니당"
-                        android:textSize="8sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/img_firstboard_body"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        <TextView
+                            android:id="@+id/tv_first_board_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="35dp"
+                            android:text=""
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@+id/img_firstboard_body"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="제목 미리보기" />
 
-                    <TextView
-                        android:id="@+id/tv_first_board_body_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="3dp"
-                        android:text="본문 자리입니다"
-                        android:textColor="#B3B3B3"
-                        android:textSize="8sp"
-                        app:layout_constraintStart_toEndOf="@+id/img_firstboard_body"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_first_board_title" />
+                        <TextView
+                            android:id="@+id/tv_first_board_body_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="3dp"
+                            android:text=""
+                            android:textColor="#B3B3B3"
+                            android:textSize="11sp"
+                            app:layout_constraintStart_toEndOf="@+id/img_firstboard_body"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_first_board_title"
+                            tools:text="본문 미리보기" />
 
-                    <TextView
-                        android:id="@+id/tv_first_board_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginBottom="11dp"
-                        android:text="01/16  12:19"
-                        android:textSize="8sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/img_firstboard_body" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        <TextView
+                            android:id="@+id/tv_first_board_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="172dp"
+                            android:layout_marginBottom="68dp"
+                            android:text=""
+                            android:textSize="8sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/img_firstboard_body"
+                            tools:text="01/16  12:19" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-            <!--게시물 2-->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/secondboard"
-                android:layout_width="300dp"
-                android:layout_height="96dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="2dp"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="6dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/firstboard"
-                app:strokeWidth="0dp">
+                <!--게시물 2-->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/secondboard"
+                    android:layout_width="300dp"
+                    android:layout_height="96dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="2dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="6dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/firstboard"
+                    app:strokeWidth="0dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
-                    <ImageView
-                        android:id="@+id/img_secondboard_profile"
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_marginStart="15dp"
-                        android:layout_marginTop="11dp"
-                        android:paddingStart="2dp"
-                        android:paddingEnd="2dp"
-                        android:src="@drawable/profile"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:contentDescription="@null"/>
+                        <ImageView
+                            android:id="@+id/img_secondboard_profile"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="11dp"
+                            android:contentDescription="@null"
+                            android:paddingStart="2dp"
+                            android:paddingEnd="2dp"
+                            android:src="@drawable/profile"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
-                        android:id="@+id/img_secondboard_body"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="15dp"
-                        android:layout_marginTop="35dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@tools:sample/backgrounds/scenic"
-                        android:contentDescription="@null"/>
+                        <ImageView
+                            android:id="@+id/img_secondboard_body"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="35dp"
+                            android:contentDescription="@null"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:src="@tools:sample/backgrounds/scenic" />
 
-                    <TextView
-                        android:id="@+id/user_name_second"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="1dp"
-                        android:layout_marginTop="11dp"
-                        android:gravity="center"
-                        android:text="닉네임"
-                        android:textSize="8sp"
-                        app:layout_constraintStart_toEndOf="@+id/img_secondboard_profile"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        <TextView
+                            android:id="@+id/user_name_second"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="1dp"
+                            android:layout_marginTop="11dp"
+                            android:gravity="center"
+                            android:text=""
+                            android:textSize="8sp"
+                            app:layout_constraintStart_toEndOf="@+id/img_secondboard_profile"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="닉네임" />
 
-                    <TextView
-                        android:id="@+id/tv_second_board_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="35dp"
-                        android:text="제목이 들어올 자리입니당"
-                        android:textSize="8sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/img_secondboard_body"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        <TextView
+                            android:id="@+id/tv_second_board_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="35dp"
+                            android:text=""
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@+id/img_secondboard_body"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="제목 미리보기" />
 
-                    <TextView
-                        android:id="@+id/tv_second_board_body_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="3dp"
-                        android:text="본문 자리입니다"
-                        android:textColor="#B3B3B3"
-                        android:textSize="8sp"
-                        app:layout_constraintStart_toEndOf="@+id/img_secondboard_body"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_second_board_title" />
+                        <TextView
+                            android:id="@+id/tv_second_board_body_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="3dp"
+                            android:text=""
+                            android:textColor="#B3B3B3"
+                            android:textSize="11sp"
+                            app:layout_constraintStart_toEndOf="@+id/img_secondboard_body"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_second_board_title"
+                            tools:text="본문 미리보기" />
 
-                    <TextView
-                        android:id="@+id/tv_second_board_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginBottom="11dp"
-                        android:text="01/16  12:19"
-                        android:textSize="8sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/img_secondboard_body" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        <TextView
+                            android:id="@+id/tv_second_board_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="172dp"
+                            android:layout_marginBottom="68dp"
+                            android:text=""
+                            android:textSize="8sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/img_secondboard_body"
+                            tools:text="01/16  12:19" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
 
     <!--분실물게시판-->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/lost_found_card"
-        android:layout_width="318dp"
-        android:layout_height="265dp"
-        android:layout_marginStart="45dp"
-        android:layout_marginTop="441dp"
-        android:layout_marginEnd="45dp"
-        app:cardBackgroundColor="@color/search"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="6dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:strokeWidth="0dp">
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/lost_found_card"
+            android:layout_width="318dp"
+            android:layout_height="265dp"
+            android:layout_marginStart="45dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="45dp"
+            android:layout_marginBottom="216dp"
+            app:cardBackgroundColor="@color/search"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/share_card"
+            app:strokeWidth="0dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <!--분실물 타이틀-->
-            <TextView
-                android:id="@+id/tv_lost_found"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="10dp"
-                android:text="분실물"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/tv_lost_found"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/lost_found_title"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- + 버튼 -->
-            <ImageButton
-                android:id="@+id/btn_more_lost_found"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:backgroundTint="#00FFFFFF"
-                android:padding="0dp"
-                android:src="@drawable/ic_add"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="분실물 게시글 더보기" />
+                <ImageButton
+                    android:id="@+id/imgbtn_more_lost_found"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="#00FFFFFF"
+                    android:contentDescription="@string/cd_more_lost_found"
+                    android:padding="0dp"
+                    android:src="@drawable/ic_add"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <!--게시물 3-->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/thirdboard"
-                android:layout_width="300dp"
-                android:layout_height="96dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="47dp"
-                android:layout_marginEnd="2dp"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="6dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeWidth="0dp">
+                <!--게시물 3-->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/thirdboard"
+                    android:layout_width="300dp"
+                    android:layout_height="96dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="47dp"
+                    android:layout_marginEnd="2dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="6dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeWidth="0dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
-                    <ImageView
-                        android:id="@+id/img_thirdboard_profile"
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_marginStart="15dp"
-                        android:layout_marginTop="11dp"
-                        android:paddingStart="2dp"
-                        android:paddingEnd="2dp"
-                        android:src="@drawable/profile"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:contentDescription="@null"/>
+                        <ImageView
+                            android:id="@+id/img_thirdboard_profile"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="11dp"
+                            android:contentDescription="@null"
+                            android:paddingStart="2dp"
+                            android:paddingEnd="2dp"
+                            android:src="@drawable/profile"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
-                        android:id="@+id/img_thirdboard_body"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="15dp"
-                        android:layout_marginTop="35dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@tools:sample/backgrounds/scenic"
-                        android:contentDescription="@null"/>
+                        <ImageView
+                            android:id="@+id/img_thirdboard_body"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="35dp"
+                            android:contentDescription="@null"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:src="@tools:sample/backgrounds/scenic" />
 
-                    <TextView
-                        android:id="@+id/user_name_third"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="1dp"
-                        android:layout_marginTop="11dp"
-                        android:gravity="center"
-                        android:text="닉네임"
-                        android:textSize="8sp"
-                        app:layout_constraintStart_toEndOf="@+id/img_thirdboard_body"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        <TextView
+                            android:id="@+id/user_name_third"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="1dp"
+                            android:layout_marginTop="11dp"
+                            android:gravity="center"
+                            android:text=""
+                            android:textSize="8sp"
+                            app:layout_constraintStart_toEndOf="@+id/img_thirdboard_body"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="닉네임" />
 
-                    <TextView
-                        android:id="@+id/tv_third_board_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="35dp"
-                        android:text="제목이 들어올 자리입니당"
-                        android:textSize="8sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/img_thirdboard_body"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        <TextView
+                            android:id="@+id/tv_third_board_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="35dp"
+                            android:text=""
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@+id/img_thirdboard_body"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="제목 미리보기" />
 
-                    <TextView
-                        android:id="@+id/tv_third_board_body_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="3dp"
-                        android:text="본문 자리입니다"
-                        android:textColor="#B3B3B3"
-                        android:textSize="8sp"
-                        app:layout_constraintStart_toEndOf="@+id/img_thirdboard_body"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_third_board_title" />
+                        <TextView
+                            android:id="@+id/tv_third_board_body_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="3dp"
+                            android:text=""
+                            android:textColor="#B3B3B3"
+                            android:textSize="11sp"
+                            app:layout_constraintStart_toEndOf="@+id/img_thirdboard_body"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_third_board_title"
+                            tools:text="본문 미리보기" />
 
-                    <TextView
-                        android:id="@+id/tv_third_board_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginBottom="11dp"
-                        android:text="01/16  12:19"
-                        android:textSize="8sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/img_thirdboard_body" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        <TextView
+                            android:id="@+id/tv_third_board_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="172dp"
+                            android:layout_marginBottom="68dp"
+                            android:text=""
+                            android:textSize="8sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/img_thirdboard_body"
+                            tools:text="01/16  12:19" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-            <!--게시물 4-->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/fourthboard"
-                android:layout_width="300dp"
-                android:layout_height="96dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="2dp"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="6dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/thirdboard"
-                app:strokeWidth="0dp">
+                <!--게시물 4-->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/fourthboard"
+                    android:layout_width="300dp"
+                    android:layout_height="96dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="2dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="6dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/thirdboard"
+                    app:strokeWidth="0dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
-                    <ImageView
-                        android:id="@+id/img_fourthboard_profile"
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_marginStart="15dp"
-                        android:layout_marginTop="11dp"
-                        android:paddingStart="2dp"
-                        android:paddingEnd="2dp"
-                        android:src="@drawable/profile"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:contentDescription="@null"/>
+                        <ImageView
+                            android:id="@+id/img_fourthboard_profile"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="11dp"
+                            android:contentDescription="@null"
+                            android:paddingStart="2dp"
+                            android:paddingEnd="2dp"
+                            android:src="@drawable/profile"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
-                        android:id="@+id/img_fourthboard_body"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="15dp"
-                        android:layout_marginTop="35dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@tools:sample/backgrounds/scenic" />
+                        <ImageView
+                            android:id="@+id/img_fourthboard_body"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="35dp"
+                            android:contentDescription="@null"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:src="@tools:sample/backgrounds/scenic" />
 
-                    <TextView
-                        android:id="@+id/user_name_fourth"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="1dp"
-                        android:layout_marginTop="11dp"
-                        android:gravity="center"
-                        android:text="닉네임"
-                        android:textSize="8sp"
-                        app:layout_constraintStart_toEndOf="@+id/img_fourthboard_profile"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        <TextView
+                            android:id="@+id/user_name_fourth"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="1dp"
+                            android:layout_marginTop="11dp"
+                            android:gravity="center"
+                            android:text=""
+                            android:textSize="8sp"
+                            app:layout_constraintStart_toEndOf="@+id/img_fourthboard_profile"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="닉네임" />
 
-                    <TextView
-                        android:id="@+id/tv_fourth_board_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="35dp"
-                        android:text="제목이 들어올 자리입니당"
-                        android:textSize="8sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/img_fourthboard_body"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        <TextView
+                            android:id="@+id/tv_fourth_board_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="35dp"
+                            android:text=""
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@+id/img_fourthboard_body"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="제목 미리보기" />
 
-                    <TextView
-                        android:id="@+id/tv_fourth_board_body_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginTop="3dp"
-                        android:text="본문 자리입니다"
-                        android:textColor="#B3B3B3"
-                        android:textSize="8sp"
-                        app:layout_constraintStart_toEndOf="@+id/img_fourthboard_body"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_fourth_board_title" />
+                        <TextView
+                            android:id="@+id/tv_fourth_board_body_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="3dp"
+                            android:text=""
+                            android:textColor="#B3B3B3"
+                            android:textSize="11sp"
+                            app:layout_constraintStart_toEndOf="@+id/img_fourthboard_body"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_fourth_board_title"
+                            tools:text="본문 미리보기" />
 
-                    <TextView
-                        android:id="@+id/tv_fourth_board_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginBottom="11dp"
-                        android:text="01/16  12:19"
-                        android:textSize="8sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/img_fourthboard_body" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        <TextView
+                            android:id="@+id/tv_fourth_board_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="172dp"
+                            android:layout_marginBottom="68dp"
+                            android:text=""
+                            android:textSize="8sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/img_fourthboard_body"
+                            tools:text="01/16  12:19" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

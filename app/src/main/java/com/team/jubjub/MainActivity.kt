@@ -7,15 +7,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import com.team.jubjub.databinding.ActivityMainBinding
+import com.team.jubjub.ui.post.home.HomeFragment
+import com.team.jubjub.ui.post.lostfound.LostFoundFragment
+import com.team.jubjub.ui.post.profile.ProfileFragment
+import com.team.jubjub.ui.post.share.ShareFragment
+import com.team.jubjub.ui.post.write.WriteFragment
+import androidx.core.view.updateLayoutParams
+import androidx.constraintlayout.widget.ConstraintLayout
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
     private val fragments = mutableMapOf<Int, Fragment>()
-    private var selectedId: Int = -1  //초기 선택 안함
+    private var selectedId: Int = -1  // 초기 선택 안함
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,13 +44,46 @@ class MainActivity : AppCompatActivity() {
             switchTab(R.id.nav_home)
         }
 
-        //상단 인셋 처리
+        // 인셋 처리: 상단(status bar) + 하단(navigation bar)
+        applyEdgeToEdgeInsets()
+    }
+
+    private fun applyEdgeToEdgeInsets() {
+        // 기존 패딩
+        val baseMainPaddingLeft = binding.main.paddingLeft
+        val baseMainPaddingRight = binding.main.paddingRight
+
+        // bottom_bar_card의 기본marginBottom 저장
+        val baseBottomMargin =
+            (binding.bottomBarCard.layoutParams as ConstraintLayout.LayoutParams).bottomMargin
+
+        val extraLiftPx = 50 // 올림 픽셀
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { _, insets ->
-            val sys = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            binding.fragmentContainer.setPadding(sys.left, sys.top, sys.right, 0)
+            val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val navBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+
+            // 메인 좌우 시스템바 패딩
+            binding.main.updatePadding(
+                left = baseMainPaddingLeft + sysBars.left,
+                right = baseMainPaddingRight + sysBars.right
+            )
+
+            // 시스템 하단바가 있는 경우 커스텀 하단바 위로 올림
+            val newBottomMargin = if (navBars.bottom > 0) {
+                baseBottomMargin + extraLiftPx
+            } else {
+                baseBottomMargin
+            }
+
+            binding.bottomBarCard.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                bottomMargin = newBottomMargin
+            }
+
             insets
         }
     }
+
 
     private fun switchTab(itemId: Int) {
         if (selectedId == itemId) return
