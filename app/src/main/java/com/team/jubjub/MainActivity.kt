@@ -16,14 +16,16 @@ import com.team.jubjub.ui.home.HomeFragment
 import com.team.jubjub.ui.lostfound.LostFoundFragment
 import com.team.jubjub.ui.mypage.MyPageFragment
 import com.team.jubjub.ui.share.ShareFragment
-import com.team.jubjub.ui.write.WriteFragment
-import androidx.core.view.updateLayoutParams
-import androidx.core.view.updatePadding
+import com.team.jubjub.ui.write.WriteLostFoundFragment
+import com.team.jubjub.ui.write.WriteShareFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.math.abs
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        private const val REQ_POST_TYPE = "req_post_type"
+    }
 
     private lateinit var binding: ActivityMainBinding
     private val fragments = mutableMapOf<Int, Fragment>()
@@ -39,14 +41,54 @@ class MainActivity : AppCompatActivity() {
         binding.navHome.setOnClickListener { switchTab(R.id.nav_home) }
         binding.navShare.setOnClickListener { switchTab(R.id.nav_share) }
         binding.navLostFound.setOnClickListener { switchTab(R.id.nav_lost_found) }
-        binding.navWrite.setOnClickListener { switchTab(R.id.nav_write) }
+
+        // write는 탭 전환이 아니라 다이얼로그 -> overlay로 이동
+        binding.navWrite.setOnClickListener { showPostTypeDialog() }
+
         binding.navMyPage.setOnClickListener { switchTab(R.id.nav_my_page) }
+
+        // 다이얼로그 결과 리스너
+        setupPostTypeDialogResult()
+
+        supportFragmentManager.addOnBackStackChangedListener {
+            if (supportFragmentManager.backStackEntryCount == 0) {
+                fragments[selectedId]?.let { current ->
+                    supportFragmentManager.beginTransaction()
+                        .show(current)
+                        .commit()
+                }
+            }
+            // 오버레이 열림/닫힘 포함해서 항상 아이콘 갱신
+            updateSelectedUi(selectedId)
+        }
 
         if (savedInstanceState == null) {
             switchTab(R.id.nav_home)
+        } else {
+            // 복원 시에도 UI 맞추기
+            updateSelectedUi(selectedId)
         }
 
         applyEdgeToEdgeInsets()
+    }
+
+    // 작성 타입 선택 다이얼로그
+    private fun showPostTypeDialog() {
+        ConfirmDialogFragment.newInstance(
+            requestKey = REQ_POST_TYPE,
+            specKey = ConfirmDialogSpec.WriteStatus.key
+        ).show(supportFragmentManager, "WriteStatusDialog")
+    }
+
+    // 다이얼로그 결과 -> MyPageFragment처럼 openOverlay로 띄우기
+    private fun setupPostTypeDialogResult() {
+        supportFragmentManager.setFragmentResultListener(REQ_POST_TYPE, this) { _, bundle ->
+            val target: Fragment = when (ConfirmDialogFragment.readChoice(bundle)) {
+                DialogChoice.LEFT -> WriteLostFoundFragment()
+                DialogChoice.RIGHT -> WriteShareFragment()
+            }
+            openOverlay(target, tag = target::class.java.name)
+        }
     }
 
     private fun applyEdgeToEdgeInsets() {
@@ -66,7 +108,6 @@ class MainActivity : AppCompatActivity() {
             val mandatoryGestureBottom =
                 insets.getInsets(WindowInsetsCompat.Type.mandatorySystemGestures()).bottom
 
-            // 전체 레이아웃: 상단/좌우만 반영
             binding.main.updatePadding(
                 left = baseMainLeft + sysBars.left,
                 right = baseMainRight + sysBars.right,
@@ -96,57 +137,40 @@ class MainActivity : AppCompatActivity() {
     private fun switchTab(itemId: Int) {
         if (selectedId == itemId) return
 
-        supportFragmentManager.popBackStack(
-            null,
-            androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-        )
-
-
         val fm = supportFragmentManager
 
-        //오버레이 먼저 닫음
-        val popped = fm.popBackStackImmediate(
-            null,
-            androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-        )
+        // 오버레이(BackStack) 제거 로직 (기존 유지)
+        fm.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
         fm.executePendingTransactions()
-
-        // 같은 탭을 다시 누른 경우
-        // 오버레이만 닫힌 경우 필요 없음
-        if (selectedId == itemId) {
-            if (popped) {
-                // 혹시 현재 탭이 숨겨져 있을 수 있으니 다시 보여줌
-                supportFragmentManager.beginTransaction()
-                    .show(fragments[selectedId] ?: return)
-                    .commit()
-            }
-            return
-        }
 
         val tx = fm.beginTransaction()
 
+        // 현재 탭 숨기기
         fragments[selectedId]?.let { tx.hide(it) }
 
         val tag = itemId.toString()
-        val target = fragments[itemId] ?: fm.findFragmentByTag(tag) ?: when (itemId) {
-            R.id.nav_home -> HomeFragment()
-            R.id.nav_share -> ShareFragment()
-            R.id.nav_lost_found -> LostFoundFragment()
-            R.id.nav_write -> WriteFragment()
-            R.id.nav_my_page -> MyPageFragment()
-            else -> HomeFragment()
-        }.also {
-            fragments[itemId] = it
-            tx.add(R.id.fragmentContainer, it, tag)
+        var target = fragments[itemId]
+
+        if (target == null) {
+            target = when (itemId) {
+                R.id.nav_home -> HomeFragment()
+                R.id.nav_share -> ShareFragment()
+                R.id.nav_lost_found -> LostFoundFragment()
+                R.id.nav_my_page -> MyPageFragment()
+                // nav_write는 탭이 아니므로 여기서 처리하지 않음
+                else -> HomeFragment()
+            }
+            fragments[itemId] = target
+            tx.add(R.id.fragmentContainer, target, tag)
+        } else {
+            tx.show(target)
         }
 
-        tx.show(target)
         tx.commit()
 
         selectedId = itemId
         updateSelectedUi(itemId)
     }
-
 
     fun selectTab(itemId: Int) {
         switchTab(itemId)
@@ -161,12 +185,19 @@ class MainActivity : AppCompatActivity() {
         tx.add(R.id.fragmentContainer, fragment, tag)
             .addToBackStack(tag)
             .commit()
-    }
 
+        // 오버레이가 최상단이 되었을 때 write 아이콘이 초록이 되도록 즉시 갱신 시도
+        // (commit 타이밍 이슈 방지 위해 pending 처리)
+        fm.executePendingTransactions()
+        updateSelectedUi(selectedId)
+    }
 
     private fun updateSelectedUi(selected: Int) {
         val main = ContextCompat.getColor(this, R.color.main)
         val gray = ContextCompat.getColor(this, android.R.color.darker_gray)
+
+        val currentTop = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+        val isWriteScreen = currentTop is WriteShareFragment || currentTop is WriteLostFoundFragment
 
         val buttons = listOf(
             binding.navHome,
@@ -177,7 +208,14 @@ class MainActivity : AppCompatActivity() {
         )
 
         buttons.forEach { btn ->
-            val color = if (btn.id == selected) main else gray
+            val color = if (isWriteScreen) {
+                // Write 화면이면 4번만 초록, 나머지 회색
+                if (btn.id == R.id.nav_write) main else gray
+            } else {
+                // 일반 탭 화면이면 selected 탭만 초록
+                if (btn.id == selected) main else gray
+            }
+
             btn.imageTintList = ColorStateList.valueOf(color)
         }
     }
