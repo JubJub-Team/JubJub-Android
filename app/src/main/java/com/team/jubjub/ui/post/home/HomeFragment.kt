@@ -1,9 +1,10 @@
-package com.team.jubjub
+package com.team.jubjub.ui.post.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import com.team.jubjub.databinding.FragmentHomeBinding
 
@@ -27,7 +28,7 @@ class HomeFragment : Fragment() {
     private fun setupSearch() {
         // 키보드에서 "검색" 눌렀을 시 액션
         binding.txtSearch.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 performSearch()
                 true
             } else {
