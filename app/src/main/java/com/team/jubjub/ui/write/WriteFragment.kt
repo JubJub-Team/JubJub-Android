@@ -1,4 +1,4 @@
-package com.team.jubjub.ui.post.write
+package com.team.jubjub.ui.write
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
