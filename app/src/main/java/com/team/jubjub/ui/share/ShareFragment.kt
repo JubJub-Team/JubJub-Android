@@ -1,4 +1,4 @@
-package com.team.jubjub.ui.post.share
+package com.team.jubjub.ui.share
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

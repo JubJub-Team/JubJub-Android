@@ -1,4 +1,4 @@
-package com.team.jubjub.ui.post.profile
+package com.team.jubjub.ui.mypage
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
