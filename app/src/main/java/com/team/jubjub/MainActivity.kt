@@ -10,11 +10,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import com.team.jubjub.databinding.ActivityMainBinding
-import com.team.jubjub.ui.post.home.HomeFragment
-import com.team.jubjub.ui.post.lostfound.LostFoundFragment
-import com.team.jubjub.ui.post.profile.ProfileFragment
-import com.team.jubjub.ui.post.share.ShareFragment
-import com.team.jubjub.ui.post.write.WriteFragment
+import com.team.jubjub.ui.home.HomeFragment
+import com.team.jubjub.ui.lostfound.LostFoundFragment
+import com.team.jubjub.ui.mypage.ProfileFragment
+import com.team.jubjub.ui.share.ShareFragment
+import com.team.jubjub.ui.write.WriteFragment
 import androidx.core.view.updateLayoutParams
 import androidx.constraintlayout.widget.ConstraintLayout
 

@@ -1,4 +1,4 @@
-package com.team.jubjub.ui.post.home
+package com.team.jubjub.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,7 +27,7 @@ class HomeFragment : Fragment() {
 
     private fun setupSearch() {
         // 키보드에서 "검색" 눌렀을 시 액션
-        binding.txtSearch.setOnEditorActionListener { _, actionId, _ ->
+        binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 performSearch()
                 true
@@ -37,13 +37,13 @@ class HomeFragment : Fragment() {
         }
 
         // 오른쪽 돋보기 아이콘 클릭
-        binding.imgSearchright.setOnClickListener {
+        binding.ivSearch.setOnClickListener {
             performSearch()
         }
     }
 
     private fun performSearch() {
-        val query = binding.txtSearch.text.toString().trim()
+        val query = binding.etSearch.text.toString().trim()
         if (query.isEmpty()) return
 
         // TODO: 여기서 실제 검색 처리
