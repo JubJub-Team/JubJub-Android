@@ -5,7 +5,32 @@
     <string name="home">홈</string>
     <string name="share_board">나눔 게시판</string>
     <string name="lost_found_board">분실물 게시판</string>
+    <string name="share_board_title">나눔/기부</string>
+    <string name="lost_found_title">분실물</string>
     <string name="write">작성</string>
+
+    <!--홈-->
     <string name="mypage">마이페이지</string>
     <string name="jubjub_explanation">캠퍼스에서 발견한 분실물과\n 나눔 물품을 공유하는 공간, 줍줍</string>
+    <string name="cd_alarm">알림</string>
+    <string name="cd_profile">프로필</string>
+    <string name="cd_more_share">나눔/기부 게시판 더보기</string>
+    <string name="cd_more_lost_found">분실물 게시글 더보기</string>
+    <string name="cd_search">검색</string>
+    <string name="cd_search_eng">Search</string>
+
+    <!--마이페이지-->
+    <string name="my_page">마이페이지</string>
+    <string name="my_profile">내 프로필</string>
+    <string name="my_share_level">나의 나눔 레벨</string>
+    <string name="my_share">나의 나눔</string>
+    <string name="liked_share">관심 나눔</string>
+    <string name="my_posts">나의 게시글</string>
+    <string name="alarm">알림</string>
+    <string name="etc">기타</string>
+    <string name="withdraw">회원탈퇴</string>
+    <string name="logout">로그아웃</string>
+
+    <string name="nickname_placeholder">닉네임</string>
+    <string name="profile_summary_placeholder">서울여대•게시물0</string>
 </resources>

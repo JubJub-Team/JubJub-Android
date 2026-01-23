@@ -6,7 +6,7 @@ import com.team.jubjub.data.model.Post
 import com.team.jubjub.data.model.enum.PostType
 import kotlinx.coroutines.tasks.await
 
-class PostRepositoryImplementation : PostRepository {
+class PostRepositoryImpl : PostRepository {
 
     private val db = FirebaseFirestore.getInstance()
     private val postRef = db.collection("posts")
