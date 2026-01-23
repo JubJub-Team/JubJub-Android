@@ -5,55 +5,120 @@ import com.team.jubjub.data.model.enum.PostType
 
 interface PostRepository {
 
-    // 1. [홈] 학교 및 게시물 타입 기준 전체 게시물 목록 조회
+    /**
+     * 1. [홈] 전체 게시물 목록 조회
+     * 특정 학교의 분실(LOST) 또는 나눔(SHARING) 게시물을 최신순으로 가져옵니다.
+     *
+     * @param schoolName : 조회할 학교 이름 (예: "서울여자대학교")
+     * @param type : 게시물 타입 (PostType.LOST 또는 PostType.SHARING)
+     * @return Result<List<Post>> : 성공 시 게시물 리스트 반환
+     */
     suspend fun getPostList(
         schoolName: String,
         type: PostType
     ): Result<List<Post>>
 
-    // 2. [홈] 게시물 검색 (제목 및 내용 기준)
+    /**
+     * 2. [홈] 게시물 검색
+     * 제목이나 본문 내용에 키워드가 포함된 게시물을 검색합니다.
+     *
+     * @param schoolName : 검색을 수행할 학교 이름
+     * @param keyword : 검색어
+     * @return Result<List<Post>> : 검색 결과 리스트
+     */
     suspend fun searchPosts(
         schoolName: String,
         keyword: String
     ): Result<List<Post>>
 
-    // 3. [마이페이지] 사용자가 작성한 게시물 목록 조회
+    /**
+     * 3. [마이페이지] 내가 작성한 게시물 조회
+     * 현재 로그인한 사용자가 작성한 글 목록을 가져옵니다.
+     *
+     * @param userId : 사용자 고유 ID (Writer ID)
+     * @return Result<List<Post>> : 작성한 게시물 리스트
+     */
     suspend fun getMyPostList(
         userId: String
     ): Result<List<Post>>
 
-    // 4. [마이페이지] 사용자가 스크랩한 게시물 목록 조회
+    /**
+     * 4. [마이페이지] 내가 스크랩한 게시물 조회
+     * 사용자가 관심 목록(찜)에 추가한 게시물들을 가져옵니다.
+     *
+     * @param userId : 사용자 고유 ID
+     * @return Result<List<Post>> : 스크랩한 게시물 리스트
+     */
     suspend fun getScrappedPostList(
         userId: String
     ): Result<List<Post>>
 
-    // 5. [작성] 게시물 업로드
+    /**
+     * 5. [작성] 게시물 업로드
+     * 새로운 게시물을 Firestore 'posts' 컬렉션에 저장합니다.
+     *
+     * @param post : 업로드할 게시물 객체 (이미지 URL 포함 완료된 상태)
+     * @return Result<Boolean> : 업로드 성공 여부
+     */
     suspend fun uploadPost(
         post: Post
     ): Result<Boolean>
 
-    // 6. [상세] 게시물 상세 정보 조회
+    /**
+     * 6. [상세] 게시물 상세 정보 조회
+     * 리스트에서 아이템 클릭 시, 해당 게시물의 전체 정보를 가져옵니다.
+     *
+     * @param postId : 게시물 고유 ID
+     * @return Result<Post?> : 성공 시 Post 객체, 실패하거나 없으면 null
+     */
     suspend fun getPostDetail(
         postId: String
     ): Result<Post?>
 
-    // 7. [수정] 게시물 내용 수정
+    /**
+     * 7. [수정] 게시물 내용 수정
+     * 기존 게시물의 내용을 덮어씌워 수정합니다.
+     *
+     * @param post : 수정된 내용이 담긴 Post 객체 (postId는 유지)
+     * @return Result<Boolean> : 수정 성공 여부
+     */
     suspend fun updatePost(
         post: Post
     ): Result<Boolean>
 
-    // 8. [삭제] 게시물 삭제
+    /**
+     * 8. [삭제] 게시물 삭제
+     * 해당 게시물을 DB에서 영구 삭제합니다.
+     *
+     * @param postId : 삭제할 게시물 ID
+     * @return Result<Boolean> : 삭제 성공 여부
+     */
     suspend fun deletePost(
         postId: String
     ): Result<Boolean>
 
-    // 9. [상세] 게시물 상태 변경 (예: 거래중, 거래완료)
+    /**
+     * 9. [상세] 게시물 상태 변경
+     * 판매중 -> 거래완료 등으로 상태를 변경합니다.
+     *
+     * @param postId : 대상 게시물 ID
+     * @param status : 변경할 상태 문자열 (예: "TRADING", "COMPLETED")
+     * @return Result<Boolean> : 변경 성공 여부
+     */
     suspend fun updatePostStatus(
         postId: String,
         status: String
     ): Result<Boolean>
 
-    // 10. [상세] 게시물 스크랩 상태 변경
+    /**
+     * 10. [상세] 게시물 스크랩(찜) 토글
+     * 스크랩을 추가하거나 취소합니다. (트랜잭션 처리 권장)
+     *
+     * @param postId : 대상 게시물 ID
+     * @param userId : 요청하는 사용자 ID
+     * @param isScrap : true=스크랩 추가, false=스크랩 취소
+     * @return Result<Boolean> : 처리 성공 여부
+     */
     suspend fun toggleScrap(
         postId: String,
         userId: String,

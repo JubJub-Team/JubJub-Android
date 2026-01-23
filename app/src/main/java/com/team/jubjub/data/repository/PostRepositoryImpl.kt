@@ -6,7 +6,7 @@ import com.team.jubjub.data.model.Post
 import com.team.jubjub.data.model.enum.PostType
 import kotlinx.coroutines.tasks.await
 
-class PostRepositoryImplementation : PostRepository {
+class PostRepositoryImpl : PostRepository {
 
     private val db = FirebaseFirestore.getInstance()
     private val postRef = db.collection("posts")
@@ -19,7 +19,7 @@ class PostRepositoryImplementation : PostRepository {
         return try {
             val snapshot = postRef
                 .whereEqualTo("school", school) // 학교 필터링
-                .whereEqualTo("postType", type)         // 타입 필터링 (LOST/SHARING)
+                .whereEqualTo("postType", type.name)         // 타입 필터링 (LOST/SHARING)
                 .orderBy("createdAt", Query.Direction.DESCENDING) // 최신순 정렬
                 .get()
                 .await()
@@ -48,7 +48,7 @@ class PostRepositoryImplementation : PostRepository {
             val filteredList = snapshot.documents.mapNotNull { doc ->
                 doc.toObject(Post::class.java)?.copy(postId = doc.id)
             }.filter { post ->
-                post.title.contains(keyword) || post.content.contains(keyword)
+                post.title.contains(keyword, ignoreCase = true) || post.content.contains(keyword, ignoreCase = true)
             }
             Result.success(filteredList)
         } catch (e: Exception) {
