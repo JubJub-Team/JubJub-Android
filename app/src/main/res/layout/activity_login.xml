@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="47dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.022"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_logo" />
+
+    <TextView
+        android:id="@+id/tv_intro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="캠퍼스에서 발견한 분실물과\n나눔 물품을 공유하는 공간, 줍줍"
+        app:layout_constraintTop_toBottomOf="@id/iv_logo"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/tv_welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="40dp"
+        android:text="줍줍에 오신 걸 환영합니다."
+        android:textColor="#767676"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_intro" />
+
+    <!-- ID 입력 -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_id"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_welcome"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edt_id"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:hint="ID"
+            android:textColorHint="#767676"
+            android:textSize="14sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Password 입력 -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        app:endIconMode="password_toggle"
+        app:layout_constraintTop_toBottomOf="@id/til_id"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edt_pw"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:textColorHint="#767676"
+            android:textSize="14sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 아이디 / 비밀번호 찾기 -->
+    <LinearLayout
+        android:id="@+id/layout_find"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/til_password"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tv_find_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="아이디 찾기"
+            android:textColor="#767676"
+            android:textSize="12sp" />
+
+        <View
+            android:id="@+id/view_divider"
+            android:layout_width="1dp"
+            android:layout_height="12dp"
+            android:layout_marginHorizontal="6dp"
+            android:background="#767676" />
+
+        <TextView
+            android:id="@+id/tv_find_pw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="비밀번호 찾기"
+            android:textColor="#767676"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <!-- 로그인 버튼 -->
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="28dp"
+        android:backgroundTint="@color/main"
+        android:text="로그인"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_find" />
+
+    <LinearLayout
+        android:id="@+id/layout_signup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="32dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/btn_login"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- 안내 문구 -->
+        <TextView
+            android:id="@+id/tv_signup_guide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="아직 회원이 아니신가요?"
+            android:textSize="12sp"
+            android:textColor="#767676" />
+
+        <!-- 회원가입 하기 -->
+        <TextView
+            android:id="@+id/tv_signup_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="회원가입 하기"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@color/main" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
