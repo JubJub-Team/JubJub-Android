@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="BottomNavNoText" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">0sp</item>
         <item name="android:includeFontPadding">false</item>
     </style>
-    <style name="ShapeAppearanceOverlay.App" parent="">
-        <!-- 기본 shape -->
+
+    <style name="ShapeAppearanceOverlay">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">0dp</item>
     </style>
+
+    <style name="ShapeAppearanceOverlay.App">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
     <style name="ShapeAppearanceOverlay.App.Circle">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
 </resources>
