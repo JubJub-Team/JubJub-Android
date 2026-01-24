@@ -1,0 +1,10 @@
+0 AirPods
+1 Tumbler
+2 Adapter
+3 Cable
+4 GalaxyBuds
+5 Wallet
+6 Card
+7 Mouse
+8 PowerBank
+9 Eraser
