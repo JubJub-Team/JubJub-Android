@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
+import com.team.jubjub.R
 import com.team.jubjub.databinding.FragmentHomeBinding
+import com.team.jubjub.ui.mypage.AlarmFragment
 
 class HomeFragment : Fragment() {
 
@@ -21,7 +23,7 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         setupSearch()
-
+        setupAlarmButton()
         return binding.root
     }
 
@@ -49,6 +51,15 @@ class HomeFragment : Fragment() {
         // TODO: 여기서 실제 검색 처리
         // 예) ViewModel 호출, 검색 화면 이동 등
         // findNavController().navigate(...)
+    }
+
+    private fun setupAlarmButton() {
+        binding.ibAlarm.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, AlarmFragment())
+                .addToBackStack(null) // 뒤로가기 시 Home으로 복귀
+                .commit()
+        }
     }
 
     override fun onDestroyView() {
