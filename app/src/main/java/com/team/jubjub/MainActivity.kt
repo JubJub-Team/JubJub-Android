@@ -24,7 +24,6 @@ import kotlin.math.abs
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
     private val fragments = mutableMapOf<Int, Fragment>()
     private var selectedId: Int = -1
 
