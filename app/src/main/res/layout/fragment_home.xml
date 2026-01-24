@@ -93,7 +93,7 @@
             app:layout_constraintEnd_toStartOf="@+id/ib_profile"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!--프로필 버튼-->
+        <!--마이페이지 버튼-->
         <ImageButton
             android:id="@+id/ib_profile"
             android:layout_width="wrap_content"
@@ -103,7 +103,7 @@
             android:backgroundTint="#00FFFFFF"
             android:padding="0dp"
             android:src="@drawable/profile"
-            android:contentDescription="@string/cd_profile"
+            android:contentDescription="@string/cd_my_page"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -226,6 +226,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
                             android:layout_marginTop="35dp"
+                            android:maxLines="1"
                             android:text=""
                             android:textSize="11sp"
                             android:textStyle="bold"
@@ -239,9 +240,13 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
                             android:layout_marginTop="3dp"
+                            android:layout_marginEnd="17dp"
+                            android:maxLines="2"
                             android:text=""
                             android:textColor="#B3B3B3"
                             android:textSize="11sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0"
                             app:layout_constraintStart_toEndOf="@+id/iv_first_board_image"
                             app:layout_constraintTop_toBottomOf="@+id/tv_first_board_title"
                             tools:text="본문 미리보기" />
@@ -328,7 +333,8 @@
                             android:textStyle="bold"
                             app:layout_constraintStart_toEndOf="@+id/iv_second_board_image"
                             app:layout_constraintTop_toTopOf="parent"
-                            tools:text="제목 미리보기" />
+                            tools:text="제목 미리보기"
+                            android:maxLines="1"/>
 
                         <TextView
                             android:id="@+id/tv_second_board_body_text"
@@ -336,9 +342,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
                             android:layout_marginTop="3dp"
+                            android:layout_marginEnd="17dp"
+                            android:maxLines="2"
                             android:text=""
                             android:textColor="#B3B3B3"
                             android:textSize="11sp"
+                            app:flow_firstHorizontalBias="0"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0"
                             app:layout_constraintStart_toEndOf="@+id/iv_second_board_image"
                             app:layout_constraintTop_toBottomOf="@+id/tv_second_board_title"
                             tools:text="본문 미리보기" />
@@ -474,7 +485,8 @@
                             android:textStyle="bold"
                             app:layout_constraintStart_toEndOf="@+id/iv_third_board_image"
                             app:layout_constraintTop_toTopOf="parent"
-                            tools:text="제목 미리보기" />
+                            tools:text="제목 미리보기"
+                            android:maxLines="1"/>
 
                         <TextView
                             android:id="@+id/tv_third_board_body_text"
@@ -482,9 +494,13 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
                             android:layout_marginTop="3dp"
+                            android:layout_marginEnd="17dp"
+                            android:maxLines="2"
                             android:text=""
                             android:textColor="#B3B3B3"
                             android:textSize="11sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0"
                             app:layout_constraintStart_toEndOf="@+id/iv_third_board_image"
                             app:layout_constraintTop_toBottomOf="@+id/tv_third_board_title"
                             tools:text="본문 미리보기" />
@@ -571,7 +587,8 @@
                             android:textStyle="bold"
                             app:layout_constraintStart_toEndOf="@+id/iv_fourth_board_image"
                             app:layout_constraintTop_toTopOf="parent"
-                            tools:text="제목 미리보기" />
+                            tools:text="제목 미리보기"
+                            android:maxLines="1"/>
 
                         <TextView
                             android:id="@+id/tv_fourth_board_body_text"
@@ -579,9 +596,13 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
                             android:layout_marginTop="3dp"
+                            android:layout_marginEnd="17dp"
+                            android:maxLines="2"
                             android:text=""
                             android:textColor="#B3B3B3"
                             android:textSize="11sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0"
                             app:layout_constraintStart_toEndOf="@+id/iv_fourth_board_image"
                             app:layout_constraintTop_toBottomOf="@+id/tv_fourth_board_title"
                             tools:text="본문 미리보기" />
