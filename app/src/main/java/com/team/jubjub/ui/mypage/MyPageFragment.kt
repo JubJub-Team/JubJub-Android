@@ -5,8 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.team.jubjub.R
 import com.team.jubjub.data.model.enum.UserLevel
 import com.team.jubjub.databinding.FragmentMyPageBinding
+import com.team.jubjub.ui.post.SharePostDetailFragment
 
 class MyPageFragment : Fragment() {
 
@@ -30,8 +32,12 @@ class MyPageFragment : Fragment() {
 
         binding.ivLevelBar.setImageResource(userLevel.levelBarRes)
 
-        // 예시: 메뉴 클릭도 이런 식으로
-        // binding.itemMyPosts.setOnClickListener { ... }
+        binding.btnGoDetail.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, SharePostDetailFragment())
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     override fun onDestroyView() {
