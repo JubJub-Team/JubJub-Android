@@ -9,7 +9,7 @@
     android:layout_marginStart="15dp"
     android:layout_marginEnd="10dp"
     android:background="#F2F2F2"
-    tools:context=".SignupActivity"
+    tools:context=".ui.auth.SignupActivity"
     tools:ignore="HardcodedText,SmallSp,ContentDescription,VisualLintOverlap,TouchTargetSize">
 
     <ScrollView
@@ -24,15 +24,12 @@
             android:layout_height="wrap_content">
 
             <!-- 로고 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
             <ImageView
                 android:id="@+id/ic_logo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
+                android:layout_marginStart="30dp"
                 android:layout_marginEnd="91dp"
                 android:layout_marginBottom="112dp"
                 android:contentDescription="@null"
@@ -69,7 +66,7 @@
                 android:layout_marginTop="-31dp"
                 android:layout_marginStart="68dp">
 
-            <ImageView
+                <ImageView
                     android:id="@+id/ic_ellipse"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -93,12 +90,12 @@
                 android:id="@+id/tv_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="아이디*"
-                android:textSize="11sp"
                 android:layout_marginStart="8dp"
+                android:text="아이디*"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/til_id"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/til_id"
-                app:layout_constraintBottom_toBottomOf="@id/til_id"/>
+                app:layout_constraintTop_toTopOf="@id/til_id" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_id"
@@ -106,7 +103,7 @@
                 android:layout_height="wrap_content"
                 app:hintEnabled="false"
                 app:layout_constraintTop_toBottomOf="@id/ic_profile"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="30dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.45">
@@ -136,18 +133,18 @@
                 android:id="@+id/tv_pw"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="비밀번호*"
-                android:textSize="11sp"
                 android:layout_marginStart="8dp"
+                android:text="비밀번호*"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/til_pw"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/til_pw"
-                app:layout_constraintBottom_toBottomOf="@id/til_pw"/>
+                app:layout_constraintTop_toTopOf="@id/til_pw" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_pw"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="30dp"
                 app:hintEnabled="false"
                 app:layout_constraintTop_toBottomOf="@id/til_id"
                 app:layout_constraintStart_toStartOf="parent"
@@ -180,18 +177,20 @@
                 android:id="@+id/tv_pwcheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="비밀번호 확인*"
-                android:textSize="11sp"
                 android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="비밀번호 확인*"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/til_pw_check"
+                app:layout_constraintEnd_toStartOf="@id/til_pw_check"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/til_pw_check"
-                app:layout_constraintBottom_toBottomOf="@id/til_pw_check"/>
+                app:layout_constraintTop_toTopOf="@id/til_pw_check" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_pw_check"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="30dp"
                 app:hintEnabled="false"
                 app:layout_constraintTop_toBottomOf="@id/til_pw"
                 app:layout_constraintStart_toStartOf="parent"
@@ -224,18 +223,18 @@
                 android:id="@+id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="이름*"
-                android:textSize="11sp"
                 android:layout_marginStart="8dp"
+                android:text="이름*"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/til_name"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/til_name"
-                app:layout_constraintBottom_toBottomOf="@id/til_name"/>
+                app:layout_constraintTop_toTopOf="@id/til_name" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_name"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="30dp"
                 app:hintEnabled="false"
                 app:layout_constraintTop_toBottomOf="@id/til_pw_check"
                 app:layout_constraintStart_toStartOf="parent"
@@ -256,18 +255,18 @@
                 android:id="@+id/tv_school"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="학교*"
-                android:textSize="11sp"
                 android:layout_marginStart="8dp"
+                android:text="학교*"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/til_school"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/til_school"
-                app:layout_constraintBottom_toBottomOf="@id/til_school"/>
+                app:layout_constraintTop_toTopOf="@id/til_school" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_school"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="30dp"
                 app:hintEnabled="false"
                 app:layout_constraintTop_toBottomOf="@id/til_name"
                 app:layout_constraintStart_toStartOf="parent"
@@ -288,18 +287,18 @@
                 android:id="@+id/tv_nickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="닉네임*"
-                android:textSize="11sp"
                 android:layout_marginStart="8dp"
+                android:text="닉네임*"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/til_nickname"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/til_nickname"
-                app:layout_constraintBottom_toBottomOf="@id/til_nickname"/>
+                app:layout_constraintTop_toTopOf="@id/til_nickname" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_nickname"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="30dp"
                 app:hintEnabled="false"
                 app:layout_constraintTop_toBottomOf="@id/til_school"
                 app:layout_constraintStart_toStartOf="parent"
@@ -323,26 +322,26 @@
                 android:textSize="10sp"
                 android:textColor="#E53935"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/til_pw_check"
-                app:layout_constraintStart_toStartOf="@id/til_pw_check" />
+                app:layout_constraintTop_toBottomOf="@id/til_nickname"
+                app:layout_constraintStart_toStartOf="@id/til_nickname" />
 
             <!-- 이메일 -->
             <TextView
                 android:id="@+id/tv_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="이메일*"
-                android:textSize="11sp"
                 android:layout_marginStart="8dp"
+                android:text="이메일*"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/til_email"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/til_email"
-                app:layout_constraintBottom_toBottomOf="@id/til_email"/>
+                app:layout_constraintTop_toTopOf="@id/til_email" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_email"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="30dp"
                 app:hintEnabled="false"
                 app:layout_constraintTop_toBottomOf="@id/til_nickname"
                 app:layout_constraintStart_toStartOf="parent"
@@ -367,26 +366,26 @@
                 android:textSize="10sp"
                 android:textColor="#E53935"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/til_pw_check"
-                app:layout_constraintStart_toStartOf="@id/til_pw_check" />
+                app:layout_constraintTop_toBottomOf="@id/til_email"
+                app:layout_constraintStart_toStartOf="@id/til_email" />
 
             <!-- 전화번호 -->
             <TextView
                 android:id="@+id/tv_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="전화번호*"
-                android:textSize="11sp"
                 android:layout_marginStart="8dp"
+                android:text="전화번호*"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/til_phone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/til_phone"
-                app:layout_constraintBottom_toBottomOf="@id/til_phone"/>
+                app:layout_constraintTop_toTopOf="@id/til_phone" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_phone"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="30dp"
                 app:hintEnabled="false"
                 app:layout_constraintTop_toBottomOf="@id/til_email"
                 app:layout_constraintStart_toStartOf="parent"
@@ -411,26 +410,26 @@
                 android:textSize="10sp"
                 android:textColor="#E53935"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/til_pw_check"
-                app:layout_constraintStart_toStartOf="@id/til_pw_check" />
+                app:layout_constraintTop_toBottomOf="@id/til_phone"
+                app:layout_constraintStart_toStartOf="@id/til_phone" />
 
             <!-- 생년월일 -->
             <TextView
                 android:id="@+id/tv_birth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="생년월일*"
-                android:textSize="11sp"
                 android:layout_marginStart="8dp"
+                android:text="생년월일*"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/til_birth"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/til_birth"
-                app:layout_constraintBottom_toBottomOf="@id/til_birth"/>
+                app:layout_constraintTop_toTopOf="@id/til_birth" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_birth"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="30dp"
                 app:hintEnabled="false"
                 app:layout_constraintTop_toBottomOf="@id/til_phone"
                 app:layout_constraintStart_toStartOf="parent"
@@ -485,7 +484,8 @@
             <!-- 아이디 중복 확인 -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_idcheck"
-                android:layout_width="88dp"
+                android:layout_width="wrap_content"
+                android:minWidth="75dp"
                 android:layout_height="35dp"
                 android:contentDescription="@null"
                 android:text="중복 확인"
@@ -501,7 +501,8 @@
             <!-- 닉네임 중복 확인 -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_nicknamecheck"
-                android:layout_width="88dp"
+                android:layout_width="wrap_content"
+                android:minWidth="75dp"
                 android:layout_height="35dp"
                 android:contentDescription="@null"
                 android:text="중복 확인"
@@ -517,7 +518,8 @@
             <!-- 이메일 중복 확인 -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_emailcheck"
-                android:layout_width="88dp"
+                android:layout_width="wrap_content"
+                android:minWidth="75dp"
                 android:layout_height="35dp"
                 android:contentDescription="@null"
                 android:text="중복 확인"
@@ -533,7 +535,8 @@
             <!-- 전화번호 중복 확인 -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_phonecheck"
-                android:layout_width="88dp"
+                android:layout_width="wrap_content"
+                android:minWidth="75dp"
                 android:layout_height="35dp"
                 android:contentDescription="@null"
                 android:text="중복 확인"
