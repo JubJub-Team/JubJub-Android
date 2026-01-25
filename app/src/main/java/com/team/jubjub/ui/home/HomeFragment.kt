@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
+import com.team.jubjub.MainActivity
 import com.team.jubjub.R
 import com.team.jubjub.databinding.FragmentHomeBinding
 import com.team.jubjub.ui.mypage.AlarmFragment
@@ -24,21 +25,20 @@ class HomeFragment : Fragment() {
 
         setupSearch()
         setupAlarmButton()
+        setupProfileButton()
+        setupMoreButtons()
+
         return binding.root
     }
 
     private fun setupSearch() {
-        // 키보드에서 "검색" 눌렀을 시 액션
         binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 performSearch()
                 true
-            } else {
-                false
-            }
+            } else false
         }
 
-        // 오른쪽 돋보기 아이콘 클릭
         binding.ivSearch.setOnClickListener {
             performSearch()
         }
@@ -47,18 +47,28 @@ class HomeFragment : Fragment() {
     private fun performSearch() {
         val query = binding.etSearch.text.toString().trim()
         if (query.isEmpty()) return
-
-        // TODO: 여기서 실제 검색 처리
-        // 예) ViewModel 호출, 검색 화면 이동 등
-        // findNavController().navigate(...)
+        // TODO: 검색 처리
     }
 
     private fun setupAlarmButton() {
         binding.ibAlarm.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, AlarmFragment())
-                .addToBackStack(null) // 뒤로가기 시 Home으로 복귀
-                .commit()
+            (requireActivity() as MainActivity).openOverlay(AlarmFragment())
+        }
+    }
+
+    private fun setupProfileButton() {
+        binding.ibProfile.setOnClickListener {
+            (requireActivity() as MainActivity).selectTab(R.id.nav_my_page)
+        }
+    }
+
+    private fun setupMoreButtons() {
+        binding.ibMoreShare.setOnClickListener {
+            (requireActivity() as MainActivity).selectTab(R.id.nav_share)
+        }
+
+        binding.ibMoreLostFound.setOnClickListener {
+            (requireActivity() as MainActivity).selectTab(R.id.nav_lost_found)
         }
     }
 

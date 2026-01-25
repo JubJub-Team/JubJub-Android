@@ -27,15 +27,35 @@
             android:paddingTop="11dp"
             tools:text="글쓴 사람 아이디•01/17 1:05" />
 
-        <TextView
-            android:id="@+id/tv_share_post_detail_title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="7dp"
-            android:paddingBottom="24dp"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            tools:text="게시글 제목" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_share_post_detail_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingTop="7dp"
+                android:paddingBottom="24dp"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                tools:text="게시글 제목" />
+
+            <ImageButton
+                android:id="@+id/ib_bookmark"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/cd_bookmark"
+                android:padding="0dp"
+                app:srcCompat="@drawable/ic_bookmark" />
+
+        </LinearLayout>
+
 
         <!-- 카테고리 -->
         <LinearLayout

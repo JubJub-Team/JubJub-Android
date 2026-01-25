@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.team.jubjub.R
 import com.team.jubjub.databinding.FragmentLostFoundBinding
+import com.team.jubjub.ui.post.PostDetailFragment
 
 class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
 
@@ -79,10 +80,16 @@ class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
     ------------------------ */
     private fun setupPostClick() {
         binding.tvTitle1.setOnClickListener {
-            Toast.makeText(requireContext(), "상세 페이지 이동", Toast.LENGTH_SHORT).show()
-            // TODO: 상세 Fragment 연결
+            parentFragmentManager.beginTransaction()
+                .replace(
+                    R.id.fragmentContainer,
+                    PostDetailFragment.newInstance(PostDetailFragment.PostType.LOST_FOUND)
+                )
+                .addToBackStack(null)
+                .commit()
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
