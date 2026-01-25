@@ -1,60 +1,90 @@
 package com.team.jubjub.ui.share
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.team.jubjub.R
+import com.team.jubjub.databinding.FragmentShareBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class ShareFragment : Fragment(R.layout.fragment_share) {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ShareFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class ShareFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentShareBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentShareBinding.bind(view)
+
+        setupBackButton()
+        setupSearch()
+        setupFilter()
+        setupPostClick()
+    }
+
+    /* ------------------------
+       상단바 뒤로가기
+    ------------------------ */
+    private fun setupBackButton() {
+        binding.icArrowBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_share, container, false)
+    /* ------------------------
+       검색
+    ------------------------ */
+    private fun setupSearch() {
+
+        binding.etSearch.setOnClickListener {
+            binding.etSearch.requestFocus()
+        }
+
+        binding.icCustomSearch.setOnClickListener {
+            val keyword = binding.etSearch.text.toString()
+
+            if (keyword.isBlank()) {
+                Toast.makeText(requireContext(), "검색어를 입력하세요", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "검색어: $keyword", Toast.LENGTH_SHORT).show()
+                // TODO: 검색 API 연동
+            }
+        }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ShareFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ShareFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    /* ------------------------
+       필터 (나눔)
+    ------------------------ */
+    private fun setupFilter() {
+        binding.icFilter.setOnClickListener {
+            val filters = arrayOf("나눔 중", "예약 중", "나눔 완료")
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setItems(filters) { _, which ->
+                    when (which) {
+                        0 -> Toast.makeText(requireContext(), "나눔 중", Toast.LENGTH_SHORT).show()
+                        1 -> Toast.makeText(requireContext(), "예약 중", Toast.LENGTH_SHORT).show()
+                        2 -> Toast.makeText(requireContext(), "나눔 완료", Toast.LENGTH_SHORT).show()
+                    }
+                    // TODO: 필터 API 연동
                 }
-            }
+                .show()
+        }
+    }
+
+    /* ------------------------
+       게시글 클릭
+    ------------------------ */
+    private fun setupPostClick() {
+        binding.tvTitle1.setOnClickListener {
+            Toast.makeText(requireContext(), "나눔 상세 페이지 이동", Toast.LENGTH_SHORT).show()
+            // TODO: 상세 Fragment 연결
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

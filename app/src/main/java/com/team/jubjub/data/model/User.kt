@@ -1,8 +1,8 @@
 package com.team.jubjub.data.model
 
-import com.team.jubjub.data.model.enum.NotificationType
-import com.team.jubjub.data.model.enum.PostStatus
-import com.team.jubjub.data.model.enum.PostType
+import com.team.jubjub.data.model.enums.NotificationType
+import com.team.jubjub.data.model.enums.PostStatus
+import com.team.jubjub.data.model.enums.PostType
 import java.util.Date
 
 // 사용자 정보 (users 컬렉션)

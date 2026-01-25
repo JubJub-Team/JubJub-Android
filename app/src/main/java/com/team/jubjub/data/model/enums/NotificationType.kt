@@ -1,4 +1,4 @@
-package com.team.jubjub.data.model.enum
+package com.team.jubjub.data.model.enums
 
 enum class NotificationType {
     COMMENT, // 댓글 알림
