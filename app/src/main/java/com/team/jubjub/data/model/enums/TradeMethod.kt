@@ -1,4 +1,4 @@
-package com.team.jubjub.data.model.enum
+package com.team.jubjub.data.model.enums
 
 enum class TradeMethod {
     DIRECT, // 직거래

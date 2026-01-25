@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.google.services)
 
     id("kotlin-parcelize")
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -60,6 +62,12 @@ android {
 dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
+
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("androidx.fragment:fragment-ktx:1.8.5")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
