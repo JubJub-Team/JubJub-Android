@@ -13,7 +13,6 @@ data class Comment(
 
     val content: String = "", // 댓글 내용
     val isSecret: Boolean = false, // 비밀 댓글 여부
-    val isDeleted: Boolean = false, // 삭제된 댓글 여부
 
     val parentId: String? = null, // 부모 댓글 ID (대댓글인 경우)
     val createdAt: Date? = null // 댓글 작성 일시

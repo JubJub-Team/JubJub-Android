@@ -6,10 +6,14 @@ import com.team.jubjub.data.model.Notification
 import com.team.jubjub.data.model.Scrap
 import com.team.jubjub.data.model.User
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class UserRepositoryImpl : UserRepository {
+@Singleton
+class UserRepositoryImpl @Inject constructor(
+    private val db: FirebaseFirestore // Hilt가 넣어줌 (직접 getInstance 호출 X)
+) : UserRepository {
 
-    private val db = FirebaseFirestore.getInstance()
     private val userRef = db.collection("users")
 
     // 1-1. 아이디 중복 확인
@@ -32,7 +36,7 @@ class UserRepositoryImpl : UserRepository {
         return checkDuplicate("phone", phone)
     }
 
-    // [내부 함수] 중복 체크 헬퍼 (필드 값이 없으면 true=사용가능)
+    // [내부 함수] 중복 체크 헬퍼 (쿼리 결과가 비어있으면 true = 중복 아님/사용 가능)
     private suspend fun checkDuplicate(field: String, value: String): Result<Boolean> {
         return try {
             val snapshot = userRef.whereEqualTo(field, value).limit(1).get().await()
@@ -45,6 +49,7 @@ class UserRepositoryImpl : UserRepository {
     // 2. 정보 저장/수정
     override suspend fun saveUserProfile(user: User): Result<Unit> {
         return try {
+            // userId를 문서 ID로 사용 (set)
             userRef.document(user.userId).set(user).await()
             Result.success(Unit)
         } catch (e: Exception) {
@@ -76,7 +81,7 @@ class UserRepositoryImpl : UserRepository {
                 .get()
                 .await()
 
-            val list = snapshot.documents.mapNotNull { it.toObject(Scrap::class.java) }
+            val list = snapshot.toObjects(Scrap::class.java)
             Result.success(list)
         } catch (e: Exception) {
             Result.failure(e)
@@ -92,7 +97,7 @@ class UserRepositoryImpl : UserRepository {
                 .get()
                 .await()
 
-            val list = snapshot.documents.mapNotNull { it.toObject(Notification::class.java) }
+            val list = snapshot.toObjects(Notification::class.java)
             Result.success(list)
         } catch (e: Exception) {
             Result.failure(e)
