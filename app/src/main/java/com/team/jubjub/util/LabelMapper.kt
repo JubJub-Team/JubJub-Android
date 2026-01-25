@@ -12,15 +12,16 @@ object LabelMapper {
         "card" to listOf("카드", "신용카드", "체크카드", "교통카드", "학생증"),
         "mouse" to listOf("마우스"),
         "powerbank" to listOf("보조배터리", "배터리"),
-        "eraser" to listOf("지우개")
+        "eraser" to listOf("지우개"),
+        "umbrella" to listOf("우산")
     )
 
     // ML Kit용 사전
     private val mlKitDictionary = mapOf(
         "wallet" to listOf("지갑", "카드 지갑"),
         "purse" to listOf("지갑", "파우치"),
-        "mobile phone" to listOf("휴대전화", "스마트폰", "핸드폰"),
-        "smartphone" to listOf("휴대전화", "스마트폰"),
+        "mobile phone" to listOf("휴대전화", "스마트폰", "핸드폰", "폰"),
+        "smartphone" to listOf("휴대전화", "스마트폰", "핸드폰", "폰"),
         "earbuds" to listOf("이어폰", "무선 이어폰"),
         "headphones" to listOf("헤드셋", "헤드폰"),
         "laptop" to listOf("노트북", "컴퓨터"),
