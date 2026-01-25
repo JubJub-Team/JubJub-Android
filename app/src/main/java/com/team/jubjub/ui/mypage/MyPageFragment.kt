@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.team.jubjub.R
-import com.team.jubjub.data.model.enum.UserLevel
+import com.team.jubjub.data.model.enums.UserLevel
 import com.team.jubjub.databinding.FragmentMyPageBinding
 import com.team.jubjub.ui.post.SharePostDetailFragment
 

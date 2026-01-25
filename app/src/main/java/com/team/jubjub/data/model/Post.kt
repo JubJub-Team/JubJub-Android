@@ -1,18 +1,21 @@
 package com.team.jubjub.data.model
 
-import com.team.jubjub.data.model.enum.PostCategory
-import com.team.jubjub.data.model.enum.PostStatus
-import com.team.jubjub.data.model.enum.PostType
-import com.team.jubjub.data.model.enum.ProductCondition
-import com.team.jubjub.data.model.enum.TradeMethod
-import java.util.Date
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.ServerTimestamp
+import com.team.jubjub.data.model.enums.PostCategory
+import com.team.jubjub.data.model.enums.PostStatus
+import com.team.jubjub.data.model.enums.PostType
+import com.team.jubjub.data.model.enums.ProductCondition
+import com.team.jubjub.data.model.enums.TradeMethod
 
 // 게시글 정보 (posts 컬렉션 - 나눔/분실 통합)
 data class Post(
     // 공통 필드
+    @DocumentId // Firestore 문서 ID를 자동으로 매핑
     val postId: String = "", // 게시글 ID
     val postType: PostType = PostType.SHARING, // 게시글 유형 (나눔/분실)
-    val school: String="", // 학교명
+    val school: String = "", // 학교명
 
     // 작성자 정보
     val writerUserId: String = "", // 작성자 User ID
@@ -26,10 +29,10 @@ data class Post(
     val images: List<String> = emptyList(), // 이미지 URL 목록
     val status: PostStatus = PostStatus.AVAILABLE, // 게시글 상태 (판매중/예약중/완료)
 
-    val keywords: List<String> = emptyList(), // 검색용 키워드 리스트(AI 분석 + 매퍼 결과)
+    val keywords: List<String> = emptyList(), // 검색용 키워드 리스트
 
-    val createdAt: Date? = null, // 작성 일시
-    val scrapCount: Int = 0, // 스크랩 수
+    @ServerTimestamp // 업로드 시 서버 시간 자동 기록
+    val createdAt: Timestamp? = null,
     val commentCount: Int = 0, // 댓글 수
 
     // 나눔 전용 필드 (SHARING)
@@ -42,6 +45,6 @@ data class Post(
     // 분실 전용 필드 (LOST)
     val foundLocation: String? = null, // 습득 장소
     val foundDetailLocation: String? = null, // 습득 상세 장소
-    val foundDate: Date? = null, // 습득 일시
+    val foundDate: Timestamp? = null, // 습득 일시 (Timestamp)
     val storageLocation: String? = null // 물품 보관 장소
 )

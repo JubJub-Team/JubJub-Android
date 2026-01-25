@@ -1,4 +1,4 @@
-package com.team.jubjub.data.model.enum
+package com.team.jubjub.data.model.enums
 
 import androidx.annotation.DrawableRes
 import com.team.jubjub.R

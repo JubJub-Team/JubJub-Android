@@ -1,4 +1,4 @@
-package com.team.jubjub.data.model.enum
+package com.team.jubjub.data.model.enums
 
 enum class PostStatus {
     AVAILABLE, // 판매중 (나눔중, 찾는중)

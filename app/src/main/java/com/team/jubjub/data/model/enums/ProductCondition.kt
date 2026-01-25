@@ -1,4 +1,4 @@
-package com.team.jubjub.data.model.enum
+package com.team.jubjub.data.model.enums
 
 enum class ProductCondition {
     NEW,        // 새상품

@@ -6,7 +6,7 @@ import android.util.Log
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
-import com.team.jubjub.data.model.enum.PostType
+import com.team.jubjub.data.model.enums.PostType
 
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
