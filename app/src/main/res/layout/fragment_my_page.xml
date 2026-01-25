@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    android:fillViewport="true"
+    tools:context=".ui.mypage.MyPageFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/transparent"
+        android:orientation="vertical"
+        android:padding="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="26dp">
+
+            <!-- 내 프로필 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="@string/my_page"
+                android:textColor="#BDBDBD"
+                android:textSize="13sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/my_profile"
+                android:textColor="#212121"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- 프로필 초록 카드 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_marginBottom="18dp"
+                android:backgroundTint="@color/main"
+                android:elevation="0dp"
+                android:radius="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="14dp">
+
+                    <!-- 동그란 프로필 이미지 -->
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/iv_profile"
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="@string/cd_profile"
+                        android:scaleType="centerCrop"
+                        android:src="@android:drawable/sym_def_app_icon"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle" />
+
+                    <!-- 닉네임 / 지역 -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="12dp"
+                        android:layout_toEndOf="@id/iv_profile"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_nickname"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:text="@string/nickname_placeholder"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_profile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/profile_summary_placeholder"
+                            android:textColor="@color/white"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <!-- 오른쪽 화살표 (장식용) -->
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_mypage_profile_chevron_right" />
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 나눔 레벨 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                android:text="@string/my_share_level"
+                android:textColor="#212121"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_level_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="53dp"
+                    android:contentDescription="@null"
+                    tools:src="@drawable/ic_level_bar_2" />
+
+            </LinearLayout>
+
+            <!-- 나의 나눔 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/my_share"
+                android:textColor="#212121"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- 나의 나눔 메뉴 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                android:orientation="vertical">
+
+                <!-- 관심 나눔 -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_item_liked"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    app:drawableStartCompat="@drawable/ic_bookmark"
+                    android:drawablePadding="7dp"
+                    android:text="@string/liked_share"
+                    android:textColor="#212121"
+                    android:textSize="16sp" />
+
+                <!-- 나의 게시글 -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_item_my_posts"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    app:drawableStartCompat="@drawable/ic_my_post"
+                    android:drawablePadding="7dp"
+                    android:text="@string/my_posts"
+                    android:textColor="#212121"
+                    android:textSize="16sp" />
+
+                <!-- 알림 -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_item_alarm"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    app:drawableStartCompat="@drawable/ic_mypage_alarm"
+                    android:drawablePadding="7dp"
+                    android:text="@string/alarm"
+                    android:textColor="#212121"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- 기타 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/etc"
+                android:textColor="#212121"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- 회원탈퇴 -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_item_withdraw"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    app:drawableStartCompat="@drawable/ic_mypage_person"
+                    android:drawablePadding="7dp"
+                    android:text="@string/withdraw"
+                    android:textColor="#212121"
+                    android:textSize="16sp" />
+
+                <!-- 로그아웃 -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_item_logout"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    app:drawableStartCompat="@drawable/ic_mypage_person"
+                    android:drawablePadding="7dp"
+                    android:text="@string/logout"
+                    android:textColor="#212121"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 아래 여백 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="18dp" />
+
+        <!--임시-->
+        <Button
+            android:id="@+id/btn_go_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="상세로 이동" />
+
+
+    </LinearLayout>
+</ScrollView>

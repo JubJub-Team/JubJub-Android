@@ -41,6 +41,20 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    androidResources {
+        noCompress += "tflite"
+    }
+
+    lint {
+        disable += "NativeLibNotAligned"
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
 }
 
 dependencies {
@@ -50,8 +64,18 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
+    implementation(libs.mlkit.image.labeling)
+    implementation(libs.mlkit.translation)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
+    implementation(libs.firebase.auth)
+
+    implementation(libs.tensorflow.lite.task.vision)
+    implementation(libs.tensorflow.lite.support)
+    implementation(libs.tensorflow.lite.metadata)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

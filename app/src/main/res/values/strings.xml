@@ -8,12 +8,59 @@
     <string name="share_board_title">나눔/기부</string>
     <string name="lost_found_title">분실물</string>
     <string name="write">작성</string>
+
+    <!--홈-->
     <string name="mypage">마이페이지</string>
     <string name="jubjub_explanation">캠퍼스에서 발견한 분실물과\n 나눔 물품을 공유하는 공간, 줍줍</string>
     <string name="cd_alarm">알림</string>
-    <string name="cd_profile">프로필</string>
+    <string name="cd_my_page">마이페이지</string>
     <string name="cd_more_share">나눔/기부 게시판 더보기</string>
     <string name="cd_more_lost_found">분실물 게시글 더보기</string>
     <string name="cd_search">검색</string>
     <string name="cd_search_eng">Search</string>
+
+    <!--마이페이지-->
+    <string name="my_page">마이페이지</string>
+    <string name="cd_profile">프로필</string>
+    <string name="my_profile">내 프로필</string>
+    <string name="my_share_level">나의 나눔 레벨</string>
+    <string name="my_share">나의 나눔</string>
+    <string name="liked_share">관심 나눔</string>
+    <string name="my_posts">나의 게시글</string>
+    <string name="alarm">알림</string>
+    <string name="etc">기타</string>
+    <string name="withdraw">회원탈퇴</string>
+    <string name="logout">로그아웃</string>
+
+    <string name="nickname_placeholder">닉네임</string>
+    <string name="profile_summary_placeholder">서울여대•게시물0</string>
+
+    <!--댓글-->
+    <string name="reply_indicator">대댓글</string>
+
+    <!--게시글 상세-->
+    <string name="hint_write_comment">댓글을 입력하세요</string>
+    <string name="cd_toolbar">상단 툴바</string>
+    <string name="cd_post_and_comments_list">게시글 및 댓글 목록</string>
+    <string name="cd_comment_input_bar">댓글 입력 영역</string>
+    <string name="cd_comment_input_container">댓글 입력창 컨테이너</string>
+    <string name="cd_send_comment">댓글 전송</string>
+
+    <string name="cd_detail_img">물품 이미지</string>
+    <string name="label_category">카테고리</string>
+    <string name="label_condition">물품 상태</string>
+    <string name="label_count">수량</string>
+    <string name="label_method">나눔 방법</string>
+    <string name="label_location">희망 장소</string>
+
+    <string name="method_delivery">택배</string>
+    <string name="method_direct">직거래</string>
+
+    <string name="comment_count_format">댓글 %1$d</string>
+    <string name="writer_date_format">%1$s•%2$s</string>
+
+    <!--알림-->
+    <string name="no_alarm">알림이 없습니다.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

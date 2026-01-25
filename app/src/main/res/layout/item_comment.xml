@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingHorizontal="31dp">
+
+    <!-- reply=true 일 때만 보이는 화살표 -->
+    <ImageView
+        android:id="@+id/iv_reply_arrow"
+        android:layout_width="42dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="0dp"
+        android:paddingEnd="5dp"
+        android:paddingStart="0dp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_reply_arrow"
+        app:tint="#BDBDBD"
+        tools:visibility="visible"
+        android:contentDescription="@null"/>
+
+    <!-- 댓글 전체(프로필/텍스트/본문/구분선) wrapper -->
+    <LinearLayout
+        android:id="@+id/ll_comment_content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- 상단 프로필+닉네임+시간 -->
+        <LinearLayout
+            android:id="@+id/ll_comment_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="12dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                app:cardCornerRadius="5dp"
+                app:cardUseCompatPadding="false"
+                app:cardPreventCornerOverlap="true">
+
+                <ImageView
+                    android:id="@+id/iv_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@android:drawable/sym_def_app_icon"
+                    android:contentDescription="@string/reply_indicator"/>
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_nickname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textStyle="bold"
+                    tools:text="닉네임" />
+
+                <TextView
+                    android:id="@+id/tv_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textColor="#9E9E9E"
+                    android:textSize="11sp"
+                    tools:text="01/18 07:54" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 본문 -->
+        <TextView
+            android:id="@+id/tv_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="none"
+            android:textSize="13sp"
+            tools:text="네 어떻게 드릴까요?" />
+
+        <!-- 구분선 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E6E6E6" />
+
+    </LinearLayout>
+
+</LinearLayout>
