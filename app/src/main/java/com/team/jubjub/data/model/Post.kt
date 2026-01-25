@@ -12,6 +12,7 @@ import com.team.jubjub.data.model.enums.TradeMethod
 // 게시글 정보 (posts 컬렉션 - 나눔/분실 통합)
 data class Post(
     // 공통 필드
+    @DocumentId // Firestore 문서 ID를 자동으로 매핑
     val postId: String = "", // 게시글 ID
     val postType: PostType = PostType.SHARING, // 게시글 유형 (나눔/분실)
     val school: String = "", // 학교명
