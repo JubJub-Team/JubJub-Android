@@ -147,6 +147,11 @@ class UserRepositoryImpl @Inject constructor(
 
             // 3. 저장
             notiRef.set(newNotification).await()
+            // 해당 타겟 유저의 notifications 컬렉션에 새 문서 추가
+            userRef.document(targetUserId)
+                .collection("notifications")
+                .add(notification) // 자동 ID 생성하며 저장
+                .await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
