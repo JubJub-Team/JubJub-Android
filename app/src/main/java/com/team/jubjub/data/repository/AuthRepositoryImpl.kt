@@ -1,6 +1,7 @@
 package com.team.jubjub.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -68,8 +69,10 @@ class AuthRepositoryImpl @Inject constructor(
             // Firebase Auth 계정 삭제
             currentUser.delete().await()
             Result.success(Unit)
-        } catch (e: Exception) {
+        } catch (e: FirebaseAuthRecentLoginRequiredException) {
             // 참고: 로그인한 지 오래된 경우 재인증(re-authentication)이 필요할 수 있음
+            Result.failure(Exception("REAUTHENTICATION_REQUIRED"))
+        } catch (e: Exception) {
             Result.failure(e)
         }
     }
