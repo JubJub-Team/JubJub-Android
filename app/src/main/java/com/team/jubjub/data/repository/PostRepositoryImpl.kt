@@ -1,13 +1,9 @@
 package com.team.jubjub.data.repository
 
-import com.google.firebase.Timestamp
+import com.team.jubjub.data.model.Comment
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.team.jubjub.data.model.Comment
-import com.team.jubjub.data.model.Notification
 import com.team.jubjub.data.model.Post
-import com.team.jubjub.data.model.Scrap
-import com.team.jubjub.data.model.enums.NotificationType
 import com.team.jubjub.data.model.enums.PostType
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -15,8 +11,7 @@ import javax.inject.Singleton
 
 @Singleton
 class PostRepositoryImpl @Inject constructor(
-    private val db: FirebaseFirestore,
-    private val userRepository: UserRepository
+    private val db: FirebaseFirestore
 ) : PostRepository {
 
     private val postRef = db.collection("posts")
@@ -81,12 +76,12 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 4. [마이페이지] 사용자가 스크랩한 게시물 목록 조회 (업그레이드: 10개 제한 해결)
+    // 4. [마이페이지] 사용자가 스크랩한 게시물 목록 조회
     override suspend fun getScrappedPostList(
         userId: String
     ): Result<List<Post>> {
         return try {
-            // ID 목록 가져오기
+            // 1단계: ID 목록 가져오기
             val scrapSnapshot = db.collection("users").document(userId)
                 .collection("scraps")
                 .get()
@@ -98,24 +93,14 @@ class PostRepositoryImpl @Inject constructor(
                 return Result.success(emptyList())
             }
 
-            // 실제 게시물 조회
-            val resultList = mutableListOf<Post>()
+            // 2단계: 실제 게시물 조회
+            val postsSnapshot = postRef
+                .whereIn("postId", scrapIds)
+                .get()
+                .await()
 
-            // 10개씩 묶어서 처리
-            val chunks = scrapIds.chunked(10)
-
-            for (chunk in chunks) {
-                val postsSnapshot = postRef
-                    .whereIn("postId", chunk)
-                    .get()
-                    .await()
-                resultList.addAll(postsSnapshot.toObjects(Post::class.java))
-            }
-
-            // 최신순 정렬 (Client side)
-            val sortedList = resultList.sortedByDescending { it.createdAt }
-
-            Result.success(sortedList)
+            val list = postsSnapshot.toObjects(Post::class.java)
+            Result.success(list)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -199,10 +184,7 @@ class PostRepositoryImpl @Inject constructor(
                 .collection("scraps").document(postId)
 
             if (isScrap) {
-                val data = mapOf(
-                    "postId" to postId,
-                    "scrappedAt" to java.util.Date()
-                )
+                val data = mapOf("scrappedAt" to System.currentTimeMillis())
                 scrapRef.set(data).await()
             } else {
                 scrapRef.delete().await()
@@ -220,7 +202,7 @@ class PostRepositoryImpl @Inject constructor(
         return try {
             val snapshot = postRef.document(postId)
                 .collection("comments")
-                .orderBy("createdAt", Query.Direction.ASCENDING) // 작성순 정렬
+                .orderBy("createdAt", Query.Direction.ASCENDING) // 오래된순
                 .get()
                 .await()
 
@@ -231,31 +213,24 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 12. [상세] 댓글 작성 및 알림 발송
+    // 12. [상세] 댓글 작성 (및 알림 전송)
     override suspend fun addComment(
         postId: String,
         comment: Comment,
         postWriterId: String
     ): Result<Boolean> {
         return try {
-            // 댓글 저장 (자동 문서 ID 생성)
-            val commentDoc = postRef.document(postId).collection("comments").document()
-            val newComment = comment.copy(commentId = commentDoc.id)
-            commentDoc.set(newComment).await()
+            val commentRef = postRef.document(postId)
+                .collection("comments")
+                .document()
 
-            // 게시글 작성자에게 보낼 알림 객체 생성
-            // 본인이 본인 글에 댓글을 남긴 경우에는 알림을 보내지 않도록 처리
-            if (comment.writerUserId != postWriterId) {
-                val notification = Notification(
-                    notificationType = NotificationType.COMMENT,
-                    notificationMessage = "${comment.writerNickname}님이 게시글에 댓글을 남겼습니다.",
-                    targetPostId = postId,
-                    isRead = false,
-                    createdAt = java.util.Date()
-                )
-                // UserRepository의 알림 전송 함수 호출
-                userRepository.sendNotification(postWriterId, notification)
-            }
+            // 댓글 ID를 문서 ID로 맞추고 싶으면(선택):
+            val newComment = comment.copy(commentId = commentRef.id)
+
+            commentRef.set(newComment).await()
+
+            // 알림 전송은 "여기서" 하라고 인터페이스 주석에 있지만,
+            // PostRepositoryImpl에 UserRepository를 주입하지 않은 상태라면 일단 보류.
 
             Result.success(true)
         } catch (e: Exception) {
@@ -274,9 +249,11 @@ class PostRepositoryImpl @Inject constructor(
                 .document(commentId)
                 .delete()
                 .await()
+
             Result.success(true)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
+
 }

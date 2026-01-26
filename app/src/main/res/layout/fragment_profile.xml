@@ -38,52 +38,51 @@
                 android:contentDescription="@null"
                 android:src="@drawable/ic_logo"
                 app:layout_constraintBottom_toTopOf="@+id/tv_profile_username_label"
-                app:layout_constraintEnd_toStartOf="@+id/iv_profile_header_icon"
+                app:layout_constraintEnd_toStartOf="@+id/ic_profile"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- 프로필 아이콘(상단 장식) -->
-            <ImageView
-                android:id="@+id/iv_profile_header_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="33dp"
-                android:contentDescription="@null"
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ic_profile"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="33dp"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_profile"
-                app:layout_constraintBottom_toTopOf="@+id/til_profile_username"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearance="@style/CircleImage" />
 
-            <!-- 프로필 이미지 + 카메라 -->
             <FrameLayout
-                android:id="@+id/fl_profile_image_wrapper"
+                android:id="@+id/profile_image_wrapper"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-31dp"
-                android:layout_marginStart="68dp"
-                app:layout_constraintTop_toBottomOf="@id/iv_profile_header_icon"
+                app:layout_constraintTop_toBottomOf="@id/ic_profile"
+
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintEnd_toEndOf="parent"
+
+                android:layout_marginTop="-31dp"
+                android:layout_marginStart="68dp">
 
                 <ImageView
-                    android:id="@+id/iv_profile_image"
+                    android:id="@+id/img_ellipse"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_ellipse"/>
+                    android:src="@drawable/ic_ellipse"
+                    android:contentDescription="@null"/>
 
                 <ImageView
-                    android:id="@+id/iv_profile_camera"
+                    android:id="@+id/ic_camera"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_marginEnd="6dp"
-                    android:layout_marginBottom="6dp"
+                    android:src="@drawable/ic_camera"
                     android:contentDescription="@null"
                     android:elevation="8dp"
                     android:layout_gravity="bottom|end"
-                    android:src="@drawable/ic_camera"/>
+                    android:layout_marginEnd="6dp"
+                    android:layout_marginBottom="6dp"/>
             </FrameLayout>
 
             <!-- 아이디 -->
@@ -104,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
                 app:hintEnabled="false"
-                app:layout_constraintTop_toBottomOf="@id/iv_profile_header_icon"
+                app:layout_constraintTop_toBottomOf="@id/ic_profile"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.45">

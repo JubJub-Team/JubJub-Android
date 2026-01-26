@@ -13,6 +13,7 @@ import com.team.jubjub.MainActivity
 import com.team.jubjub.R
 import com.team.jubjub.data.model.enums.UserLevel
 import com.team.jubjub.data.repository.AuthRepository
+import com.team.jubjub.data.repository.UserRepository
 import com.team.jubjub.databinding.FragmentMyPageBinding
 import com.team.jubjub.ui.auth.LoginActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,12 +24,16 @@ import javax.inject.Inject
 class MyPageFragment : Fragment() {
 
     @Inject lateinit var authRepository: AuthRepository
+    @Inject lateinit var userRepository: UserRepository
 
     private var _binding: FragmentMyPageBinding? = null
     private val binding get() = _binding!!
-    private val REQ_POST_TYPE = "req_post_type"
-    private val REQ_LOGOUT = "req_logout"
-    private val REQ_WITHDRAW = "req_withdraw"
+
+    companion object {
+        private const val REQ_POST_TYPE = "req_post_type"
+        private const val REQ_LOGOUT = "req_logout"
+        private const val REQ_WITHDRAW = "req_withdraw"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -83,7 +83,10 @@ class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
             parentFragmentManager.beginTransaction()
                 .replace(
                     R.id.fragmentContainer,
-                    PostDetailFragment.newInstance(PostDetailFragment.PostType.LOST_FOUND)
+                    PostDetailFragment.newInstance(
+                        com.team.jubjub.data.model.enums.PostType.LOST,
+                        "임시postId"
+                    )
                 )
                 .addToBackStack(null)
                 .commit()
