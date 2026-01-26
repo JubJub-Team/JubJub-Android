@@ -26,6 +26,9 @@ class MyPageFragment : Fragment() {
 
     private var _binding: FragmentMyPageBinding? = null
     private val binding get() = _binding!!
+    private val REQ_POST_TYPE = "req_post_type"
+    private val REQ_LOGOUT = "req_logout"
+    private val REQ_WITHDRAW = "req_withdraw"
 
     private val REQ_POST_TYPE = "req_post_type"
     private val REQ_LOGOUT = "req_logout"
