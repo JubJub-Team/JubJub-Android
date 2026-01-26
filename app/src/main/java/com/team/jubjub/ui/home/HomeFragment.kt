@@ -92,6 +92,28 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun setupAlarmButton() {
         binding.ibAlarm.setOnClickListener {
+            (requireActivity() as MainActivity).openOverlay(AlarmFragment())
+        }
+    }
+
+    private fun setupProfileButton() {
+        binding.ibProfile.setOnClickListener {
+            (requireActivity() as MainActivity).selectTab(R.id.nav_my_page)
+        }
+    }
+
+    private fun setupMoreButtons() {
+        binding.ibMoreShare.setOnClickListener {
+            (requireActivity() as MainActivity).selectTab(R.id.nav_share)
+        }
+
+        binding.ibMoreLostFound.setOnClickListener {
+            (requireActivity() as MainActivity).selectTab(R.id.nav_lost_found)
+        }
+    }
+
+    private fun setupAlarmButton() {
+        binding.ibAlarm.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, AlarmFragment())
                 .addToBackStack(null)
