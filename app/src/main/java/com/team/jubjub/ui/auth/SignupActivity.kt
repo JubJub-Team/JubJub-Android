@@ -1,19 +1,23 @@
 package com.team.jubjub.ui.auth
 
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.storage.FirebaseStorage
 import com.team.jubjub.data.model.User
 import com.team.jubjub.data.repository.AuthRepository
 import com.team.jubjub.data.repository.UserRepository
 import com.team.jubjub.databinding.ActivitySignupBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -23,6 +27,22 @@ class SignupActivity : AppCompatActivity() {
 
     @Inject lateinit var authRepository: AuthRepository
     @Inject lateinit var userRepository: UserRepository
+
+    // Firebase Storage
+    private val storage by lazy { FirebaseStorage.getInstance() }
+
+    // 선택된 프로필 이미지 Uri
+    private var selectedProfileImageUri: Uri? = null
+
+    // 갤러리에서 이미지 선택
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            if (uri != null) {
+                selectedProfileImageUri = uri
+                binding.icProfile.setImageURI(null) // 갱신 보장용
+                binding.icProfile.setImageURI(uri)
+            }
+        }
 
     private var isIdChecked = false
     private var isNicknameChecked = false
@@ -37,10 +57,16 @@ class SignupActivity : AppCompatActivity() {
         setListeners()
     }
 
-    /**
-     * 클릭 리스너 설정
-     */
     private fun setListeners() {
+
+        // 프로필 사진 선택 (img_ellipse 클릭 시 갤러리 열기)
+        binding.imgEllipse.setOnClickListener {
+            pickImageLauncher.launch("image/*")
+        }
+
+        binding.icProfile.setOnClickListener {
+            pickImageLauncher.launch("image/*")
+        }
 
         // 아이디 중복 확인
         binding.btnIdcheck.setOnClickListener { checkIdDuplicate() }
@@ -67,9 +93,6 @@ class SignupActivity : AppCompatActivity() {
         binding.btnCancel.setOnClickListener { finish() }
     }
 
-    /**
-     * 아이디 중복 확인 (Firestore: users where customId == 입력값)
-     */
     private fun checkIdDuplicate() {
         val id = binding.edtId.text.toString().trim()
 
@@ -97,9 +120,6 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 비밀번호 유효성 검사
-     */
     private fun validatePassword() {
         val password = binding.edtPw.text.toString()
         val regex = Regex("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,16}$")
@@ -111,9 +131,6 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 비밀번호 확인 검사
-     */
     private fun validatePasswordCheck() {
         val password = binding.edtPw.text.toString()
         val passwordCheck = binding.edtPwcheck.text.toString()
@@ -125,9 +142,6 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 닉네임 중복 확인 (Firestore: users where nickname == 입력값)
-     */
     private fun checkNicknameDuplicate() {
         val nickname = binding.edtNickname.text.toString().trim()
 
@@ -155,10 +169,6 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 이메일 중복 확인 (Firestore 체크 + 형식 검증)
-     * 참고: 실제 중복은 Auth 회원가입 시에도 잡힘.
-     */
     private fun checkEmailDuplicate() {
         val email = binding.edtEmail.text.toString().trim()
 
@@ -186,9 +196,6 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 전화번호 중복 확인 (Firestore: users where phone == 입력값)
-     */
     private fun checkPhoneDuplicate() {
         val phone = binding.edtPhone.text.toString().trim()
 
@@ -216,11 +223,6 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 회원가입 처리
-     * 1) Auth 가입 (email, password) -> uid
-     * 2) Firestore users/{uid} 저장 (UserRepository.saveUserProfile)
-     */
     private fun submitSignup() {
         if (!isIdChecked || !isNicknameChecked || !isEmailChecked || !isPhoneChecked) {
             showToast("중복 확인을 모두 완료해 주세요.")
@@ -250,16 +252,22 @@ class SignupActivity : AppCompatActivity() {
         binding.btnSignup.isEnabled = false
 
         lifecycleScope.launch {
-            // 1) Auth 회원가입
             authRepository.signUp(email, password)
                 .onSuccess { uid ->
-                    // 2) Firestore 프로필 저장
+
+                    val profileUrl = try {
+                        uploadProfileImageIfNeeded(uid)
+                    } catch (e: Exception) {
+                        ""
+                    }
+
                     val user = User(
                         userId = uid,
                         customId = customId,
                         nickname = nickname,
                         email = email,
-                        phone = phone
+                        phone = phone,
+                        profileImageUrl = profileUrl
                     )
 
                     userRepository.saveUserProfile(user)
@@ -280,14 +288,15 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 안내 메시지 출력
-     */
-    private fun showMessage(
-        textView: TextView,
-        message: String,
-        isSuccess: Boolean
-    ) {
+    private suspend fun uploadProfileImageIfNeeded(uid: String): String {
+        val uri = selectedProfileImageUri ?: return ""
+
+        val ref = storage.reference.child("users/$uid/profile.jpg")
+        ref.putFile(uri).await()
+        return ref.downloadUrl.await().toString()
+    }
+
+    private fun showMessage(textView: TextView, message: String, isSuccess: Boolean) {
         textView.text = message
         textView.setTextColor(
             if (isSuccess) Color.parseColor("#20CD7C")
@@ -296,9 +305,6 @@ class SignupActivity : AppCompatActivity() {
         textView.visibility = View.VISIBLE
     }
 
-    /**
-     * 토스트 출력
-     */
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }

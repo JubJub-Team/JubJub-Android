@@ -127,4 +127,22 @@ class UserRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun sendNotification(
+        targetUserId: String,
+        notification: Notification
+    ): Result<Unit> {
+        return try {
+            val notiRef = userRef.document(targetUserId)
+                .collection("notifications")
+                .document()
+
+            val newNotification = notification.copy(notificationId = notiRef.id)
+
+            notiRef.set(newNotification).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

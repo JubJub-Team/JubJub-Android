@@ -1,12 +1,15 @@
 package com.team.jubjub.ui.mypage
 
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,11 +17,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 import com.team.jubjub.R
 import com.team.jubjub.data.model.User
 import com.team.jubjub.databinding.FragmentProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import java.net.HttpURLConnection
+import java.net.URL
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
@@ -27,6 +36,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private val binding get() = _binding!!
 
     private val viewModel: ProfileViewModel by viewModels()
+
+    // Firebase Storage
+    private val storage by lazy { FirebaseStorage.getInstance() }
+
+    // 선택된 프로필 이미지 Uri (새로 선택한 경우)
+    private var selectedProfileImageUri: Uri? = null
 
     // 중복확인 완료 플래그
     private var isIdChecked = false
@@ -40,17 +55,34 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private var originalEmail: String = ""
     private var originalPhone: String = ""
 
+    // 갤러리에서 이미지 선택
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            if (uri != null) {
+                selectedProfileImageUri = uri
+
+                //Glide 없이 미리보기
+                binding.icProfile.setImageURI(null) // 같은 이미지 재선택 시 갱신 보장
+                binding.icProfile.setImageURI(uri)
+            }
+        }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentProfileBinding.bind(view)
 
-        Log.d("ProfileFragment", "onViewCreated() called") // 무조건 찍힘
+        Log.d("ProfileFragment", "onViewCreated() called")
 
         setListeners()
         observeViewModel()
 
+        // 프로필 사진 클릭(ellipse/camera/profile) -> 갤러리
+        binding.imgEllipse.setOnClickListener { pickImageLauncher.launch("image/*") }
+        binding.icCamera.setOnClickListener { pickImageLauncher.launch("image/*") }
+        binding.icProfile.setOnClickListener { pickImageLauncher.launch("image/*") }
+
         val userId = getCurrentUserId()
-        Log.d("ProfileFragment", "current uid = $userId") // uid 확인
+        Log.d("ProfileFragment", "current uid = $userId")
 
         if (userId.isNotBlank()) {
             viewModel.loadProfile(userId)
@@ -65,18 +97,29 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             val prev = viewModel.user.value
             val input = buildUserFromInputs(userId)
 
-            // 기존 값 유지 + 입력값만 반영(빈값 덮어쓰기 방지)
-            val toSave = (prev ?: User(userId = userId)).copy(
-                customId = input.customId,
-                nickname = input.nickname,
-                email = input.email,
-                phone = input.phone,
-                name = input.name,
-                school = input.school,
-                birthDate = input.birthDate
-            )
+            lifecycleScope.launch {
+                // 새 이미지 선택했으면 업로드 -> url
+                val newProfileUrl: String? = try {
+                    uploadProfileImageIfNeeded(userId)
+                } catch (e: Exception) {
+                    Log.e("ProfileFragment", "profile upload failed", e)
+                    null // 실패하면 기존 유지
+                }
 
-            viewModel.saveProfile(toSave)
+                // 기존 값 유지 + 입력값만 반영(빈값 덮어쓰기 방지)
+                val toSave = (prev ?: User(userId = userId)).copy(
+                    customId = input.customId,
+                    nickname = input.nickname,
+                    email = input.email,
+                    phone = input.phone,
+                    name = input.name,
+                    school = input.school,
+                    birthDate = input.birthDate,
+                    profileImageUrl = newProfileUrl ?: (prev?.profileImageUrl ?: "")
+                )
+
+                viewModel.saveProfile(toSave)
+            }
         }
 
         binding.btnProfileCancel.setOnClickListener {
@@ -91,7 +134,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 // 프로필 수신
                 launch {
                     viewModel.user.collect { user ->
-                        Log.d("ProfileFragment", "collect user = $user") // ✅ 여기 꼭 찍혀야 함
+                        Log.d("ProfileFragment", "collect user = $user")
                         if (user == null) return@collect
 
                         fillProfileFromUser(user)
@@ -162,8 +205,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 launch {
                     viewModel.message.collect { msg ->
                         Log.d("ProfileFragment", "message = $msg")
-                        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-
+                        if (msg.isNotBlank()) {
+                            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                        }
                         if (msg.contains("저장 완료")) {
                             requireActivity().onBackPressedDispatcher.onBackPressed()
                         }
@@ -266,6 +310,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         binding.etProfileBirth.setText(user.birthDate)
         binding.etProfilePassword.setText("")
         binding.etProfilePasswordConfirm.setText("")
+
+        // 서버에 저장된 프로필 이미지가 있으면 표시(Glide 없이)
+        // 단, 사용자가 방금 새로 선택한 이미지가 있다면 그 미리보기를 유지
+        if (selectedProfileImageUri == null) {
+            loadProfileImage(user.profileImageUrl)
+        }
     }
 
     private fun cacheOriginalsFromUser(user: User) {
@@ -432,6 +482,58 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         } else {
             showMessage(binding.tvProfilePasswordConfirmMsg, "*비밀번호가 일치합니다.", true)
         }
+    }
+
+    // ----------------------------
+    // 프로필 이미지: URL 로딩(의존성 없이)
+    // ----------------------------
+    private fun loadProfileImage(url: String) {
+        if (url.isBlank()) {
+            binding.icProfile.setImageResource(R.drawable.ic_profile)
+            return
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val bitmap = downloadBitmap(url)
+            if (bitmap != null) {
+                binding.icProfile.setImageBitmap(bitmap)
+            } else {
+                binding.icProfile.setImageResource(R.drawable.ic_profile)
+            }
+        }
+    }
+
+    private suspend fun downloadBitmap(urlStr: String) = withContext(Dispatchers.IO) {
+        try {
+            val url = URL(urlStr)
+            val conn = (url.openConnection() as HttpURLConnection).apply {
+                connectTimeout = 7000
+                readTimeout = 7000
+                doInput = true
+            }
+            conn.connect()
+            conn.inputStream.use { input ->
+                BitmapFactory.decodeStream(input)
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    // ----------------------------
+    // 프로필 이미지: Storage 업로드
+    // ----------------------------
+    private suspend fun uploadProfileImageIfNeeded(uid: String): String? {
+        val uri = selectedProfileImageUri ?: return null
+
+        // 캐시 문제 줄이려고 파일명을 매번 바꾸는 걸 추천
+        val ref = storage.reference.child("users/$uid/profile_${System.currentTimeMillis()}.jpg")
+
+        ref.putFile(uri).await()
+        val url = ref.downloadUrl.await().toString()
+
+        selectedProfileImageUri = null // 저장 후 초기화
+        return url
     }
 
     // ----------------------------

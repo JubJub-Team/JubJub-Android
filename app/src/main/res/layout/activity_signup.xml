@@ -39,21 +39,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- 프로필 아이콘 -->
-            <ImageView
+            <!-- 프로필 이미지 + 카메라 -->
+
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ic_profile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="33dp"
-                android:contentDescription="@null"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="33dp"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_profile"
-                app:layout_constraintBottom_toTopOf="@+id/til_id"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearance="@style/CircleImage" />
 
-            <!-- 프로필 이미지 + 카메라 -->
             <FrameLayout
                 android:id="@+id/profile_image_wrapper"
                 android:layout_width="wrap_content"

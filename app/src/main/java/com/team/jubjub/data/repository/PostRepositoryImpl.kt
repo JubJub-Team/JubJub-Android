@@ -1,5 +1,6 @@
 package com.team.jubjub.data.repository
 
+import com.team.jubjub.data.model.Comment
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.team.jubjub.data.model.Post
@@ -193,4 +194,66 @@ class PostRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    // 11. [상세] 댓글 목록 조회
+    override suspend fun getCommentList(
+        postId: String
+    ): Result<List<Comment>> {
+        return try {
+            val snapshot = postRef.document(postId)
+                .collection("comments")
+                .orderBy("createdAt", Query.Direction.ASCENDING) // 오래된순
+                .get()
+                .await()
+
+            val list = snapshot.toObjects(Comment::class.java)
+            Result.success(list)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // 12. [상세] 댓글 작성 (및 알림 전송)
+    override suspend fun addComment(
+        postId: String,
+        comment: Comment,
+        postWriterId: String
+    ): Result<Boolean> {
+        return try {
+            val commentRef = postRef.document(postId)
+                .collection("comments")
+                .document()
+
+            // 댓글 ID를 문서 ID로 맞추고 싶으면(선택):
+            val newComment = comment.copy(commentId = commentRef.id)
+
+            commentRef.set(newComment).await()
+
+            // 알림 전송은 "여기서" 하라고 인터페이스 주석에 있지만,
+            // PostRepositoryImpl에 UserRepository를 주입하지 않은 상태라면 일단 보류.
+
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // 13. [상세] 댓글 삭제
+    override suspend fun deleteComment(
+        postId: String,
+        commentId: String
+    ): Result<Boolean> {
+        return try {
+            postRef.document(postId)
+                .collection("comments")
+                .document(commentId)
+                .delete()
+                .await()
+
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 }
