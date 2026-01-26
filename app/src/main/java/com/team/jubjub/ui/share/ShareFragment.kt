@@ -82,7 +82,10 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
             parentFragmentManager.beginTransaction()
                 .replace(
                     R.id.fragmentContainer,
-                    PostDetailFragment.newInstance(PostDetailFragment.PostType.SHARE)
+                    PostDetailFragment.newInstance(
+                        com.team.jubjub.data.model.enums.PostType.SHARING,
+                        "임시postId"
+                    )
                 )
                 .addToBackStack(null)
                 .commit()

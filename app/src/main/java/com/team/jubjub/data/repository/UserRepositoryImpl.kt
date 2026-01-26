@@ -1,7 +1,6 @@
 package com.team.jubjub.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.Query
 import com.team.jubjub.data.model.Notification
 import com.team.jubjub.data.model.Scrap
@@ -50,12 +49,8 @@ class UserRepositoryImpl @Inject constructor(
     // 2. 정보 저장/수정
     override suspend fun saveUserProfile(user: User): Result<Unit> {
         return try {
-            if (user.userId.isBlank()) {
-                throw IllegalArgumentException("User ID(Document ID)가 비어있습니다.")
-            }
-
-            userRef.document(user.userId).set(user, SetOptions.merge()).await()
-
+            // userId를 문서 ID로 사용 (set)
+            userRef.document(user.userId).set(user).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -127,31 +122,6 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun deleteAllUserData(userId: String): Result<Unit> {
         return try {
             userRef.document(userId).delete().await()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    // 8. 알림 생성 및 전송
-    override suspend fun sendNotification(
-        targetUserId: String,
-        notification: Notification
-    ): Result<Unit> {
-        return try {
-            // 1. 저장할 위치 참조 및 새 ID 생성
-            val notiRef = userRef.document(targetUserId).collection("notifications").document()
-
-            // 2. 생성된 ID를 객체 안에 주입 (나중에 알림 삭제/읽음 처리 시 ID를 알기 위해서)
-            val newNotification = notification.copy(notificationId = notiRef.id)
-
-            // 3. 저장
-            notiRef.set(newNotification).await()
-            // 해당 타겟 유저의 notifications 컬렉션에 새 문서 추가
-            userRef.document(targetUserId)
-                .collection("notifications")
-                .add(notification) // 자동 ID 생성하며 저장
-                .await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
