@@ -1,8 +1,12 @@
 package com.team.jubjub.data.repository
 
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.team.jubjub.data.model.Comment
+import com.team.jubjub.data.model.Notification
 import com.team.jubjub.data.model.Post
+import com.team.jubjub.data.model.enums.NotificationType
 import com.team.jubjub.data.model.enums.PostType
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -10,7 +14,8 @@ import javax.inject.Singleton
 
 @Singleton
 class PostRepositoryImpl @Inject constructor(
-    private val db: FirebaseFirestore
+    private val db: FirebaseFirestore,
+    private val userRepository: UserRepository
 ) : PostRepository {
 
     private val postRef = db.collection("posts")
@@ -188,6 +193,73 @@ class PostRepositoryImpl @Inject constructor(
             } else {
                 scrapRef.delete().await()
             }
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // 11. [상세] 댓글 목록 조회
+    override suspend fun getCommentList(
+        postId: String
+    ): Result<List<Comment>> {
+        return try {
+            val snapshot = postRef.document(postId)
+                .collection("comments")
+                .orderBy("createdAt", Query.Direction.ASCENDING) // 작성순 정렬
+                .get()
+                .await()
+
+            val list = snapshot.toObjects(Comment::class.java)
+            Result.success(list)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // 12. [상세] 댓글 작성 및 알림 발송
+    override suspend fun addComment(
+        postId: String,
+        comment: Comment,
+        postWriterId: String
+    ): Result<Boolean> {
+        return try {
+            // 댓글 저장 (자동 문서 ID 생성)
+            val commentDoc = postRef.document(postId).collection("comments").document()
+            val newComment = comment.copy(commentId = commentDoc.id)
+            commentDoc.set(newComment).await()
+
+            // 게시글 작성자에게 보낼 알림 객체 생성
+            // 본인이 본인 글에 댓글을 남긴 경우에는 알림을 보내지 않도록 처리
+            if (comment.writerUserId != postWriterId) {
+                val notification = Notification(
+                    notificationType = NotificationType.COMMENT,
+                    notificationMessage = "${comment.writerNickname}님이 게시글에 댓글을 남겼습니다.",
+                    targetPostId = postId,
+                    isRead = false,
+                    createdAt = java.util.Date()
+                )
+                // UserRepository의 알림 전송 함수 호출
+                userRepository.sendNotification(postWriterId, notification)
+            }
+
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // 13. [상세] 댓글 삭제
+    override suspend fun deleteComment(
+        postId: String,
+        commentId: String
+    ): Result<Boolean> {
+        return try {
+            postRef.document(postId)
+                .collection("comments")
+                .document(commentId)
+                .delete()
+                .await()
             Result.success(true)
         } catch (e: Exception) {
             Result.failure(e)

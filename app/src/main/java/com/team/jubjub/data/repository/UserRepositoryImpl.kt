@@ -127,4 +127,21 @@ class UserRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    // 8. 알림 생성 및 전송
+    override suspend fun sendNotification(
+        targetUserId: String,
+        notification: Notification
+    ): Result<Unit> {
+        return try {
+            // 해당 타겟 유저의 notifications 컬렉션에 새 문서 추가
+            userRef.document(targetUserId)
+                .collection("notifications")
+                .add(notification) // 자동 ID 생성하며 저장
+                .await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

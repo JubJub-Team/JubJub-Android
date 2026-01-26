@@ -1,5 +1,6 @@
 package com.team.jubjub.data.repository
 
+import com.team.jubjub.data.model.Comment
 import com.team.jubjub.data.model.Post
 import com.team.jubjub.data.model.enums.PostType
 
@@ -123,5 +124,44 @@ interface PostRepository {
         postId: String,
         userId: String,
         isScrap: Boolean
+    ): Result<Boolean>
+
+    /**
+     * 11. [상세] 댓글 목록 조회
+     * 해당 게시물에 달린 모든 댓글을 작성 순서(오래된순)대로 가져옴
+     *
+     * @param postId : 게시물 ID
+     * @return Result<List<Comment>> : 댓글 리스트
+     */
+    suspend fun getCommentList(
+        postId: String
+    ): Result<List<Comment>>
+
+    /**
+     * 12. [상세] 댓글 작성 (및 알림 전송)
+     * 게시물에 댓글을 저장하고, 작성자에게 알림을 전송함 (구현부에서 처리)
+     *
+     * @param postId : 게시물 ID
+     * @param comment : 저장할 댓글 객체
+     * @param postWriterId : 게시글 작성자의 UID (알림 수신자)
+     * @return Result<Boolean> : 작성 성공 여부
+     */
+    suspend fun addComment(
+        postId: String,
+        comment: Comment,
+        postWriterId: String
+    ): Result<Boolean>
+
+    /**
+     * 13. [상세] 댓글 삭제
+     * 본인이 작성한 댓글을 삭제함
+     *
+     * @param postId : 게시물 ID (SubCollection 접근용)
+     * @param commentId : 삭제할 댓글 ID
+     * @return Result<Boolean> : 삭제 성공 여부
+     */
+    suspend fun deleteComment(
+        postId: String,
+        commentId: String
     ): Result<Boolean>
 }
