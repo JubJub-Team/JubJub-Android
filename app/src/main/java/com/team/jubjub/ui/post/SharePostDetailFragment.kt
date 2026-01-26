@@ -26,7 +26,7 @@ class SharePostDetailFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val header = PostHeader(
+        val header = DetailHeader.Share(
             idDate = "글쓴 사람 아이디•01/17 1:05",
             title = "게시글 제목",
             category = "책",
