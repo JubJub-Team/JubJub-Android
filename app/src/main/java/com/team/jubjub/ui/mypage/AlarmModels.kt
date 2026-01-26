@@ -3,7 +3,7 @@ package com.team.jubjub.ui.mypage
 import java.util.concurrent.TimeUnit
 
 data class Alarm(
-    val id: Long,
+    val id: String,
     val title: String,
     val createdAtMillis: Long,
     val isRead: Boolean
@@ -18,8 +18,6 @@ fun buildAlarmUiItems(alarms: List<Alarm>): List<AlarmUiItem> {
     if (alarms.isEmpty()) return emptyList()
 
     val now = System.currentTimeMillis()
-
-    // 최신이 위로
     val sorted = alarms.sortedByDescending { it.createdAtMillis }
 
     fun daysAgo(time: Long): Long =
@@ -31,11 +29,11 @@ fun buildAlarmUiItems(alarms: List<Alarm>): List<AlarmUiItem> {
     val past = mutableListOf<Alarm>()
 
     for (a in sorted) {
-        when (val d = daysAgo(a.createdAtMillis)) {
-            0L -> today.add(a)           // 오늘
-            1L -> yesterday.add(a)       // 어제
-            in 2L..6L -> last7days.add(a) // 지난 7일(2~6일 전)
-            else -> past.add(a)          // 그 이전
+        when (daysAgo(a.createdAtMillis)) {
+            0L -> today.add(a)
+            1L -> yesterday.add(a)
+            in 2L..6L -> last7days.add(a)
+            else -> past.add(a)
         }
     }
 
@@ -54,4 +52,3 @@ fun buildAlarmUiItems(alarms: List<Alarm>): List<AlarmUiItem> {
 
     return result
 }
-
