@@ -27,8 +27,6 @@ class MyPageFragment : Fragment() {
     private var _binding: FragmentMyPageBinding? = null
     private val binding get() = _binding!!
     private val REQ_POST_TYPE = "req_post_type"
-
-    private val REQ_POST_TYPE = "req_post_type"
     private val REQ_LOGOUT = "req_logout"
     private val REQ_WITHDRAW = "req_withdraw"
 
@@ -155,21 +153,6 @@ class MyPageFragment : Fragment() {
     private fun withdrawMember() {
         // TODO: 실제 탈퇴 처리 연결 (authRepository.withdrawAccount() 등)
         // 성공 시: LoginActivity로 CLEAR_TASK 이동
-    }
-
-    private fun openMySharePost() {
-        (activity as? MainActivity)?.openOverlay(MySharePost(), "MySharePost")
-    }
-
-    private fun openMyLostFoundPost() {
-        (activity as? MainActivity)?.openOverlay(MyLostFoundPost(), "MyLostFoundPost")
-    }
-
-    private fun showPostTypeDialog() {
-        ConfirmDialogFragment.newInstance(
-            requestKey = REQ_POST_TYPE,
-            specKey = ConfirmDialogSpec.PostType.key // "postType"
-        ).show(parentFragmentManager, "postTypeDialog")
     }
 
     override fun onDestroyView() {

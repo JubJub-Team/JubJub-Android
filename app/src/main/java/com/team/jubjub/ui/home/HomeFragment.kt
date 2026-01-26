@@ -111,32 +111,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             (requireActivity() as MainActivity).selectTab(R.id.nav_lost_found)
         }
     }
-
-    private fun setupAlarmButton() {
-        binding.ibAlarm.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, AlarmFragment())
-                .addToBackStack(null)
-                .commit()
-        }
-    }
-
-    private fun setupProfileButton() {
-        binding.ibProfile.setOnClickListener {
-            (requireActivity() as MainActivity).selectTab(R.id.nav_my_page)
-        }
-    }
-
-    private fun setupMoreButtons() {
-        binding.ibMoreShare.setOnClickListener {
-            (requireActivity() as MainActivity).selectTab(R.id.nav_share)
-        }
-
-        binding.ibMoreLostFound.setOnClickListener {
-            (requireActivity() as MainActivity).selectTab(R.id.nav_lost_found)
-        }
-    }
-
     // -------------------------
     // 홈 카드 데이터 바인딩
     // -------------------------
