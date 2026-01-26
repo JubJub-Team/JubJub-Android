@@ -1,16 +1,15 @@
 package com.team.jubjub.ui.post
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.team.jubjub.databinding.ItemCommentBinding
-import com.team.jubjub.databinding.ItemSharePostDetailHeaderBinding
-import com.team.jubjub.databinding.ItemLostFoundPostDetailHeaderBinding
+import com.team.jubjub.databinding.ItemPostHeaderBinding
+import android.view.View
+import androidx.core.view.updateLayoutParams
 
 class DetailAdapter(
-    private var header: DetailHeader,
+    private var header: PostHeader,
     private val comments: MutableList<Comment>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

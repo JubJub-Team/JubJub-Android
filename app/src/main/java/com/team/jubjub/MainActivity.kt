@@ -17,6 +17,10 @@ import com.team.jubjub.ui.lostfound.LostFoundFragment
 import com.team.jubjub.ui.mypage.MyPageFragment
 import com.team.jubjub.ui.share.ShareFragment
 import com.team.jubjub.ui.write.WriteFragment
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import kotlin.math.abs
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -88,6 +92,14 @@ class MainActivity : AppCompatActivity() {
         (dp * resources.displayMetrics.density).toInt()
 
     private fun switchTab(itemId: Int) {
+        if (selectedId == itemId) return
+
+        supportFragmentManager.popBackStack(
+            null,
+            androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+        )
+
+
         val fm = supportFragmentManager
 
         //오버레이 먼저 닫음

@@ -10,6 +10,7 @@ import com.team.jubjub.MainActivity
 import com.team.jubjub.R
 import com.team.jubjub.data.model.enums.UserLevel
 import com.team.jubjub.databinding.FragmentMyPageBinding
+import com.team.jubjub.ui.post.SharePostDetailFragment
 
 class MyPageFragment : Fragment() {
 

@@ -72,6 +72,15 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun setupAlarmButton() {
+        binding.ibAlarm.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, AlarmFragment())
+                .addToBackStack(null) // 뒤로가기 시 Home으로 복귀
+                .commit()
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
