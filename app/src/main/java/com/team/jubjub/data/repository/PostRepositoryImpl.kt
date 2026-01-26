@@ -6,6 +6,7 @@ import com.google.firebase.firestore.Query
 import com.team.jubjub.data.model.Comment
 import com.team.jubjub.data.model.Notification
 import com.team.jubjub.data.model.Post
+import com.team.jubjub.data.model.Scrap
 import com.team.jubjub.data.model.enums.NotificationType
 import com.team.jubjub.data.model.enums.PostType
 import kotlinx.coroutines.tasks.await
@@ -80,12 +81,12 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 4. [마이페이지] 사용자가 스크랩한 게시물 목록 조회
+    // 4. [마이페이지] 사용자가 스크랩한 게시물 목록 조회 (업그레이드: 10개 제한 해결)
     override suspend fun getScrappedPostList(
         userId: String
     ): Result<List<Post>> {
         return try {
-            // 1단계: ID 목록 가져오기
+            // ID 목록 가져오기
             val scrapSnapshot = db.collection("users").document(userId)
                 .collection("scraps")
                 .get()
@@ -97,14 +98,24 @@ class PostRepositoryImpl @Inject constructor(
                 return Result.success(emptyList())
             }
 
-            // 2단계: 실제 게시물 조회
-            val postsSnapshot = postRef
-                .whereIn("postId", scrapIds)
-                .get()
-                .await()
+            // 실제 게시물 조회
+            val resultList = mutableListOf<Post>()
 
-            val list = postsSnapshot.toObjects(Post::class.java)
-            Result.success(list)
+            // 10개씩 묶어서 처리
+            val chunks = scrapIds.chunked(10)
+
+            for (chunk in chunks) {
+                val postsSnapshot = postRef
+                    .whereIn("postId", chunk)
+                    .get()
+                    .await()
+                resultList.addAll(postsSnapshot.toObjects(Post::class.java))
+            }
+
+            // 최신순 정렬 (Client side)
+            val sortedList = resultList.sortedByDescending { it.createdAt }
+
+            Result.success(sortedList)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -188,7 +199,10 @@ class PostRepositoryImpl @Inject constructor(
                 .collection("scraps").document(postId)
 
             if (isScrap) {
-                val data = mapOf("scrappedAt" to System.currentTimeMillis())
+                val data = mapOf(
+                    "postId" to postId,
+                    "scrappedAt" to java.util.Date()
+                )
                 scrapRef.set(data).await()
             } else {
                 scrapRef.delete().await()
