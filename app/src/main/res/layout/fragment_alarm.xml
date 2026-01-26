@@ -16,7 +16,7 @@
             android:layout_height="48dp"
             android:background="@android:color/white"
             app:navigationIcon="@drawable/ic_back"
-            app:title="알림" />
+            app:title="" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- 리스트 + Empty -->

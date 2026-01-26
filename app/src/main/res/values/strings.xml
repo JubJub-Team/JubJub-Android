@@ -45,6 +45,7 @@
     <string name="cd_comment_input_bar">댓글 입력 영역</string>
     <string name="cd_comment_input_container">댓글 입력창 컨테이너</string>
     <string name="cd_send_comment">댓글 전송</string>
+    <string name="cd_bookmark">스크랩</string>
 
     <string name="cd_detail_img">물품 이미지</string>
     <string name="label_category">카테고리</string>
@@ -52,6 +53,10 @@
     <string name="label_count">수량</string>
     <string name="label_method">나눔 방법</string>
     <string name="label_location">희망 장소</string>
+    <string name="label_found_place">발견 장소</string>
+    <string name="label_detail_place">상세 장소</string>
+    <string name="label_found_date">발견 일시</string>
+    <string name="label_entrusted_place">위탁 장소</string>
 
     <string name="method_delivery">택배</string>
     <string name="method_direct">직거래</string>

@@ -14,43 +14,59 @@ class DetailAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private companion object {
-        const val TYPE_HEADER = 0
-        const val TYPE_COMMENT = 1
+        const val TYPE_HEADER_SHARE = 0
+        const val TYPE_HEADER_LOST_FOUND = 1
+        const val TYPE_COMMENT = 2
     }
 
     override fun getItemCount(): Int = 1 + comments.size
 
-    override fun getItemViewType(position: Int): Int =
-        if (position == 0) TYPE_HEADER else TYPE_COMMENT
+    override fun getItemViewType(position: Int): Int {
+        if (position != 0) return TYPE_COMMENT
+
+        return when (header) {
+            is DetailHeader.Share -> TYPE_HEADER_SHARE
+            is DetailHeader.LostFound -> TYPE_HEADER_LOST_FOUND
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            TYPE_HEADER -> HeaderVH(ItemPostHeaderBinding.inflate(inflater, parent, false))
-            else -> CommentVH(ItemCommentBinding.inflate(inflater, parent, false))
+            TYPE_HEADER_SHARE ->
+                ShareHeaderVH(ItemSharePostDetailHeaderBinding.inflate(inflater, parent, false))
+
+            TYPE_HEADER_LOST_FOUND ->
+                LostFoundHeaderVH(ItemLostFoundPostDetailHeaderBinding.inflate(inflater, parent, false))
+
+            else ->
+                CommentVH(ItemCommentBinding.inflate(inflater, parent, false))
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is HeaderVH -> holder.bind(header)
-            is CommentVH -> holder.bind(comments[position - 1]) // 헤더 때문에 -1
+            is ShareHeaderVH -> holder.bind(header as DetailHeader.Share)
+            is LostFoundHeaderVH -> holder.bind(header as DetailHeader.LostFound)
+            is CommentVH -> holder.bind(comments[position - 1])
         }
     }
 
-    fun setHeader(newHeader: PostHeader) {
+    fun setHeader(newHeader: DetailHeader) {
         header = newHeader
         notifyItemChanged(0)
     }
 
     fun addComment(c: Comment) {
         comments.add(c)
-        notifyItemInserted(comments.size) // 헤더가 0이라, 새 댓글 position = comments.size
+        notifyItemInserted(comments.size) // 헤더가 0이라 새 댓글 위치 = comments.size
     }
 
-    class HeaderVH(private val binding: ItemPostHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(h: PostHeader) {
-            // item_post_header.xml에서 id로 만든 뷰들에 값 세팅
+    class ShareHeaderVH(
+        private val binding: ItemSharePostDetailHeaderBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(h: DetailHeader.Share) {
             binding.tvSharePostDetailIdDate.text = h.idDate
             binding.tvSharePostDetailTitle.text = h.title
             binding.tvSharePostDetailCategory.text = h.category
@@ -59,16 +75,32 @@ class DetailAdapter(
             binding.tvSharePostDetailContent.text = h.content
             binding.tvSharePostDetailLocation.text = h.location
 
-            // 나눔 방법 표시(선택 가능 여부)
             binding.tvSharePostDetailMethodDelivery.alpha = if (h.deliveryEnabled) 1f else 0.3f
             binding.tvSharePostDetailMethodDirect.alpha = if (h.directEnabled) 1f else 0.3f
         }
     }
 
-    class CommentVH(private val binding: ItemCommentBinding)
-        : RecyclerView.ViewHolder(binding.root) {
+    class LostFoundHeaderVH(
+        private val binding: ItemLostFoundPostDetailHeaderBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-        // base marginStart 저장 (재활용 때문에 꼭 필요)
+        fun bind(h: DetailHeader.LostFound) {
+            binding.tvLostFoundPostDetailIdDate.text = h.idDate
+            binding.tvLostFoundPostDetailTitle.text = h.title
+
+            binding.tvLostFoundPostDetailFoundPlace.text = h.foundPlace
+            binding.tvLostFoundPostDetailDetailPlace.text = h.detailPlace
+            binding.tvLostFoundPostDetailFoundDate.text = h.foundDate
+
+            binding.tvLostFoundPostDetailContent.text = h.content
+            binding.tvLostFoundPostDetailEntrustedPlace.text = h.entrustedPlace
+
+            // 댓글 수는 Fragment/Adapter에서 따로 세팅할거면 여기서 안 건드려도 됨
+        }
+    }
+
+    class CommentVH(private val binding: ItemCommentBinding) : RecyclerView.ViewHolder(binding.root) {
+
         private val baseRowMarginStart =
             (binding.llCommentRow.layoutParams as ViewGroup.MarginLayoutParams).marginStart
         private val baseBodyMarginStart =
@@ -80,11 +112,8 @@ class DetailAdapter(
             binding.tvBody.text = item.body
 
             val isReply = item.isReply
-
-            // 1) 화살표는 대댓글일 때만 보이게 (자리도 없어짐)
             binding.ivReplyArrow.visibility = if (isReply) View.VISIBLE else View.GONE
 
-            // 2) 대댓글이면 옆으로 밀기 (스샷 느낌)
             val indent = if (isReply) dpToPx(24) else 0
 
             binding.llCommentRow.updateLayoutParams<ViewGroup.MarginLayoutParams> {

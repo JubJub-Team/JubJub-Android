@@ -22,7 +22,7 @@
             android:paddingHorizontal="16dp">
 
             <ImageView
-                android:id="@+id/ic_back"
+                android:id="@+id/ic_arrow_back"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_centerVertical="true"
@@ -30,11 +30,11 @@
                 android:src="@drawable/ic_arrow_back" />
 
             <TextView
-                android:id="@+id/tv_done"
+                android:id="@+id/tv_share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="나눔/기부 게시판"
+                android:text="나의 게시글"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -85,24 +85,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="end"
-        android:padding="16dp">
-
-        <ImageView
-            android:id="@+id/ic_filter"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginEnd="30dp"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_filter" />
-    </LinearLayout>
+        android:padding="16dp"/>
 
     <!-- 스크롤 영역 -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="1"
         android:fillViewport="true"
-        android:clipToPadding="false"
-        android:layout_weight="1">
+        android:clipToPadding="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -110,18 +101,30 @@
             android:orientation="vertical"
             android:paddingBottom="120dp">
 
-            <!-- 게시글 1 -->
+            <TextView
+                android:id="@+id/tv_info_done_gray"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="16dp"
+                android:text="나눔 완료 처리된 글은 회색으로 보입니다"
+                android:textSize="11sp"
+                android:textColor="#999999"
+                tools:ignore="HardcodedText" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#E0E0E0"/>
 
+            <!-- 게시글 1 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="16dp">
 
+                <!-- 썸네일 -->
                 <ImageView
                     android:id="@+id/ic_background1"
                     android:layout_width="40dp"
@@ -130,20 +133,40 @@
                     android:contentDescription="@null"
                     android:src="@drawable/ic_launcher_background" />
 
+                <!-- 오른쪽(텍스트 영역) -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tv_title1"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="제목 미리보기"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        tools:ignore="HardcodedText" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tv_title1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="제목 미리보기"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <ImageButton
+                            android:id="@+id/btn_menu1"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@android:color/transparent"
+                            android:contentDescription="@null"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_menu"
+                            app:tint="#999999" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/tv_text1"
@@ -152,9 +175,9 @@
                         android:layout_marginTop="4dp"
                         android:text="본문 미리보기"
                         android:textColor="#666666"
-                        android:textSize="13sp"
-                        tools:ignore="HardcodedText" />
+                        android:textSize="13sp" />
 
+                    <!-- 하단 정보 -->
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -178,10 +201,9 @@
                             android:text="위치 · 8분 전"
                             android:textColor="#999999"
                             android:textSize="12sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ic_location1"
                             app:layout_constraintTop_toTopOf="parent"
-                            tools:ignore="HardcodedText,TextContrastCheck" />
+                            app:layout_constraintBottom_toBottomOf="parent"/>
 
                         <ImageView
                             android:id="@+id/ic_chat1"
@@ -189,24 +211,23 @@
                             android:layout_height="14dp"
                             android:contentDescription="@null"
                             android:src="@drawable/ic_chat"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@id/tv_chat1"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
 
                         <TextView
                             android:id="@+id/tv_chat1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2"
-                            android:textSize="12sp"
-                            android:textColor="#999999"
-                            android:layout_marginStart="6dp"
                             android:layout_marginEnd="8dp"
-                            tools:ignore="HardcodedText,TextContrastCheck"
+                            android:text="2"
+                            android:textColor="#999999"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -236,14 +257,35 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tv_title2"
-                        android:layout_width="wrap_content"
+                    <!-- 제목 + 메뉴 버튼 (게시글1과 동일) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="제목 미리보기"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        tools:ignore="HardcodedText" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tv_title2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="제목 미리보기"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
+
+                        <ImageButton
+                            android:id="@+id/btn_menu2"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@android:color/transparent"
+                            android:contentDescription="@null"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_menu"
+                            app:tint="#999999" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/tv_text2"
@@ -278,9 +320,9 @@
                             android:text="위치 · 10분 전 · 예약 중"
                             android:textColor="#999999"
                             android:textSize="12sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ic_location2"
                             app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             tools:ignore="HardcodedText,TextContrastCheck" />
 
                         <ImageView
@@ -289,24 +331,24 @@
                             android:layout_height="14dp"
                             android:contentDescription="@null"
                             android:src="@drawable/ic_chat"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@id/tv_chat2"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
 
                         <TextView
                             android:id="@+id/tv_chat2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2"
-                            android:textSize="12sp"
-                            android:textColor="#999999"
-                            android:layout_marginStart="6dp"
                             android:layout_marginEnd="8dp"
-                            tools:ignore="HardcodedText,TextContrastCheck"
+                            android:text="2"
+                            android:textColor="#999999"
+                            android:textSize="12sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"/>
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            tools:ignore="HardcodedText,TextContrastCheck" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -336,13 +378,33 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tv_title3"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="제목 미리보기"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tv_title3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="제목 미리보기"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <ImageButton
+                            android:id="@+id/btn_menu3"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@android:color/transparent"
+                            android:contentDescription="@null"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_menu"
+                            app:tint="#999999" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/tv_text3"
@@ -376,9 +438,9 @@
                             android:text="위치 · 10분 전 · 예약 중"
                             android:textColor="#999999"
                             android:textSize="12sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ic_location3"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
 
                         <ImageView
                             android:id="@+id/ic_chat3"
@@ -386,23 +448,23 @@
                             android:layout_height="14dp"
                             android:contentDescription="@null"
                             android:src="@drawable/ic_chat"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@id/tv_chat3"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
 
                         <TextView
                             android:id="@+id/tv_chat3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2"
-                            android:textSize="12sp"
-                            android:textColor="#999999"
-                            android:layout_marginStart="6dp"
                             android:layout_marginEnd="8dp"
+                            android:text="2"
+                            android:textColor="#999999"
+                            android:textSize="12sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -432,13 +494,33 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tv_title4"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="제목 미리보기"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tv_title4"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="제목 미리보기"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <ImageButton
+                            android:id="@+id/btn_menu4"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@android:color/transparent"
+                            android:contentDescription="@null"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_menu"
+                            app:tint="#999999" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/tv_text4"
@@ -472,9 +554,9 @@
                             android:text="위치 · 3분 전 · 예약 중"
                             android:textColor="#999999"
                             android:textSize="12sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ic_location4"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
 
                         <ImageView
                             android:id="@+id/ic_chat4"
@@ -482,23 +564,23 @@
                             android:layout_height="14dp"
                             android:contentDescription="@null"
                             android:src="@drawable/ic_chat"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@id/tv_chat4"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
 
                         <TextView
                             android:id="@+id/tv_chat4"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1"
-                            android:textSize="12sp"
-                            android:textColor="#999999"
-                            android:layout_marginStart="6dp"
                             android:layout_marginEnd="8dp"
+                            android:text="1"
+                            android:textColor="#999999"
+                            android:textSize="12sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -528,13 +610,33 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tv_title5"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="제목 미리보기"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tv_title5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="제목 미리보기"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <ImageButton
+                            android:id="@+id/btn_menu5"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@android:color/transparent"
+                            android:contentDescription="@null"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_menu"
+                            app:tint="#999999" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/tv_text5"
@@ -568,9 +670,9 @@
                             android:text="위치 · 방금 · 예약 중"
                             android:textColor="#999999"
                             android:textSize="12sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ic_location5"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
 
                         <ImageView
                             android:id="@+id/ic_chat5"
@@ -578,23 +680,23 @@
                             android:layout_height="14dp"
                             android:contentDescription="@null"
                             android:src="@drawable/ic_chat"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@id/tv_chat5"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
 
                         <TextView
                             android:id="@+id/tv_chat5"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textSize="12sp"
-                            android:textColor="#999999"
-                            android:layout_marginStart="6dp"
                             android:layout_marginEnd="8dp"
+                            android:text="0"
+                            android:textColor="#999999"
+                            android:textSize="12sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -629,14 +731,34 @@
                         android:layout_weight="1"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/tv_title6"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="제목 미리보기"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            tools:ignore="HardcodedText" />
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:id="@+id/tv_title6"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:text="제목 미리보기"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                tools:ignore="HardcodedText" />
+
+                            <ImageButton
+                                android:id="@+id/btn_menu6"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:background="@android:color/transparent"
+                                android:contentDescription="@null"
+                                android:padding="8dp"
+                                android:src="@drawable/ic_menu"
+                                app:tint="#999999" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/tv_text6"
@@ -671,9 +793,9 @@
                                 android:text="위치 · 10분 전 · 나눔 완료"
                                 android:textColor="#999999"
                                 android:textSize="12sp"
-                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toEndOf="@id/ic_location6"
                                 app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
                                 tools:ignore="HardcodedText,TextContrastCheck" />
 
                             <ImageView
@@ -682,24 +804,24 @@
                                 android:layout_height="14dp"
                                 android:contentDescription="@null"
                                 android:src="@drawable/ic_chat"
-                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toStartOf="@id/tv_chat6"
-                                app:layout_constraintTop_toTopOf="parent" />
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent" />
 
                             <TextView
                                 android:id="@+id/tv_chat6"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="5"
-                                android:textSize="12sp"
-                                android:textColor="#999999"
-                                android:layout_marginStart="6dp"
                                 android:layout_marginEnd="8dp"
-                                tools:ignore="HardcodedText,TextContrastCheck"
+                                android:text="5"
+                                android:textColor="#999999"
+                                android:textSize="12sp"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent"/>
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                tools:ignore="HardcodedText,TextContrastCheck" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
+
                     </LinearLayout>
                 </LinearLayout>
             </FrameLayout>
