@@ -7,8 +7,4 @@
     </style>
 
     <style name="Theme.JubJub" parent="Base.Theme.JubJub" />
-
-    <style name="ShapeAppearanceOverlay.App" parent="">
-        <!-- 기본 shape -->
-    </style>
 </resources>

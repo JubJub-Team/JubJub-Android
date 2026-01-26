@@ -7,9 +7,11 @@ import com.team.jubjub.databinding.ItemCommentBinding
 import com.team.jubjub.databinding.ItemPostHeaderBinding
 import android.view.View
 import androidx.core.view.updateLayoutParams
+import com.team.jubjub.databinding.ItemLostFoundPostDetailHeaderBinding
+import com.team.jubjub.databinding.ItemSharePostDetailHeaderBinding
 
 class DetailAdapter(
-    private var header: PostHeader,
+    private var header: DetailHeader,
     private val comments: MutableList<Comment>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

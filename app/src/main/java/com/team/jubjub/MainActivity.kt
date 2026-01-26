@@ -19,8 +19,10 @@ import com.team.jubjub.ui.share.ShareFragment
 import com.team.jubjub.ui.write.WriteFragment
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.abs
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

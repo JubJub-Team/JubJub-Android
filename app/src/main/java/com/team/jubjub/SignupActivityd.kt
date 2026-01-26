@@ -1,4 +1,4 @@
-package com.team.jubjub.ui.auth
+package com.team.jubjub
 
 import android.graphics.Color
 import android.os.Bundle
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SignupActivity : AppCompatActivity() {
+class ignupActivityd : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignupBinding
 
@@ -43,32 +43,48 @@ class SignupActivity : AppCompatActivity() {
     private fun setListeners() {
 
         // 아이디 중복 확인
-        binding.btnIdcheck.setOnClickListener { checkIdDuplicate() }
+        binding.btnIdcheck.setOnClickListener {
+            checkIdDuplicate()
+        }
 
         // 비밀번호 유효성 검사
-        binding.edtPw.doAfterTextChanged { validatePassword() }
+        binding.edtPw.doAfterTextChanged {
+            validatePassword()
+        }
 
         // 비밀번호 확인 검사
-        binding.edtPwcheck.doAfterTextChanged { validatePasswordCheck() }
+        binding.edtPwcheck.doAfterTextChanged {
+            validatePasswordCheck()
+        }
 
         // 닉네임 중복 확인
-        binding.btnNicknamecheck.setOnClickListener { checkNicknameDuplicate() }
+        binding.btnNicknamecheck.setOnClickListener {
+            checkNicknameDuplicate()
+        }
 
         // 이메일 중복 확인
-        binding.btnEmailcheck.setOnClickListener { checkEmailDuplicate() }
+        binding.btnEmailcheck.setOnClickListener {
+            checkEmailDuplicate()
+        }
 
         // 전화번호 중복 확인
-        binding.btnPhonecheck.setOnClickListener { checkPhoneDuplicate() }
+        binding.btnPhonecheck.setOnClickListener {
+            checkPhoneDuplicate()
+        }
 
         // 회원가입
-        binding.btnSignup.setOnClickListener { submitSignup() }
+        binding.btnSignup.setOnClickListener {
+            submitSignup()
+        }
 
         // 취소
-        binding.btnCancel.setOnClickListener { finish() }
+        binding.btnCancel.setOnClickListener {
+            finish()
+        }
     }
 
     /**
-     * 아이디 중복 확인 (Firestore: users where customId == 입력값)
+     * 아이디 중복 확인
      */
     private fun checkIdDuplicate() {
         val id = binding.edtId.text.toString().trim()
@@ -91,6 +107,7 @@ class SignupActivity : AppCompatActivity() {
                     }
                 }
                 .onFailure { e ->
+                    // Rules 막힘/네트워크 등
                     showMessage(binding.tvIdMsg, "*아이디 확인 실패: ${e.message}", false)
                     isIdChecked = false
                 }
@@ -126,13 +143,13 @@ class SignupActivity : AppCompatActivity() {
     }
 
     /**
-     * 닉네임 중복 확인 (Firestore: users where nickname == 입력값)
+     * 닉네임 중복 확인
      */
     private fun checkNicknameDuplicate() {
         val nickname = binding.edtNickname.text.toString().trim()
 
-        if (nickname.isEmpty()) {
-            showMessage(binding.tvNicknameMsg, "*올바른 닉네임을 입력해주세요.", false)
+        if (nickname.isBlank()) {
+            showMessage(binding.tvNicknameMsg, "*닉네임을 입력해 주세요.", false)
             isNicknameChecked = false
             return
         }
@@ -156,8 +173,7 @@ class SignupActivity : AppCompatActivity() {
     }
 
     /**
-     * 이메일 중복 확인 (Firestore 체크 + 형식 검증)
-     * 참고: 실제 중복은 Auth 회원가입 시에도 잡힘.
+     * 이메일 중복 확인
      */
     private fun checkEmailDuplicate() {
         val email = binding.edtEmail.text.toString().trim()
@@ -169,6 +185,7 @@ class SignupActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
+            // 참고: 이메일 중복은 Auth에서도 막히지만, 너 인터페이스에 있어서 그대로 사용
             userRepository.checkEmailDuplicate(email)
                 .onSuccess { available ->
                     if (available) {
@@ -187,7 +204,7 @@ class SignupActivity : AppCompatActivity() {
     }
 
     /**
-     * 전화번호 중복 확인 (Firestore: users where phone == 입력값)
+     * 전화번호 중복 확인
      */
     private fun checkPhoneDuplicate() {
         val phone = binding.edtPhone.text.toString().trim()
@@ -217,9 +234,7 @@ class SignupActivity : AppCompatActivity() {
     }
 
     /**
-     * 회원가입 처리
-     * 1) Auth 가입 (email, password) -> uid
-     * 2) Firestore users/{uid} 저장 (UserRepository.saveUserProfile)
+     * 회원가입 처리 (Auth 가입 → Firestore users/{uid} 저장)
      */
     private fun submitSignup() {
         if (!isIdChecked || !isNicknameChecked || !isEmailChecked || !isPhoneChecked) {
@@ -228,38 +243,34 @@ class SignupActivity : AppCompatActivity() {
         }
 
         val customId = binding.edtId.text.toString().trim()
+        val password = binding.edtPw.text.toString().trim()
+        val passwordCheck = binding.edtPwcheck.text.toString().trim()
         val nickname = binding.edtNickname.text.toString().trim()
         val email = binding.edtEmail.text.toString().trim()
         val phone = binding.edtPhone.text.toString().trim()
-        val password = binding.edtPw.text.toString().trim()
-        val passwordCheck = binding.edtPwcheck.text.toString().trim()
 
-        if (password.isBlank() || passwordCheck.isBlank()) {
-            showToast("비밀번호를 입력해 주세요.")
-            return
-        }
         if (password != passwordCheck) {
             showToast("비밀번호가 일치하지 않습니다.")
             return
         }
-        if (!email.contains("@")) {
-            showToast("이메일 형식을 확인해 주세요.")
+        if (email.isBlank() || password.isBlank()) {
+            showToast("이메일/비밀번호를 입력해 주세요.")
             return
         }
 
+        // (선택) 버튼 중복 클릭 방지
         binding.btnSignup.isEnabled = false
 
         lifecycleScope.launch {
-            // 1) Auth 회원가입
             authRepository.signUp(email, password)
                 .onSuccess { uid ->
-                    // 2) Firestore 프로필 저장
                     val user = User(
                         userId = uid,
                         customId = customId,
                         nickname = nickname,
                         email = email,
                         phone = phone
+                        // name/school/birthDate 등은 너 UI에 있으면 추가로 넣어주면 됨
                     )
 
                     userRepository.saveUserProfile(user)
@@ -269,8 +280,7 @@ class SignupActivity : AppCompatActivity() {
                         }
                         .onFailure { e ->
                             binding.btnSignup.isEnabled = true
-                            android.util.Log.e("Signup", "saveUserProfile failed", e)
-                            showToast("프로필 저장 실패: ${e.localizedMessage ?: e.javaClass.simpleName}")
+                            showToast("프로필 저장 실패: ${e.message}")
                         }
                 }
                 .onFailure { e ->

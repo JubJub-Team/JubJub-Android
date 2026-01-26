@@ -28,7 +28,7 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
        상단바 뒤로가기
     ------------------------ */
     private fun setupBackButton() {
-        binding.icArrowBack.setOnClickListener {
+        binding.icBack.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }

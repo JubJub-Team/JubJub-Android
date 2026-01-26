@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.team.jubjub.R
-import com.team.jubjub.data.model.enum.PostType
+import com.team.jubjub.data.model.enums.PostType
 import com.team.jubjub.databinding.FragmentWriteBinding
 
 class WriteFragment : Fragment() {
