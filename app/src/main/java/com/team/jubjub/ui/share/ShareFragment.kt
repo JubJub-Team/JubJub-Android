@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.team.jubjub.R
 import com.team.jubjub.databinding.FragmentShareBinding
+import com.team.jubjub.ui.post.PostDetailFragment
 
 class ShareFragment : Fragment(R.layout.fragment_share) {
 
@@ -78,10 +79,16 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
     ------------------------ */
     private fun setupPostClick() {
         binding.tvTitle1.setOnClickListener {
-            Toast.makeText(requireContext(), "나눔 상세 페이지 이동", Toast.LENGTH_SHORT).show()
-            // TODO: 상세 Fragment 연결
+            parentFragmentManager.beginTransaction()
+                .replace(
+                    R.id.fragmentContainer,
+                    PostDetailFragment.newInstance(PostDetailFragment.PostType.SHARE)
+                )
+                .addToBackStack(null)
+                .commit()
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/iv_share_post_detail_image"
+        android:layout_width="match_parent"
+        android:layout_height="373dp"
+        tools:src="@tools:sample/backgrounds/scenic"
+        android:contentDescription="@string/cd_detail_img"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="31dp"
+        android:paddingEnd="31dp">
+
+        <TextView
+            android:id="@+id/tv_share_post_detail_id_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="11dp"
+            tools:text="글쓴 사람 아이디•01/17 1:05" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_share_post_detail_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingTop="7dp"
+                android:paddingBottom="24dp"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                tools:text="게시글 제목" />
+
+            <ImageButton
+                android:id="@+id/ib_bookmark"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/cd_bookmark"
+                android:padding="0dp"
+                app:srcCompat="@drawable/ic_bookmark" />
+
+        </LinearLayout>
+
+
+        <!-- 카테고리 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="6dp">
+
+            <TextView
+                android:id="@+id/tv_share_post_detail_label_category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/label_category"
+                android:textColor="#616161"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_share_post_detail_category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textColor="#000000"
+                android:textSize="12sp"
+                tools:text="책" />
+        </LinearLayout>
+
+        <!-- 물품 상태 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="6dp">
+
+            <TextView
+                android:id="@+id/tv_share_post_detail_label_condition"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/label_condition"
+                android:textColor="#616161"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_share_post_detail_condition"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textColor="#000000"
+                android:textSize="12sp"
+                tools:text="새 상품(미사용)" />
+        </LinearLayout>
+
+        <!-- 수량 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="6dp">
+
+            <TextView
+                android:id="@+id/tv_share_post_detail_label_count"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/label_count"
+                android:textColor="#616161"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_share_post_detail_count"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textColor="#000000"
+                android:textSize="12sp"
+                tools:text="1" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_share_post_detail_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:ellipsize="none"
+            android:paddingTop="26dp"
+            android:paddingBottom="26dp"
+            tools:text="게시글 내용" />
+
+        <!-- 나눔 방법 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="6dp">
+
+            <TextView
+                android:id="@+id/tv_share_post_detail_label_method"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/label_method"
+                android:textColor="#616161"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="start"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_share_post_detail_method_delivery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/method_delivery"
+                    android:textColor="#616161"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_share_post_detail_method_direct"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/method_direct"
+                    android:textColor="#000000"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 희망 장소 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="6dp"
+            android:paddingBottom="27dp">
+
+            <TextView
+                android:id="@+id/tv_share_post_detail_label_location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/label_location"
+                android:textColor="#616161"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_share_post_detail_location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textColor="#000000"
+                android:textSize="12sp"
+                tools:text="서울여대 과학관" />
+        </LinearLayout>
+
+        <!-- 위 구분선 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#616161" />
+
+        <!-- 아이콘 + 텍스트 한 줄 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="5dp">
+
+            <ImageView
+                android:id="@+id/iv_share_post_detail_commentIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:srcCompat="@drawable/ic_comment_24"
+                app:tint="#616161"
+                android:contentDescription="@null"/>
+
+            <TextView
+                android:id="@+id/tv_share_post_detail_comment_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="#616161"
+                android:textSize="13sp"
+                tools:text="댓글 2" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#616161" />
+
+    </LinearLayout>
+</LinearLayout>

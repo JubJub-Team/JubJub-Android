@@ -90,4 +90,15 @@ interface UserRepository {
     suspend fun deleteAllUserData(
         userId: String
     ): Result<Unit>
+
+    /**
+     * 8. [알림] 알림 생성 및 전송
+     * 댓글 작성, 키워드 일치 등 이벤트 발생 시 상대방의 알림함에 추가
+     * @param targetUserId : 알림을 받을 사용자의 UID
+     * @param notification : 생성할 알림 객체
+     */
+    suspend fun sendNotification(
+        targetUserId: String,
+        notification: Notification
+    ): Result<Unit>
 }

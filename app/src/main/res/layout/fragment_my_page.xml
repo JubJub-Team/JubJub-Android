@@ -93,14 +93,18 @@
                             android:textSize="11sp" />
                     </LinearLayout>
 
-                    <!-- 오른쪽 화살표 (장식용) -->
+                    <!-- 프로필 상세보기 화살표 -->
                     <ImageView
+                        android:id="@+id/iv_go_to_profile"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:contentDescription="@null"
-                        android:src="@drawable/ic_mypage_profile_chevron_right" />
+                        android:src="@drawable/ic_mypage_profile_chevron_right"
+                        android:clickable="true"
+                        android:focusable="true"
+                        />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 

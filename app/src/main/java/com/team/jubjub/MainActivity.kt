@@ -19,8 +19,10 @@ import com.team.jubjub.ui.share.ShareFragment
 import com.team.jubjub.ui.write.WriteFragment
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.abs
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -101,6 +103,26 @@ class MainActivity : AppCompatActivity() {
 
 
         val fm = supportFragmentManager
+
+        //오버레이 먼저 닫음
+        val popped = fm.popBackStackImmediate(
+            null,
+            androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+        )
+        fm.executePendingTransactions()
+
+        // 같은 탭을 다시 누른 경우
+        // 오버레이만 닫힌 경우 필요 없음
+        if (selectedId == itemId) {
+            if (popped) {
+                // 혹시 현재 탭이 숨겨져 있을 수 있으니 다시 보여줌
+                supportFragmentManager.beginTransaction()
+                    .show(fragments[selectedId] ?: return)
+                    .commit()
+            }
+            return
+        }
+
         val tx = fm.beginTransaction()
 
         fragments[selectedId]?.let { tx.hide(it) }
@@ -124,6 +146,23 @@ class MainActivity : AppCompatActivity() {
         selectedId = itemId
         updateSelectedUi(itemId)
     }
+
+
+    fun selectTab(itemId: Int) {
+        switchTab(itemId)
+    }
+
+    fun openOverlay(fragment: Fragment, tag: String = fragment::class.java.name) {
+        val fm = supportFragmentManager
+        val tx = fm.beginTransaction()
+
+        fragments[selectedId]?.let { tx.hide(it) }
+
+        tx.add(R.id.fragmentContainer, fragment, tag)
+            .addToBackStack(tag)
+            .commit()
+    }
+
 
     private fun updateSelectedUi(selected: Int) {
         val main = ContextCompat.getColor(this, R.color.main)
