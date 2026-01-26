@@ -27,7 +27,7 @@ class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
        상단바 뒤로가기
     ------------------------ */
     private fun setupBackButton() {
-        binding.icArrowBack.setOnClickListener {
+        binding.icBack.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }
