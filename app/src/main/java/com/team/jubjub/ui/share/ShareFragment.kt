@@ -27,7 +27,7 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
     private lateinit var shareAdapter: ShareAdapter
     private var originList: List<Post> = emptyList()
 
-    private var selectedFilterIndex = 0 // 0: 전체, 1: 나눔 중, 2: 예약 중, 3: 나눔 완료
+    private var selectedFilterIndex = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,14 +38,13 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
         setupSearch()
         setupFilter()
         observeViewModel()
+    }
 
-        // 최초 나눔 게시물 로드
+    override fun onResume() {
+        super.onResume()
         viewModel.loadSharePosts("서울여자대학교")
     }
 
-    /**
-     * 🔙 백 버튼 → 홈 화면
-     */
     private fun setupBackButton() {
         binding.icBack.setOnClickListener {
             parentFragmentManager.beginTransaction()
@@ -54,9 +53,6 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
         }
     }
 
-    /* ------------------------
-       RecyclerView
-    ------------------------ */
     private fun setupRecyclerView() {
         shareAdapter = ShareAdapter(emptyList()) { post ->
             moveToDetail(post)
@@ -68,9 +64,6 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
         }
     }
 
-    /* ------------------------
-       검색
-    ------------------------ */
     private fun setupSearch() {
         binding.icCustomSearch.setOnClickListener {
             val keyword = binding.etSearch.text.toString()
@@ -84,16 +77,13 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
         }
     }
 
-    /* ------------------------
-       필터 (화이트 배경)
-    ------------------------ */
     private fun setupFilter() {
         binding.icFilter.setOnClickListener {
             val filters = arrayOf("전체", "나눔 중", "예약 중", "나눔 완료")
 
             MaterialAlertDialogBuilder(
                 requireContext(),
-                R.style.WhiteDialogTheme   // ✅ LostFound랑 동일
+                R.style.WhiteDialogTheme
             )
                 .setItems(filters) { _, which ->
                     selectedFilterIndex = which
@@ -117,15 +107,12 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
         binding.rvPost.adapter = shareAdapter
     }
 
-    /* ------------------------
-       ViewModel Observe
-    ------------------------ */
     private fun observeViewModel() {
         viewModel.postList.observe(viewLifecycleOwner) { list ->
             Log.d("ShareFragment", "받아온 게시물 수: ${list.size}")
 
             originList = list
-            applyFilter(selectedFilterIndex) // 현재 필터 유지
+            applyFilter(selectedFilterIndex)
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
@@ -133,9 +120,6 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
         }
     }
 
-    /* ------------------------
-       상세 화면 이동
-    ------------------------ */
     private fun moveToDetail(post: Post) {
         parentFragmentManager.beginTransaction()
             .replace(
@@ -153,4 +137,3 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
         _binding = null
     }
 }
-

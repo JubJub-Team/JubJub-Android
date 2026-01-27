@@ -1,5 +1,6 @@
 package com.team.jubjub.ui.post
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +19,9 @@ import java.util.Locale
 
 class DetailAdapter(
     private var header: DetailHeader,
-    private val comments: MutableList<Comment>
+    private val comments: MutableList<Comment>,
+    private val currentUserId: String,
+    private val postWriterId: String
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private companion object {
@@ -56,7 +59,7 @@ class DetailAdapter(
         when (holder) {
             is ShareHeaderVH -> holder.bind(header as DetailHeader.Share)
             is LostFoundHeaderVH -> holder.bind(header as DetailHeader.LostFound)
-            is CommentVH -> holder.bind(comments[position - 1])
+            is CommentVH -> holder.bind(comments[position - 1], currentUserId, postWriterId)
         }
     }
 
@@ -127,12 +130,23 @@ class DetailAdapter(
 
         private val dateFormat = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault())
 
-        fun bind(item: Comment) {
+        fun bind(item: Comment, currentUserId: String, postWriterId: String) {
             binding.tvNickname.text = item.writerNickname
             binding.tvTime.text = item.createdAt?.let { dateFormat.format(it) } ?: "방금 전"
-            binding.tvBody.text = item.content
 
-            // 기본 이미지: ic_launcher_round (앱 아이콘)
+            if (item.isSecret) {
+                if (currentUserId == postWriterId || currentUserId == item.writerUserId) {
+                    binding.tvBody.text = item.content
+                    binding.tvBody.setTextColor(Color.BLACK)
+                } else {
+                    binding.tvBody.text = "비밀 댓글입니다."
+                    binding.tvBody.setTextColor(Color.GRAY)
+                }
+            } else {
+                binding.tvBody.text = item.content
+                binding.tvBody.setTextColor(Color.BLACK)
+            }
+
             if (!item.writerProfileImageUrl.isNullOrEmpty()) {
                 Glide.with(itemView.context)
                     .load(item.writerProfileImageUrl)
