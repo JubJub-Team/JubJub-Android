@@ -12,6 +12,6 @@ class JubJubApplication : Application() {
 
         // 네이버 지도 SDK 초기화
         NaverMapSdk.getInstance(this).client =
-            NaverMapSdk.NcpKeyClient(BuildConfig.NAVER_CLIENT_ID)
+            NaverMapSdk.NaverCloudPlatformClient(BuildConfig.NAVER_CLIENT_ID)
     }
 }

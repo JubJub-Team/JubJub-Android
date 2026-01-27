@@ -5,13 +5,16 @@ import com.google.firebase.firestore.Query
 import com.team.jubjub.data.model.Notification
 import com.team.jubjub.data.model.Scrap
 import com.team.jubjub.data.model.User
+import com.team.jubjub.util.ImageUploadHelper
+import android.net.Uri
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class UserRepositoryImpl @Inject constructor(
-    private val db: FirebaseFirestore // Hilt가 넣어줌 (직접 getInstance 호출 X)
+    private val db: FirebaseFirestore,
+    private val imageUploadHelper: ImageUploadHelper
 ) : UserRepository {
 
     private val userRef = db.collection("users")
@@ -128,6 +131,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    // 8. 알림 전송 (DB 저장)
     override suspend fun sendNotification(
         targetUserId: String,
         notification: Notification
@@ -144,5 +148,14 @@ class UserRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    // 9. 프로필 이미지 업로드 (Storage)
+    override suspend fun uploadProfileImage(userId: String, uri: Uri): Result<String> {
+        // 저장 경로 정의: profiles/{userId}.jpg
+        val path = "profiles/$userId.jpg"
+
+        // Helper에게 업로드 위임
+        return imageUploadHelper.uploadImage(path, uri)
     }
 }

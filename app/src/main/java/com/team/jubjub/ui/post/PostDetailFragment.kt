@@ -15,18 +15,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.team.jubjub.R
+import com.team.jubjub.data.model.Comment
 import com.team.jubjub.data.model.Post
 import com.team.jubjub.data.model.enums.PostType
 import com.team.jubjub.data.model.enums.TradeMethod
-import com.team.jubjub.data.repository.AuthRepository
 import com.team.jubjub.data.repository.PostRepository
-import com.team.jubjub.data.repository.UserRepository
 import com.team.jubjub.databinding.FragmentPostDetailBinding
 import com.team.jubjub.ui.lostfound.LostFoundFragment
 import com.team.jubjub.ui.mypage.AlarmFragment
 import com.team.jubjub.ui.mypage.MyPageFragment
 import com.team.jubjub.ui.share.ShareFragment
-import com.team.jubjub.util.updateAlarmBadgeIcon
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -40,15 +38,11 @@ class PostDetailFragment : Fragment() {
 
     @Inject lateinit var postRepository: PostRepository
 
-    // 추가(뱃지 아이콘용)
-    @Inject lateinit var userRepository: UserRepository
-    @Inject lateinit var authRepository: AuthRepository
-
     private lateinit var adapter: DetailAdapter
     private val comments = mutableListOf<Comment>()
 
-    // 뒤로가기 안정화
-    private var currentPostType: PostType = PostType.LOST
+    // 현재 게시글 객체 (댓글 작성 시 사용)
+    private var currentPost: Post? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,6 +56,7 @@ class PostDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 1. 인자 받기 (Enum 타입 안전하게)
         val postType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arguments?.getSerializable(ARG_POST_TYPE, PostType::class.java)
         } else {
@@ -69,14 +64,14 @@ class PostDetailFragment : Fragment() {
             arguments?.getSerializable(ARG_POST_TYPE) as? PostType
         } ?: PostType.LOST
 
-        currentPostType = postType
-
         val postId = arguments?.getString(ARG_POST_ID).orEmpty()
 
+        // 2. 툴바 뒤로가기
         binding.toolBar.setNavigationOnClickListener {
-            goBackToBoard(currentPostType)
+            goBackToBoard(postType)
         }
 
+        // 3. 툴바 메뉴 (알림/프로필)
         binding.toolBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_alarm -> {
@@ -97,45 +92,31 @@ class PostDetailFragment : Fragment() {
             }
         }
 
-        //여기서 한 번 갱신
-        binding.toolBar.updateAlarmBadgeIcon(
-            viewLifecycleOwner.lifecycleScope,
-            authRepository,
-            userRepository
-        )
-
+        // 4. 시스템 뒤로가기
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            goBackToBoard(currentPostType)
+            goBackToBoard(postType)
         }
 
+        // 5. 실제 데이터 로드 및 UI 표시
         loadPostDetail(postId, postType)
 
+        // 6. 키보드/인셋 처리
+        setupKeyboardHandling()
+    }
+
+    private fun setupKeyboardHandling() {
         val rv = binding.rvDetail
         val inputBar = binding.commentInputBar
 
         inputBar.doOnLayout {
             val inputBarHeight = inputBar.height
-
             ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
                 val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
                 inputBar.updatePadding(bottom = ime.bottom)
                 rv.updatePadding(bottom = inputBarHeight + ime.bottom)
                 insets
             }
-
             ViewCompat.requestApplyInsets(binding.root)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // 알림 페이지 갔다가 돌아오면 다시 갱신
-        if (_binding != null) {
-            binding.toolBar.updateAlarmBadgeIcon(
-                viewLifecycleOwner.lifecycleScope,
-                authRepository,
-                userRepository
-            )
         }
     }
 
@@ -152,13 +133,15 @@ class PostDetailFragment : Fragment() {
                     if (post == null) {
                         Toast.makeText(requireContext(), "삭제되었거나 없는 게시글입니다.", Toast.LENGTH_SHORT).show()
                         goBackToBoard(fallbackType)
-                        return@launch
+                        return@onSuccess
                     }
-
-                    currentPostType = post.postType
+                    currentPost = post
 
                     val header = makeHeaderFromPost(post)
                     setupAdapter(header)
+
+                    // 댓글 데이터 로드
+                    loadComments(post.postId)
                 }
                 .onFailure { e ->
                     Toast.makeText(requireContext(), e.message ?: "상세 조회 실패", Toast.LENGTH_SHORT).show()
@@ -166,21 +149,38 @@ class PostDetailFragment : Fragment() {
         }
     }
 
+    private fun loadComments(postId: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            postRepository.getCommentList(postId)
+                .onSuccess { list ->
+                    comments.clear()
+                    comments.addAll(list)
+                    if (::adapter.isInitialized) {
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+        }
+    }
+
     private fun makeHeaderFromPost(post: Post): DetailHeader {
-        val idDate = "${post.writerCustomId}•${formatTs(post.createdAt)}"
+        val idDate = "${post.writerCustomId} • ${formatTs(post.createdAt)}"
+
+        // ★ [수정] images 리스트의 첫 번째를 썸네일로 사용
+        val imageUrl = post.images.firstOrNull()
 
         return when (post.postType) {
             PostType.SHARING -> {
                 DetailHeader.Share(
                     idDate = idDate,
                     title = post.title,
-                    category = post.category?.name ?: "",
-                    condition = post.productCondition?.toString() ?: "",
+                    category = post.category?.name ?: "카테고리 없음",
+                    condition = post.productCondition?.name ?: "상태 없음",
                     count = (post.quantity ?: 1).toString(),
                     content = post.content,
                     deliveryEnabled = post.tradeMethods?.contains(TradeMethod.DELIVERY) == true,
                     directEnabled = post.tradeMethods?.contains(TradeMethod.DIRECT) == true,
-                    location = post.hopeLocation ?: "장소 미정"
+                    location = post.hopeLocation ?: "장소 미정",
+                    imageUrl = imageUrl // 이미지 URL 전달
                 )
             }
             PostType.LOST -> {
@@ -191,28 +191,41 @@ class PostDetailFragment : Fragment() {
                     detailPlace = post.foundDetailLocation ?: "",
                     foundDate = formatTs(post.foundDate),
                     content = post.content,
-                    entrustedPlace = post.storageLocation ?: ""
+                    entrustedPlace = post.storageLocation ?: "보관 장소 없음",
+                    imageUrl = imageUrl // 이미지 URL 전달
                 )
             }
         }
     }
 
     private fun setupAdapter(header: DetailHeader) {
-        comments.clear()
-
-        comments.add(Comment("닉네임", "01/18 07:54", "저요저요"))
-        comments.add(Comment("닉네임", "01/18 07:55", "네 어떻게 드릴까요?", isReply = true))
-
         adapter = DetailAdapter(header, comments)
         binding.rvDetail.layoutManager = LinearLayoutManager(requireContext())
         binding.rvDetail.adapter = adapter
 
+        // 댓글 전송 버튼
         binding.btnSend.setOnClickListener {
             val text = binding.etComment.text.toString().trim()
-            if (text.isNotEmpty()) {
-                adapter.addComment(Comment("나", "방금", text))
+            val post = currentPost
+            if (text.isNotEmpty() && post != null) {
+                // TODO: 내 정보(프로필, 아이디) 로드 필요. 현재는 더미 데이터
+                val newComment = Comment(
+                    writerUserId = "my_uid_test",
+                    writerNickname = "나",
+                    writerProfileImageUrl = "", // 내 프로필 이미지
+                    content = text,
+                    createdAt = java.util.Date()
+                )
+
+                // 화면 즉시 반영
+                adapter.addComment(newComment)
                 binding.etComment.setText("")
                 binding.rvDetail.scrollToPosition(adapter.itemCount - 1)
+
+                // 서버 전송
+                viewLifecycleOwner.lifecycleScope.launch {
+                    postRepository.addComment(post.postId, newComment, post.writerUserId)
+                }
             }
         }
     }
@@ -229,18 +242,13 @@ class PostDetailFragment : Fragment() {
     }
 
     private fun goBackToBoard(postType: PostType) {
-        when (postType) {
-            PostType.SHARING -> {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, ShareFragment())
-                    .commit()
-            }
-            PostType.LOST -> {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, LostFoundFragment())
-                    .commit()
-            }
+        val targetFragment = when (postType) {
+            PostType.SHARING -> ShareFragment()
+            PostType.LOST -> LostFoundFragment()
         }
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, targetFragment)
+            .commit()
     }
 
     override fun onDestroyView() {

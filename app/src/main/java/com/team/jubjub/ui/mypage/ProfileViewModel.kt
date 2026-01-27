@@ -1,5 +1,6 @@
 package com.team.jubjub.ui.mypage
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.team.jubjub.data.model.User
@@ -66,21 +67,41 @@ class ProfileViewModel @Inject constructor(
             .onFailure { _phoneAvailable.value = null; _message.emit("전화번호 중복확인 실패: ${it.message}") }
     }
 
-    fun saveProfile(updated: User) = viewModelScope.launch {
+    fun saveProfile(updated: User, imageUri: Uri? = null) = viewModelScope.launch {
         val prev = _user.value
         val now = Date()
 
-        // createdAt 유지, updatedAt 갱신
+        var finalImageUrl = updated.profileImageUrl
+        if (finalImageUrl.isBlank()) {
+            finalImageUrl = prev?.profileImageUrl ?: ""
+        }
+
+        if (imageUri != null) {
+            _message.emit("이미지 업로드 중...")
+
+            val uploadResult = userRepository.uploadProfileImage(updated.userId, imageUri)
+
+            uploadResult.onSuccess { downloadUrl ->
+                finalImageUrl = downloadUrl // 성공 시 URL 교체
+            }.onFailure {
+                _message.emit("이미지 업로드 실패: ${it.message}")
+                return@launch // 이미지 업로드 실패하면 저장 프로세스 중단
+            }
+        }
+
         val toSave = updated.copy(
             createdAt = prev?.createdAt ?: now,
             updatedAt = now,
             sharingCount = prev?.sharingCount ?: updated.sharingCount,
             fcmToken = prev?.fcmToken ?: updated.fcmToken,
-            profileImageUrl = prev?.profileImageUrl ?: updated.profileImageUrl
+            profileImageUrl = finalImageUrl
         )
 
         userRepository.saveUserProfile(toSave)
-            .onSuccess { _message.emit("저장 완료!") }
+            .onSuccess {
+                _user.value = toSave
+                _message.emit("저장 완료!")
+            }
             .onFailure { _message.emit("저장 실패: ${it.message}") }
     }
 }

@@ -139,7 +139,8 @@ interface PostRepository {
 
     /**
      * 12. [상세] 댓글 작성 (및 알림 전송)
-     * 게시물에 댓글을 저장하고, 작성자에게 알림을 전송함 (구현부에서 처리)
+     * 게시물에 댓글을 저장하고, 게시글의 댓글 수(commentCount)를 증가시킴
+     * 작성자가 본인이 아닐 경우 알림을 전송함
      *
      * @param postId : 게시물 ID
      * @param comment : 저장할 댓글 객체
@@ -154,7 +155,7 @@ interface PostRepository {
 
     /**
      * 13. [상세] 댓글 삭제
-     * 본인이 작성한 댓글을 삭제함
+     * 본인이 작성한 댓글을 삭제하고, 게시글의 댓글 수(commentCount)를 감소시킴
      *
      * @param postId : 게시물 ID (SubCollection 접근용)
      * @param commentId : 삭제할 댓글 ID
