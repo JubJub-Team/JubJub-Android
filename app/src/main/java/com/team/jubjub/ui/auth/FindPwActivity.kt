@@ -26,6 +26,14 @@ class FindPwActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         /* ------------------------
+           뒤로가기 → 로그인 페이지
+        ------------------------ */
+        binding.ivBack.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
+
+        /* ------------------------
            아이디 찾기 이동
         ------------------------ */
         binding.tvFindIdAction.setOnClickListener {
@@ -40,7 +48,11 @@ class FindPwActivity : AppCompatActivity() {
             val email = binding.edtEmail.text.toString().trim()
 
             if (id.isEmpty() || email.isEmpty()) {
-                Toast.makeText(this, "아이디와 이메일을 입력해주세요", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "아이디와 이메일을 입력해주세요",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
 
