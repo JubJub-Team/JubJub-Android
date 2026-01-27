@@ -1,6 +1,5 @@
 package com.team.jubjub.ui.mypage
 
-import MyScrapAdapter
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast

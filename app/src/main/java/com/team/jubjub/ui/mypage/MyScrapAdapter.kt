@@ -1,10 +1,11 @@
+package com.team.jubjub.ui.mypage
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.team.jubjub.databinding.ItemScrapPostBinding
-import com.team.jubjub.ui.mypage.MyScrapItem
 
 class MyScrapAdapter(
     private val onClick: (MyScrapItem) -> Unit
