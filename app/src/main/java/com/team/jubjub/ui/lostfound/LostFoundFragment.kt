@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.team.jubjub.R
 import com.team.jubjub.data.model.Post
-import com.team.jubjub.data.model.enums.PostStatus
 import com.team.jubjub.data.model.enums.PostType
+import com.team.jubjub.data.model.enums.PostStatus
 import com.team.jubjub.databinding.FragmentLostFoundBinding
 import com.team.jubjub.ui.home.HomeFragment
 import com.team.jubjub.ui.post.PostDetailFragment
@@ -39,7 +39,14 @@ class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
         setupFilter()
         observeViewModel()
 
-        // 최초 분실물 게시물 로드
+        // [삭제됨] 여기서 호출하면 처음에만 로드되고, 뒤로가기 했을 때 갱신이 안 됨
+        // viewModel.loadLostPosts("서울여자대학교")
+    }
+
+    // ★ [추가] 화면이 다시 보일 때마다 실행되는 함수
+    override fun onResume() {
+        super.onResume()
+        // 여기서 데이터를 다시 불러와야 댓글 수 변경 사항이 반영됨
         viewModel.loadLostPosts("서울여자대학교")
     }
 
@@ -126,14 +133,12 @@ class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
             .replace(
                 R.id.fragmentContainer,
                 PostDetailFragment.newInstance(
-                    PostType.SHARING,
-                    post.postId
-                )
+                    PostType.LOST,
+                    post.postId)
             )
             .addToBackStack(null)
             .commit()
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

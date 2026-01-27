@@ -1,5 +1,6 @@
 package com.team.jubjub.data.repository
 
+import android.net.Uri
 import com.team.jubjub.data.model.Notification
 import com.team.jubjub.data.model.Scrap
 import com.team.jubjub.data.model.User
@@ -101,4 +102,16 @@ interface UserRepository {
         targetUserId: String,
         notification: Notification
     ): Result<Unit>
+
+    /**
+     * 9. [이미지] 프로필 이미지 업로드
+     * Storage에 이미지를 업로드하고 다운로드 URL을 반환
+     * @param userId : 파일 경로 생성을 위한 User UID
+     * @param uri : 갤러리에서 선택된 이미지 URI
+     * @return Result<String> : 업로드된 이미지의 URL
+     */
+    suspend fun uploadProfileImage(
+        userId: String,
+        uri: Uri
+    ): Result<String>
 }

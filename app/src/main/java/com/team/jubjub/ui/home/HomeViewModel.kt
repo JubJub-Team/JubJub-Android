@@ -32,6 +32,7 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeUiState(isLoading = true))
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
+    // [홈] 화면 데이터 로드 (나눔/분실 최신글 각 2개)
     fun loadHome() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
@@ -43,11 +44,11 @@ class HomeViewModel @Inject constructor(
             }
 
             try {
-                // 1) 유저에서 학교명 가져오기
+                // 1) 유저 프로필에서 학교명 가져오기
                 val user = userRepository.getUserProfile(uid).getOrThrow()
                 val schoolName = user.school
 
-                // 2) 게시물 가져오기 후 앞 2개만 사용 (프론트에서 컷)
+                // 2) 게시물 가져오기 후 최신순 2개만 자르기 (프론트 컷)
                 val sharingTop2 = postRepository.getPostList(schoolName, PostType.SHARING)
                     .getOrElse { emptyList() }
                     .take(2)
