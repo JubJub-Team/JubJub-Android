@@ -42,14 +42,30 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
     // AI 태그 결과 임시 저장 (업로드 때 keywords로 합칠 예정)
     private var aiTags: List<String> = emptyList()
 
+    // AI가 본문에 마지막으로 붙인 블록(교체/삭제용)
+    private var lastAiHashtagBlock: String? = null
+
+    // 이 프래그먼트는 LOST 전용
+    private val postType: PostType = PostType.LOST
+
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             if (uri == null) return@registerForActivityResult
 
+            // Uri 저장 + 접근 가능 체크
+            if (!canOpenUri(uri)) {
+                Toast.makeText(requireContext(), "선택한 이미지에 접근할 수 없음", Toast.LENGTH_SHORT).show()
+                selectedImageUri = null
+                return@registerForActivityResult
+            }
+
             selectedImageUri = uri
             Toast.makeText(requireContext(), "사진 1장 선택됨", Toast.LENGTH_SHORT).show()
 
-            // 선택 즉시 AI 분석 실행
+            // 이미지 교체 시: 이전 AI 태그 제거 + aiTags 초기화(덮어쓰기 준비)
+            removeAiTagsFromContentIfAny()
+            aiTags = emptyList()
+
             viewLifecycleOwner.lifecycleScope.launch {
                 val bmp = withContext(Dispatchers.IO) {
                     uriToBitmap(uri, maxSize = 1024)
@@ -60,8 +76,11 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
                     return@launch
                 }
 
-                // analyzeImage는 메인에서 호출 (LiveData setValue 크래시 방지)
-                aiViewModel.analyzeImage(bmp, PostType.LOST)
+                // 미리보기 표시
+                showSelectedPhotoPreview(bmp)
+
+                // 게시판 타입(LOST)으로 분석
+                aiViewModel.analyzeImage(bmp, postType)
             }
         }
 
@@ -74,13 +93,8 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
             val lng = data.getDoubleExtra("lng", 0.0)
             val address = data.getStringExtra("address").orEmpty()
 
-            // 표시 우선순위: 주소 있으면 주소, 없으면 좌표 문자열
             binding.tvLocation.text = if (address.isNotBlank()) address else "$lat, $lng"
-
-            // 원하면 ViewModel/업로드 파라미터로 좌표도 저장해두기
-            // viewModel.setPickedLatLng(lat, lng)
         }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -89,6 +103,7 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
         setupBack()
         setupInputFields()
         setupTopActions()
+        setupPhotoPreviewActions() // 추가
         setupDone()
         observeEvents()
         observeAi()
@@ -172,8 +187,6 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
        사진 / 장소 상단 액션
     ------------------------ */
     private fun setupTopActions() {
-
-        // 사진 1장 선택
         binding.layoutAddPhoto.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
@@ -185,15 +198,70 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
     }
 
     /* ------------------------
+       미리보기 클릭/삭제
+    ------------------------ */
+    private fun setupPhotoPreviewActions() {
+        // 미리보기 클릭 → 크게 보기
+        binding.ivPhotoPreview.setOnClickListener {
+            val uri = selectedImageUri ?: return@setOnClickListener
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "image/*")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            runCatching { startActivity(intent) }
+                .onFailure {
+                    Toast.makeText(requireContext(), "이미지를 열 수 없어요.", Toast.LENGTH_SHORT).show()
+                }
+        }
+
+        // X 버튼 → 사진 제거
+        binding.btnRemovePhoto.setOnClickListener {
+            clearSelectedPhoto(removeAiTagsFromContent = true)
+        }
+    }
+
+    private fun showSelectedPhotoPreview(bmp: Bitmap) {
+        binding.layoutPhotoPreview.visibility = View.VISIBLE
+        binding.ivPhotoPreview.setImageBitmap(bmp)
+    }
+
+    private fun clearSelectedPhoto(removeAiTagsFromContent: Boolean) {
+        selectedImageUri = null
+
+        // UI 초기화
+        binding.ivPhotoPreview.setImageDrawable(null)
+        binding.layoutPhotoPreview.visibility = View.GONE
+
+        // AI 태그 상태 초기화(업로드 keywords에서도 빠지게)
+        aiTags = emptyList()
+
+        if (removeAiTagsFromContent) {
+            removeAiTagsFromContentIfAny()
+        }
+
+        Toast.makeText(requireContext(), "사진이 제거됐어요.", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun removeAiTagsFromContentIfAny() {
+        val block = lastAiHashtagBlock ?: return
+        val cur = binding.etContent.text?.toString().orEmpty()
+        val newText = cur.replace(block, "").trimEnd()
+        binding.etContent.setText(newText)
+        binding.etContent.setSelection(binding.etContent.text?.length ?: 0)
+        lastAiHashtagBlock = null
+    }
+
+    /* ------------------------
        완료 버튼 → 업로드
        - 해시태그 + AI태그 합쳐서 keywords로 전송
+       생성된 태그는 Post.keywords로 저장됨
     ------------------------ */
     private fun setupDone() {
         binding.tvDone.setOnClickListener {
             val title = binding.etTitle.text.toString()
             val content = binding.etContent.text.toString()
 
-            // ✅ 날짜: 숫자만 YYYYMMDD로 정규화 → Timestamp로 변환
+            // 날짜 정규화 → Timestamp
             val rawDate = binding.tvFoundDatetime.text?.toString().orEmpty().trim()
             val normalizedDate = normalizeDateToYYYYMMDD(rawDate)
 
@@ -203,7 +271,6 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
             }
 
             val foundDateTimestamp: Timestamp? = normalizedDate?.let {
-                // invalid date면 null
                 yyyymmddToTimestampOrNull(it)
             }
 
@@ -212,17 +279,16 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
                 return@setOnClickListener
             }
 
-            // ✅ 이미지 Uri 유효성(스트림 열림) 체크: 실패하면 업로드 전에 알려주기
+            // 이미지 Uri 유효성 체크
             val imageUri = selectedImageUri
-            if (imageUri != null) {
-                val canOpen = canOpenUri(imageUri)
-                if (!canOpen) {
-                    Toast.makeText(requireContext(), "선택한 이미지에 접근할 수 없어. 다시 선택해줘!", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
+            if (imageUri != null && !canOpenUri(imageUri)) {
+                Toast.makeText(requireContext(), "선택한 이미지에 접근할 수 없어. 다시 선택해줘!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
             val hashtagKeywords = extractHashtags("$title $content")
+
+            // aiTags가 mergedKeywords에 합쳐져서 백엔드 keywords로 저장됨
             val mergedKeywords = (hashtagKeywords + aiTags)
                 .map { it.trim() }
                 .filter { it.isNotBlank() }
@@ -233,7 +299,7 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
                 content = content,
                 foundLocation = binding.tvFoundPlace.text?.toString(),
                 foundDetailLocation = binding.tvPlaceDetail.text?.toString(),
-                foundDate = foundDateTimestamp, // ✅ Timestamp로 전달
+                foundDate = foundDateTimestamp,
                 storageLocation = binding.tvStoragePlace.text?.toString(),
                 imageUri = imageUri,
                 keywords = mergedKeywords
@@ -260,7 +326,10 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
         }
     }
 
-    // AI 결과 관찰: Toast 대신 etContent에 #태그 삽입
+    /**
+     * AI 결과 관찰
+     * - 새 태그가 오면 기존 AI 블록 제거 후 새 블록 붙임
+     */
     private fun observeAi() {
         aiViewModel.tags.observe(viewLifecycleOwner) { list ->
             aiTags = list ?: emptyList()
@@ -276,14 +345,25 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
             val edit = binding.etContent
             val current = edit.text?.toString().orEmpty()
 
-            // 간단 중복 방지(같은 덩어리가 이미 있으면 skip)
-            if (current.contains(hashtags)) return@observe
+            //기존 AI 블록 제거(덮어쓰기)
+            lastAiHashtagBlock?.let { block ->
+                if (current.contains(block)) {
+                    val cleaned = current.replace(block, "").trimEnd()
+                    edit.setText(cleaned)
+                    edit.setSelection(edit.text?.length ?: 0)
+                }
+            }
+
+            val afterClean = edit.text?.toString().orEmpty()
 
             val toAppend = buildString {
-                if (current.isNotBlank() && !current.endsWith("\n")) append("\n")
-                if (current.isNotBlank()) append("\n")
+                if (afterClean.isNotBlank() && !afterClean.endsWith("\n")) append("\n")
+                if (afterClean.isNotBlank()) append("\n")
                 append(hashtags)
             }
+
+            // 새 블록 저장
+            lastAiHashtagBlock = toAppend
 
             edit.append(toAppend)
             edit.setSelection(edit.text?.length ?: 0)
@@ -303,8 +383,6 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
 
     /**
      * Uri -> Bitmap 변환 (OOM 방지용 축소 디코딩)
-     * - maxSize: 긴 변 기준 목표 픽셀(권장 1024 / 더 줄이면 768, 512)
-     * - 하드웨어 비트맵 방지: ALLOCATOR_SOFTWARE + ARGB_8888
      */
     private fun uriToBitmap(uri: Uri, maxSize: Int = 1024): Bitmap? {
         return try {
@@ -357,14 +435,14 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
         return try {
             if (yyyymmdd.length != 8) return null
             val y = yyyymmdd.substring(0, 4).toInt()
-            val m = yyyymmdd.substring(4, 6).toInt() // 1~12
-            val d = yyyymmdd.substring(6, 8).toInt() // 1~31
+            val m = yyyymmdd.substring(4, 6).toInt()
+            val d = yyyymmdd.substring(6, 8).toInt()
 
             if (m !in 1..12) return null
             if (d !in 1..31) return null
 
             val cal = Calendar.getInstance().apply {
-                isLenient = false // 날짜 검증
+                isLenient = false
                 set(Calendar.YEAR, y)
                 set(Calendar.MONTH, m - 1)
                 set(Calendar.DAY_OF_MONTH, d)
@@ -380,7 +458,6 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
         }
     }
 
-    // 선택한 Uri가 실제로 열리는지 확인
     private fun canOpenUri(uri: Uri): Boolean {
         return try {
             requireContext().contentResolver.openInputStream(uri)?.use { true } ?: false

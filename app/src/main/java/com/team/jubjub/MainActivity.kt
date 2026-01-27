@@ -58,10 +58,15 @@ class MainActivity : AppCompatActivity() {
                         .commit()
                 }
             }
+            // 오버레이 열림/닫힘 포함해서 항상 아이콘 갱신
+            updateSelectedUi(selectedId)
         }
 
         if (savedInstanceState == null) {
             switchTab(R.id.nav_home)
+        } else {
+            // 복원 시에도 UI 맞추기
+            updateSelectedUi(selectedId)
         }
 
         applyEdgeToEdgeInsets()
@@ -152,7 +157,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_share -> ShareFragment()
                 R.id.nav_lost_found -> LostFoundFragment()
                 R.id.nav_my_page -> MyPageFragment()
-                //nav_write는 탭이 아니므로 여기서 처리하지 않음
+                // nav_write는 탭이 아니므로 여기서 처리하지 않음
                 else -> HomeFragment()
             }
             fragments[itemId] = target
@@ -180,11 +185,19 @@ class MainActivity : AppCompatActivity() {
         tx.add(R.id.fragmentContainer, fragment, tag)
             .addToBackStack(tag)
             .commit()
+
+        // 오버레이가 최상단이 되었을 때 write 아이콘이 초록이 되도록 즉시 갱신 시도
+        // (commit 타이밍 이슈 방지 위해 pending 처리)
+        fm.executePendingTransactions()
+        updateSelectedUi(selectedId)
     }
 
     private fun updateSelectedUi(selected: Int) {
         val main = ContextCompat.getColor(this, R.color.main)
         val gray = ContextCompat.getColor(this, android.R.color.darker_gray)
+
+        val currentTop = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+        val isWriteScreen = currentTop is WriteShareFragment || currentTop is WriteLostFoundFragment
 
         val buttons = listOf(
             binding.navHome,
@@ -195,11 +208,16 @@ class MainActivity : AppCompatActivity() {
         )
 
         buttons.forEach { btn ->
-            val color = when (btn.id) {
-                R.id.nav_write -> gray
-                else -> if (btn.id == selected) main else gray
+            val color = if (isWriteScreen) {
+                // Write 화면이면 4번만 초록, 나머지 회색
+                if (btn.id == R.id.nav_write) main else gray
+            } else {
+                // 일반 탭 화면이면 selected 탭만 초록
+                if (btn.id == selected) main else gray
             }
+
             btn.imageTintList = ColorStateList.valueOf(color)
         }
     }
 }
+
