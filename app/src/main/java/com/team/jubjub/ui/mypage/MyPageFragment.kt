@@ -1,5 +1,8 @@
 package com.team.jubjub.ui.mypage
 
+import com.team.jubjub.ConfirmDialogFragment
+import com.team.jubjub.ConfirmDialogSpec
+import com.team.jubjub.DialogChoice
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.team.jubjub.ConfirmDialogFragment
 import com.team.jubjub.MainActivity
 import com.team.jubjub.R
 import com.team.jubjub.data.model.enums.UserLevel
