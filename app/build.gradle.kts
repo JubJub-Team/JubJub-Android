@@ -33,8 +33,7 @@ android {
 
         buildConfigField("String", "NAVER_CLIENT_ID", "\"${localProperties["NAVER_CLIENT_ID"]}\"")
         buildConfigField("String", "NAVER_CLIENT_SECRET", "\"${localProperties["NAVER_CLIENT_SECRET"]}\"")
-
-        manifestPlaceholders["NAVER_CLIENT_ID"] = localProperties["NAVER_CLIENT_ID"] as String
+        manifestPlaceholders["NAVER_CLIENT_ID"] = localProperties.getProperty("NAVER_CLIENT_ID")
     }
 
     buildTypes {
@@ -103,9 +102,10 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation(libs.androidx.hilt.navigation.fragment)
-    kapt(libs.androidx.hilt.compiler)
-    implementation(libs.naver.map.sdk)
+    implementation("androidx.hilt:hilt-navigation-fragment:1.2.0")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
+    implementation("com.naver.maps:map-sdk:3.18.0")
 
-    implementation(libs.androidx.core.splashscreen)
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
 }

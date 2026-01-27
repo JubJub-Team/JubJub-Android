@@ -1,5 +1,6 @@
 package com.team.jubjub.ui.post
 
+// 게시글 상세 화면의 헤더 데이터 모델
 sealed class DetailHeader {
     data class Share(
         val idDate: String,
@@ -10,7 +11,8 @@ sealed class DetailHeader {
         val content: String,
         val deliveryEnabled: Boolean,
         val directEnabled: Boolean,
-        val location: String
+        val location: String,
+        val imageUrl: String?
     ) : DetailHeader()
 
     data class LostFound(
@@ -20,13 +22,7 @@ sealed class DetailHeader {
         val detailPlace: String,
         val foundDate: String,
         val content: String,
-        val entrustedPlace: String
+        val entrustedPlace: String,
+        val imageUrl: String?
     ) : DetailHeader()
 }
-
-data class Comment(
-    val nickname: String,
-    val timeText: String,
-    val body: String,
-    val isReply: Boolean = false
-)

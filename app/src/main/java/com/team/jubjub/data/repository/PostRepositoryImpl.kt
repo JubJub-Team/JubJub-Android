@@ -1,5 +1,6 @@
 package com.team.jubjub.data.repository
 
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.team.jubjub.data.model.Comment
@@ -8,6 +9,7 @@ import com.team.jubjub.data.model.Post
 import com.team.jubjub.data.model.enums.NotificationType
 import com.team.jubjub.data.model.enums.PostType
 import kotlinx.coroutines.tasks.await
+import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,23 +21,26 @@ class PostRepositoryImpl @Inject constructor(
 
     private val postRef = db.collection("posts")
 
-    // 1. [홈] 학교 및 게시물 타입 기준 전체 게시물 목록 조회
+    /**
+     * 1. [홈] 학교 및 게시물 타입 기준 전체 게시물 목록 조회
+     * - Firestore 복합 인덱스 문제를 피하기 위해 날짜 정렬을 클라이언트에서 수행
+     */
     override suspend fun getPostList(
         schoolName: String,
         type: PostType
     ): Result<List<Post>> {
         return try {
-            // ❌ orderBy 제거 (Firestore 인덱스 문제 해결)
             val snapshot = postRef
                 .whereEqualTo("school", schoolName)
                 .whereEqualTo("postType", type.name)
                 .get()
                 .await()
 
-            // ⭐ 클라이언트에서 정렬
+            // 메모리 내 정렬 (최신순)
             val list = snapshot
                 .toObjects(Post::class.java)
                 .sortedByDescending { it.createdAt }
+
             Result.success(list)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -43,7 +48,10 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 2. [홈] 게시물 검색
+    /**
+     * 2. [홈] 게시물 검색
+     * - 제목 또는 본문에 키워드가 포함된 게시물 필터링
+     */
     override suspend fun searchPosts(
         schoolName: String,
         keyword: String
@@ -60,6 +68,7 @@ class PostRepositoryImpl @Inject constructor(
                     it.title.contains(keyword, ignoreCase = true) ||
                             it.content.contains(keyword, ignoreCase = true)
                 }
+                .sortedByDescending { it.createdAt }
 
             Result.success(filteredList)
         } catch (e: Exception) {
@@ -67,28 +76,30 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 3. [마이페이지] 내가 작성한 게시물
+    /**
+     * 3. [마이페이지] 내가 작성한 게시물 조회
+     */
     override suspend fun getMyPostList(userId: String): Result<List<Post>> {
         return try {
             val snapshot = postRef
                 .whereEqualTo("writerUserId", userId)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
                 .get()
                 .await()
 
-            val list = snapshot
-                .toObjects(Post::class.java)
-                .sortedByDescending { it.createdAt }
-
-            Result.success(list)
+            Result.success(snapshot.toObjects(Post::class.java))
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-
-    // 4. [마이페이지] 스크랩한 게시물
+    /**
+     * 4. [마이페이지] 스크랩한 게시물 조회
+     * - 'IN' 쿼리는 최대 10개까지만 가능하므로 chunked 처리
+     */
     override suspend fun getScrappedPostList(userId: String): Result<List<Post>> {
         return try {
+            // 1. 유저의 스크랩 문서 ID 목록 가져오기
             val scrapSnapshot = db.collection("users")
                 .document(userId)
                 .collection("scraps")
@@ -100,7 +111,7 @@ class PostRepositoryImpl @Inject constructor(
 
             val resultList = mutableListOf<Post>()
 
-
+            // 2. 10개씩 끊어서 게시물 조회 (Firestore 제약 사항)
             val chunks = scrapIds.chunked(10)
             for (chunk in chunks) {
                 val postsSnapshot = postRef
@@ -116,10 +127,13 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 5. 게시물 업로드
+    /**
+     * 5. 게시물 업로드
+     */
     override suspend fun uploadPost(post: Post): Result<Boolean> {
         return try {
             val newDoc = postRef.document()
+            // 문서 ID를 Post 객체 내부에 주입
             val newPost = post.copy(postId = newDoc.id)
             newDoc.set(newPost).await()
             Result.success(true)
@@ -128,7 +142,9 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 6. 게시물 상세 조회
+    /**
+     * 6. 게시물 상세 조회
+     */
     override suspend fun getPostDetail(postId: String): Result<Post?> {
         return try {
             val doc = postRef.document(postId).get().await()
@@ -138,7 +154,9 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 7. 게시물 수정
+    /**
+     * 7. 게시물 수정
+     */
     override suspend fun updatePost(post: Post): Result<Boolean> {
         return try {
             postRef.document(post.postId).set(post).await()
@@ -148,7 +166,9 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 8. 게시물 삭제
+    /**
+     * 8. 게시물 삭제
+     */
     override suspend fun deletePost(postId: String): Result<Boolean> {
         return try {
             postRef.document(postId).delete().await()
@@ -158,7 +178,9 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 9. 게시물 상태 변경
+    /**
+     * 9. 게시물 상태 변경 (거래중, 거래완료 등)
+     */
     override suspend fun updatePostStatus(postId: String, status: String): Result<Boolean> {
         return try {
             postRef.document(postId).update("status", status).await()
@@ -168,7 +190,9 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 10. 스크랩 토글
+    /**
+     * 10. 스크랩 토글 (등록/취소)
+     */
     override suspend fun toggleScrap(
         postId: String,
         userId: String,
@@ -184,7 +208,7 @@ class PostRepositoryImpl @Inject constructor(
                 scrapRef.set(
                     mapOf(
                         "postId" to postId,
-                        "scrappedAt" to java.util.Date()
+                        "scrappedAt" to Date()
                     )
                 ).await()
             } else {
@@ -197,7 +221,9 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 11. 댓글 목록
+    /**
+     * 11. 댓글 목록 조회
+     */
     override suspend fun getCommentList(postId: String): Result<List<Comment>> {
         return try {
             val snapshot = postRef.document(postId)
@@ -212,27 +238,39 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 12. 댓글 작성 + 알림
+    /**
+     * 12. 댓글 작성 및 알림 전송
+     * - 트랜잭션을 사용하여 댓글 저장과 게시글의 댓글 수 증가(+1)를 동시에 처리
+     */
     override suspend fun addComment(
         postId: String,
         comment: Comment,
         postWriterId: String
     ): Result<Boolean> {
         return try {
-            val commentDoc = postRef.document(postId)
-                .collection("comments")
-                .document()
+            val postDocRef = postRef.document(postId)
+            val commentColRef = postDocRef.collection("comments")
 
-            val newComment = comment.copy(commentId = commentDoc.id)
-            commentDoc.set(newComment).await()
+            db.runTransaction { transaction ->
+                // 1. 새로운 댓글 문서 생성
+                val newCommentDoc = commentColRef.document()
+                val newComment = comment.copy(commentId = newCommentDoc.id)
 
+                // 2. 댓글 저장
+                transaction.set(newCommentDoc, newComment)
+
+                // 3. 게시글의 commentCount +1 증가
+                transaction.update(postDocRef, "commentCount", FieldValue.increment(1))
+            }.await()
+
+            // 작성자가 본인이 아닐 경우 알림 전송
             if (comment.writerUserId != postWriterId) {
                 val notification = Notification(
                     notificationType = NotificationType.COMMENT,
                     notificationMessage = "${comment.writerNickname}님이 게시글에 댓글을 남겼습니다.",
                     targetPostId = postId,
                     isRead = false,
-                    createdAt = java.util.Date()
+                    createdAt = Date()
                 )
                 userRepository.sendNotification(postWriterId, notification)
             }
@@ -243,17 +281,25 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 13. 댓글 삭제
+    /**
+     * 13. 댓글 삭제
+     * - 트랜잭션을 사용하여 댓글 삭제와 게시글의 댓글 수 감소(-1)를 동시에 처리
+     */
     override suspend fun deleteComment(
         postId: String,
         commentId: String
     ): Result<Boolean> {
         return try {
-            postRef.document(postId)
-                .collection("comments")
-                .document(commentId)
-                .delete()
-                .await()
+            val postDocRef = postRef.document(postId)
+            val commentDocRef = postDocRef.collection("comments").document(commentId)
+
+            db.runTransaction { transaction ->
+                // 1. 댓글 삭제
+                transaction.delete(commentDocRef)
+
+                // 2. 게시글의 commentCount -1 감소
+                transaction.update(postDocRef, "commentCount", FieldValue.increment(-1))
+            }.await()
 
             Result.success(true)
         } catch (e: Exception) {
