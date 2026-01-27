@@ -18,12 +18,15 @@ import com.team.jubjub.R
 import com.team.jubjub.data.model.Post
 import com.team.jubjub.data.model.enums.PostType
 import com.team.jubjub.data.model.enums.TradeMethod
+import com.team.jubjub.data.repository.AuthRepository
 import com.team.jubjub.data.repository.PostRepository
+import com.team.jubjub.data.repository.UserRepository
 import com.team.jubjub.databinding.FragmentPostDetailBinding
 import com.team.jubjub.ui.lostfound.LostFoundFragment
 import com.team.jubjub.ui.mypage.AlarmFragment
 import com.team.jubjub.ui.mypage.MyPageFragment
 import com.team.jubjub.ui.share.ShareFragment
+import com.team.jubjub.util.updateAlarmBadgeIcon
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -37,8 +40,15 @@ class PostDetailFragment : Fragment() {
 
     @Inject lateinit var postRepository: PostRepository
 
+    // 추가(뱃지 아이콘용)
+    @Inject lateinit var userRepository: UserRepository
+    @Inject lateinit var authRepository: AuthRepository
+
     private lateinit var adapter: DetailAdapter
     private val comments = mutableListOf<Comment>()
+
+    // 뒤로가기 안정화
+    private var currentPostType: PostType = PostType.LOST
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,16 +67,16 @@ class PostDetailFragment : Fragment() {
         } else {
             @Suppress("DEPRECATION")
             arguments?.getSerializable(ARG_POST_TYPE) as? PostType
-        } ?: PostType.LOST // 기본값 설정
+        } ?: PostType.LOST
+
+        currentPostType = postType
 
         val postId = arguments?.getString(ARG_POST_ID).orEmpty()
 
-        // 뒤로가기(툴바)
         binding.toolBar.setNavigationOnClickListener {
-            goBackToBoard(postType)
+            goBackToBoard(currentPostType)
         }
 
-        // 알림/프로필 이동
         binding.toolBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_alarm -> {
@@ -87,15 +97,19 @@ class PostDetailFragment : Fragment() {
             }
         }
 
-        // 시스템 뒤로가기
+        //여기서 한 번 갱신
+        binding.toolBar.updateAlarmBadgeIcon(
+            viewLifecycleOwner.lifecycleScope,
+            authRepository,
+            userRepository
+        )
+
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            goBackToBoard(postType)
+            goBackToBoard(currentPostType)
         }
 
-        // 실제 상세 로드 (3,4번 핵심)
         loadPostDetail(postId, postType)
 
-        // 키보드/인셋 처리(기존 그대로)
         val rv = binding.rvDetail
         val inputBar = binding.commentInputBar
 
@@ -104,17 +118,24 @@ class PostDetailFragment : Fragment() {
 
             ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
                 val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
-
-                // 키보드 올라오면 입력바를 키보드 위로 배치
                 inputBar.updatePadding(bottom = ime.bottom)
-
-                // 마지막 리스트 안 가려지도록 패딩
                 rv.updatePadding(bottom = inputBarHeight + ime.bottom)
-
                 insets
             }
 
             ViewCompat.requestApplyInsets(binding.root)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 알림 페이지 갔다가 돌아오면 다시 갱신
+        if (_binding != null) {
+            binding.toolBar.updateAlarmBadgeIcon(
+                viewLifecycleOwner.lifecycleScope,
+                authRepository,
+                userRepository
+            )
         }
     }
 
@@ -134,11 +155,10 @@ class PostDetailFragment : Fragment() {
                         return@launch
                     }
 
+                    currentPostType = post.postType
+
                     val header = makeHeaderFromPost(post)
                     setupAdapter(header)
-
-                    // TODO(선택): 실제 댓글 연결
-                    // loadComments(post.postId)
                 }
                 .onFailure { e ->
                     Toast.makeText(requireContext(), e.message ?: "상세 조회 실패", Toast.LENGTH_SHORT).show()
@@ -155,7 +175,7 @@ class PostDetailFragment : Fragment() {
                     idDate = idDate,
                     title = post.title,
                     category = post.category?.name ?: "",
-                    condition = post.productCondition?.name ?: "",
+                    condition = post.productCondition?.toString() ?: "",
                     count = (post.quantity ?: 1).toString(),
                     content = post.content,
                     deliveryEnabled = post.tradeMethods?.contains(TradeMethod.DELIVERY) == true,
@@ -163,7 +183,6 @@ class PostDetailFragment : Fragment() {
                     location = post.hopeLocation ?: "장소 미정"
                 )
             }
-
             PostType.LOST -> {
                 DetailHeader.LostFound(
                     idDate = idDate,
@@ -181,7 +200,6 @@ class PostDetailFragment : Fragment() {
     private fun setupAdapter(header: DetailHeader) {
         comments.clear()
 
-        // 더미 댓글
         comments.add(Comment("닉네임", "01/18 07:54", "저요저요"))
         comments.add(Comment("닉네임", "01/18 07:55", "네 어떻게 드릴까요?", isReply = true))
 
@@ -210,7 +228,6 @@ class PostDetailFragment : Fragment() {
         return "$mm/$dd $hh:$mi"
     }
 
-    // 게시판 돌아가기
     private fun goBackToBoard(postType: PostType) {
         when (postType) {
             PostType.SHARING -> {
@@ -235,7 +252,6 @@ class PostDetailFragment : Fragment() {
         private const val ARG_POST_TYPE = "arg_post_type"
         private const val ARG_POST_ID = "arg_post_id"
 
-        //데이터 enum + postId를 그대로 받음
         fun newInstance(type: PostType, postId: String): PostDetailFragment =
             PostDetailFragment().apply {
                 arguments = Bundle().apply {
