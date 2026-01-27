@@ -33,6 +33,7 @@ android {
 
         buildConfigField("String", "NAVER_CLIENT_ID", "\"${localProperties["NAVER_CLIENT_ID"]}\"")
         buildConfigField("String", "NAVER_CLIENT_SECRET", "\"${localProperties["NAVER_CLIENT_SECRET"]}\"")
+        manifestPlaceholders["NAVER_CLIENT_ID"] = localProperties.getProperty("NAVER_CLIENT_ID")
     }
 
     buildTypes {
@@ -103,5 +104,5 @@ dependencies {
 
     implementation("androidx.hilt:hilt-navigation-fragment:1.2.0")
     kapt("androidx.hilt:hilt-compiler:1.2.0")
-    implementation("com.naver.maps:map-sdk:3.18.0")
+    implementation("com.naver.maps:map-sdk:3.17.0")
 }

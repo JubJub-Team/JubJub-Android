@@ -1,4 +1,4 @@
-/*package com.team.jubjub.ui.write
+package com.team.jubjub.ui.write
 
 import android.app.Activity
 import android.content.Intent
@@ -89,4 +89,4 @@ class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)
     }
-}*/
+}
