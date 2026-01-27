@@ -57,13 +57,13 @@
             android:id="@+id/edt_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="E-mail"
+            android:includeFontPadding="false"
             android:minHeight="44dp"
-            android:hint="ID"
+            android:paddingVertical="12dp"
             android:textColor="@android:color/black"
             android:textColorHint="#767676"
-            android:textSize="14sp"
-            android:paddingVertical="12dp"
-            android:includeFontPadding="false"/>
+            android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- 비밀번호 입력 -->

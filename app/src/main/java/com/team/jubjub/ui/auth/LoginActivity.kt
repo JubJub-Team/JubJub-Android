@@ -87,7 +87,16 @@ class LoginActivity : AppCompatActivity() {
                     }
                     .onFailure { e ->
                         binding.btnLogin.isEnabled = true
-                        binding.tilPassword.error = "로그인 실패: ${e.message}"
+
+                        val rawMessage = e.message ?: ""
+                        val friendlyMessage = when {
+                            rawMessage.contains("badly formatted") -> "이메일 형식이 올바르지 않습니다."
+                            rawMessage.contains("invalid user") || rawMessage.contains("user not found") -> "등록되지 않은 사용자입니다."
+                            rawMessage.contains("wrong password") -> "비밀번호가 틀렸습니다."
+                            else -> "로그인 실패: 정보를 다시 확인해주세요."
+                        }
+
+                        binding.tilPassword.error = friendlyMessage
                     }
             }
         }

@@ -36,7 +36,6 @@ class PostRepositoryImpl @Inject constructor(
             val list = snapshot
                 .toObjects(Post::class.java)
                 .sortedByDescending { it.createdAt }
-
             Result.success(list)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -96,8 +95,9 @@ class PostRepositoryImpl @Inject constructor(
             if (scrapIds.isEmpty()) return Result.success(emptyList())
 
             val resultList = mutableListOf<Post>()
-            val chunks = scrapIds.chunked(10)
 
+
+            val chunks = scrapIds.chunked(10)
             for (chunk in chunks) {
                 val postsSnapshot = postRef
                     .whereIn("postId", chunk)
@@ -250,6 +250,7 @@ class PostRepositoryImpl @Inject constructor(
                 .document(commentId)
                 .delete()
                 .await()
+
             Result.success(true)
         } catch (e: Exception) {
             Result.failure(e)

@@ -141,8 +141,7 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
             .replace(
                 R.id.fragmentContainer,
                 PostDetailFragment.newInstance(
-                    PostDetailFragment.PostType.SHARE
-                )
+                    PostDetailFragment.PostType.SHARE)
             )
             .addToBackStack(null)
             .commit()

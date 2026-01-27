@@ -124,7 +124,8 @@ class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
         parentFragmentManager.beginTransaction()
             .replace(
                 R.id.fragmentContainer,
-                PostDetailFragment.newInstance(PostDetailFragment.PostType.LOST_FOUND)
+                PostDetailFragment.newInstance(
+                    PostDetailFragment.PostType.LOST_FOUND)
             )
             .addToBackStack(null)
             .commit()

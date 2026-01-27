@@ -1,5 +1,8 @@
 package com.team.jubjub.ui.mypage
 
+import com.team.jubjub.ConfirmDialogFragment
+import com.team.jubjub.ConfirmDialogSpec
+import com.team.jubjub.DialogChoice
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,11 +11,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.team.jubjub.ConfirmDialogFragment
 import com.team.jubjub.MainActivity
 import com.team.jubjub.R
 import com.team.jubjub.data.model.enums.UserLevel
 import com.team.jubjub.data.repository.AuthRepository
+import com.team.jubjub.data.repository.UserRepository
 import com.team.jubjub.databinding.FragmentMyPageBinding
 import com.team.jubjub.ui.auth.LoginActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,12 +26,16 @@ import javax.inject.Inject
 class MyPageFragment : Fragment() {
 
     @Inject lateinit var authRepository: AuthRepository
+    @Inject lateinit var userRepository: UserRepository
 
     private var _binding: FragmentMyPageBinding? = null
     private val binding get() = _binding!!
-    private val REQ_POST_TYPE = "req_post_type"
-    private val REQ_LOGOUT = "req_logout"
-    private val REQ_WITHDRAW = "req_withdraw"
+
+    companion object {
+        private const val REQ_MY_POST_SELECT = "req_my_post_select"
+        private const val REQ_LOGOUT = "req_logout"
+        private const val REQ_WITHDRAW = "req_withdraw"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,7 +57,7 @@ class MyPageFragment : Fragment() {
         // -----------------------------
         // 내 게시물 종류 선택 다이얼로그 결과
         // -----------------------------
-        parentFragmentManager.setFragmentResultListener(REQ_POST_TYPE, viewLifecycleOwner) { _, bundle ->
+        parentFragmentManager.setFragmentResultListener(REQ_MY_POST_SELECT, viewLifecycleOwner) { _, bundle ->
             val choice = ConfirmDialogFragment.readChoice(bundle)
             when (choice) {
                 DialogChoice.LEFT -> openMyLostFoundPost()
@@ -136,16 +143,16 @@ class MyPageFragment : Fragment() {
     }
 
     private fun openMySharePost() {
-        (activity as? MainActivity)?.openOverlay(MySharePost(), "MySharePost")
+        (activity as? MainActivity)?.openOverlay(MySharePostFragment(), "MySharePost")
     }
 
     private fun openMyLostFoundPost() {
-        (activity as? MainActivity)?.openOverlay(MyLostFoundPost(), "MyLostFoundPost")
+        (activity as? MainActivity)?.openOverlay(MyLostFoundPostFragment(), "MyLostFoundPost")
     }
 
     private fun showPostTypeDialog() {
         ConfirmDialogFragment.newInstance(
-            requestKey = REQ_POST_TYPE,
+            requestKey = REQ_MY_POST_SELECT,
             specKey = ConfirmDialogSpec.PostType.key
         ).show(parentFragmentManager, "postTypeDialog")
     }

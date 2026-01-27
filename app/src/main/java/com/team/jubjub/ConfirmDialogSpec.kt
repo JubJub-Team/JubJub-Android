@@ -1,3 +1,5 @@
+package com.team.jubjub
+
 enum class DialogChoice { LEFT, RIGHT }
 
 sealed class ConfirmDialogSpec(
@@ -22,12 +24,18 @@ sealed class ConfirmDialogSpec(
         "나눔 상태를 선택해 주세요.", "나눔 완료", "나눔 중"
     )
 
+    data object WriteStatus : ConfirmDialogSpec(
+        "writeStatus",
+        "작성 게시글을 선택해 주세요.", "분실물", "나눔"
+    )
+
     companion object {
         fun fromKey(key: String): ConfirmDialogSpec = when (key) {
             Logout.key -> Logout
             Withdraw.key -> Withdraw
             PostType.key -> PostType
             ShareStatus.key -> ShareStatus
+            WriteStatus.key -> WriteStatus
             else -> Logout
         }
     }
