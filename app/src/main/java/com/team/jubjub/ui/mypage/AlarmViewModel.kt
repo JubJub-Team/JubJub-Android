@@ -65,6 +65,7 @@ private fun Notification.toAlarm(): Alarm {
         id = notificationId,
         title = notificationMessage,
         createdAtMillis = createdAt?.time ?: 0L,
-        isRead = isRead
+        isRead = isRead,
+        targetPostId = targetPostId
     )
 }

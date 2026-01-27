@@ -73,15 +73,19 @@ class PostRepositoryImpl @Inject constructor(
         return try {
             val snapshot = postRef
                 .whereEqualTo("writerUserId", userId)
-                .orderBy("createdAt", Query.Direction.DESCENDING)
                 .get()
                 .await()
 
-            Result.success(snapshot.toObjects(Post::class.java))
+            val list = snapshot
+                .toObjects(Post::class.java)
+                .sortedByDescending { it.createdAt }
+
+            Result.success(list)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
+
 
     // 4. [마이페이지] 스크랩한 게시물
     override suspend fun getScrappedPostList(userId: String): Result<List<Post>> {

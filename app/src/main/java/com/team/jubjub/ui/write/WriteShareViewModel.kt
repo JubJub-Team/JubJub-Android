@@ -126,7 +126,7 @@ class WriteShareViewModel @Inject constructor(
 
                 //나눔 전용 필드
                 category = categoryEnum,
-                productCondition = conditionEnum,
+                productCondition = conditionEnum?.name,
                 quantity = quantity ?: 1,
                 tradeMethods = tradeMethodEnums,
                 hopeLocation = hopeLocation?.trim().takeIf { !it.isNullOrBlank() }
