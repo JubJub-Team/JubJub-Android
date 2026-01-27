@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.team.jubjub.R
 import com.team.jubjub.data.model.Post
+import com.team.jubjub.data.model.enums.PostType
 import com.team.jubjub.data.model.enums.PostStatus
 import com.team.jubjub.databinding.FragmentShareBinding
 import com.team.jubjub.ui.home.HomeFragment
@@ -141,7 +142,8 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
             .replace(
                 R.id.fragmentContainer,
                 PostDetailFragment.newInstance(
-                    PostDetailFragment.PostType.SHARE)
+                    PostType.SHARING,
+                    post.postId)
             )
             .addToBackStack(null)
             .commit()
