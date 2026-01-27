@@ -41,12 +41,6 @@
         <activity
             android:name=".ui.write.LocationPickerActivity"
             android:exported="false" />
-
-        <meta-data
-            android:name="com.naver.maps.map.CLIENT_ID"
-            android:value="${NAVER_CLIENT_ID}" />
-
-
     </application>
 
 </manifest>

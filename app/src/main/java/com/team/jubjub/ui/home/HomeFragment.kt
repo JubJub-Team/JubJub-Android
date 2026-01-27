@@ -10,11 +10,16 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.team.jubjub.MainActivity
 import com.team.jubjub.R
 import com.team.jubjub.data.model.Post
+import com.team.jubjub.data.model.enums.PostType
 import com.team.jubjub.databinding.FragmentHomeBinding
 import com.team.jubjub.ui.mypage.AlarmFragment
+import com.team.jubjub.ui.post.PostDetailFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -55,20 +60,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    bindSharing(state.sharingTop2) // 나눔 최신 2개
-                    bindLost(state.lostTop2)       // 분실 최신 2개
-
-                    // 로딩/에러 UI 원하면 여기서 처리
-                    // 예)
-                    // binding.progressBar.isVisible = state.isLoading
-                    // state.error?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
+                    bindSharing(state.sharingTop2) // 나눔 최신 2개 바인딩
+                    bindLost(state.lostTop2)       // 분실 최신 2개 바인딩
                 }
             }
         }
     }
 
     // -------------------------
-    // 버튼 / 검색
+    // 버튼 / 검색 기능 설정
     // -------------------------
 
     private fun setupSearch() {
@@ -87,7 +87,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun performSearch() {
         val query = binding.etSearch.text.toString().trim()
         if (query.isEmpty()) return
-        // TODO: 검색 처리
+        // TODO: 검색 결과 화면으로 이동 로직 구현 필요
     }
 
     private fun setupAlarmButton() {
@@ -111,33 +111,62 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             (requireActivity() as MainActivity).selectTab(R.id.nav_lost_found)
         }
     }
+
     // -------------------------
-    // 홈 카드 데이터 바인딩
+    // 홈 카드 데이터 바인딩 (이미지 로딩 포함)
     // -------------------------
 
     private fun bindSharing(list: List<Post>) {
         val first = list.getOrNull(0)
         val second = list.getOrNull(1)
 
-        // 데이터 없으면 카드 숨김
+        // 데이터가 없으면 카드 숨김 처리
         binding.cvFirstBoard.visibility = if (first == null) View.GONE else View.VISIBLE
         binding.cvSecondBoard.visibility = if (second == null) View.GONE else View.VISIBLE
 
-        // 1번 카드
-        binding.tvFirstBoardUserName.text = first?.writerNickname.orEmpty()
-        binding.tvFirstBoardTitle.text = first?.title.orEmpty()
-        binding.tvFirstBoardBodyText.text = first?.content.orEmpty()
-        binding.tvFirstBoardTime.text = first?.createdAt?.toDate()?.let { formatDate(it) }.orEmpty()
+        // 1번 카드 데이터 바인딩
+        if (first != null) {
+            binding.tvFirstBoardUserName.text = first.writerNickname
+            binding.tvFirstBoardTitle.text = first.title
+            binding.tvFirstBoardBodyText.text = first.content
+            binding.tvFirstBoardTime.text = first.createdAt?.toDate()?.let { formatDate(it) } ?: ""
 
-        // 2번 카드
-        binding.tvSecondBoardUserName.text = second?.writerNickname.orEmpty()
-        binding.tvSecondBoardTitle.text = second?.title.orEmpty()
-        binding.tvSecondBoardBodyText.text = second?.content.orEmpty()
-        binding.tvSecondBoardTime.text = second?.createdAt?.toDate()?.let { formatDate(it) }.orEmpty()
+            // 이미지 로딩 (썸네일)
+            val imageUrl = first.images.firstOrNull()
+            if (!imageUrl.isNullOrEmpty()) {
+                binding.ivFirstBoardImage.visibility = View.VISIBLE
+                Glide.with(this)
+                    .load(imageUrl)
+                    .transform(CenterCrop(), RoundedCorners(16))
+                    .into(binding.ivFirstBoardImage)
+            } else {
+                binding.ivFirstBoardImage.visibility = View.GONE
+            }
 
-        // 카드 클릭 -> 상세로 이동
-        binding.cvFirstBoard.setOnClickListener { first?.let { openDetail(it.postId) } }
-        binding.cvSecondBoard.setOnClickListener { second?.let { openDetail(it.postId) } }
+            binding.cvFirstBoard.setOnClickListener { openDetail(first.postType, first.postId) }
+        }
+
+        // 2번 카드 데이터 바인딩
+        if (second != null) {
+            binding.tvSecondBoardUserName.text = second.writerNickname
+            binding.tvSecondBoardTitle.text = second.title
+            binding.tvSecondBoardBodyText.text = second.content
+            binding.tvSecondBoardTime.text = second.createdAt?.toDate()?.let { formatDate(it) } ?: ""
+
+            // 이미지 로딩 (썸네일)
+            val imageUrl = second.images.firstOrNull()
+            if (!imageUrl.isNullOrEmpty()) {
+                binding.ivSecondBoardImage.visibility = View.VISIBLE
+                Glide.with(this)
+                    .load(imageUrl)
+                    .transform(CenterCrop(), RoundedCorners(16))
+                    .into(binding.ivSecondBoardImage)
+            } else {
+                binding.ivSecondBoardImage.visibility = View.GONE
+            }
+
+            binding.cvSecondBoard.setOnClickListener { openDetail(second.postType, second.postId) }
+        }
     }
 
     private fun bindLost(list: List<Post>) {
@@ -147,29 +176,62 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.cvThirdBoard.visibility = if (third == null) View.GONE else View.VISIBLE
         binding.cvFourthBoard.visibility = if (fourth == null) View.GONE else View.VISIBLE
 
-        // 3번 카드
-        binding.tvThirdBoardUserName.text = third?.writerNickname.orEmpty()
-        binding.tvThirdBoardTitle.text = third?.title.orEmpty()
-        binding.tvThirdBoardBodyText.text = third?.content.orEmpty()
-        binding.tvThirdBoardTime.text = third?.createdAt?.toDate()?.let { formatDate(it) }.orEmpty()
+        // 3번 카드 데이터 바인딩
+        if (third != null) {
+            binding.tvThirdBoardUserName.text = third.writerNickname
+            binding.tvThirdBoardTitle.text = third.title
+            binding.tvThirdBoardBodyText.text = third.content
+            binding.tvThirdBoardTime.text = third.createdAt?.toDate()?.let { formatDate(it) } ?: ""
 
-        // 4번 카드
-        binding.tvFourthBoardUserName.text = fourth?.writerNickname.orEmpty()
-        binding.tvFourthBoardTitle.text = fourth?.title.orEmpty()
-        binding.tvFourthBoardBodyText.text = fourth?.content.orEmpty()
-        binding.tvFourthBoardTime.text = fourth?.createdAt?.toDate()?.let { formatDate(it) }.orEmpty()
+            // 이미지 로딩 (썸네일)
+            val imageUrl = third.images.firstOrNull()
+            if (!imageUrl.isNullOrEmpty()) {
+                binding.ivThirdBoardImage.visibility = View.VISIBLE
+                Glide.with(this)
+                    .load(imageUrl)
+                    .transform(CenterCrop(), RoundedCorners(16))
+                    .into(binding.ivThirdBoardImage)
+            } else {
+                binding.ivThirdBoardImage.visibility = View.GONE
+            }
 
-        binding.cvThirdBoard.setOnClickListener { third?.let { openDetail(it.postId) } }
-        binding.cvFourthBoard.setOnClickListener { fourth?.let { openDetail(it.postId) } }
+            binding.cvThirdBoard.setOnClickListener { openDetail(third.postType, third.postId) }
+        }
+
+        // 4번 카드 데이터 바인딩
+        if (fourth != null) {
+            binding.tvFourthBoardUserName.text = fourth.writerNickname
+            binding.tvFourthBoardTitle.text = fourth.title
+            binding.tvFourthBoardBodyText.text = fourth.content
+            binding.tvFourthBoardTime.text = fourth.createdAt?.toDate()?.let { formatDate(it) } ?: ""
+
+            // 이미지 로딩 (썸네일)
+            val imageUrl = fourth.images.firstOrNull()
+            if (!imageUrl.isNullOrEmpty()) {
+                binding.ivFourthBoardImage.visibility = View.VISIBLE
+                Glide.with(this)
+                    .load(imageUrl)
+                    .transform(CenterCrop(), RoundedCorners(16))
+                    .into(binding.ivFourthBoardImage)
+            } else {
+                binding.ivFourthBoardImage.visibility = View.GONE
+            }
+
+            binding.cvFourthBoard.setOnClickListener { openDetail(fourth.postType, fourth.postId) }
+        }
     }
 
     private fun formatDate(date: Date): String {
         return SimpleDateFormat("MM/dd  HH:mm", Locale.KOREA).format(date)
     }
 
-    private fun openDetail(postId: String) {
-        // TODO: 상세 화면 이동 구현 (Navigation 사용이면 navigate, 아니면 transaction)
-        // findNavController().navigate(...)
+    private fun openDetail(postType: PostType, postId: String) {
+        // 상세 화면 Fragment로 교체
+        val fragment = PostDetailFragment.newInstance(postType, postId)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onDestroyView() {

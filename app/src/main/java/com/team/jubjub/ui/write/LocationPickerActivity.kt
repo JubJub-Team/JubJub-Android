@@ -7,21 +7,20 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.team.jubjub.databinding.ActivityLocationPickerBinding
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
-import com.naver.maps.map.MapView
+import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
+import com.team.jubjub.R
+import com.team.jubjub.databinding.ActivityLocationPickerBinding
 import java.util.Locale
 
 class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var binding: ActivityLocationPickerBinding
-    private lateinit var mapView: MapView
     private var naverMap: NaverMap? = null
-
     private val marker = Marker()
     private var selectedLatLng: LatLng? = null
     private var selectedAddress: String? = null
@@ -31,9 +30,15 @@ class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityLocationPickerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        mapView = binding.mapView
-        mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync(this)
+        // 1. MapFragment 얻어오기
+        val fm = supportFragmentManager
+        val mapFragment = fm.findFragmentById(R.id.map_fragment) as MapFragment?
+            ?: MapFragment.newInstance().also {
+                fm.beginTransaction().add(R.id.map_fragment, it).commit()
+            }
+
+        // 2. 비동기로 NaverMap 객체 요청
+        mapFragment.getMapAsync(this)
 
         binding.btnConfirm.setOnClickListener {
             val latLng = selectedLatLng
@@ -53,55 +58,46 @@ class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(map: NaverMap) {
-        naverMap = map
+        this.naverMap = map
 
-        // 초기 위치
-        val init = LatLng(37.5666102, 126.9783881) // 서울시청
+        // 초기 위치 설정 (서울시청)
+        val init = LatLng(37.5666102, 126.9783881)
         map.moveCamera(CameraUpdate.scrollTo(init))
 
+        // 지도 클릭 리스너
         map.setOnMapClickListener { _, latLng ->
             selectedLatLng = latLng
             marker.position = latLng
             marker.map = map
 
-            selectedAddress = reverseGeocode(latLng)
+            // 주소 변환 호출
+            reverseGeocode(latLng)
         }
     }
 
-    private fun reverseGeocode(latLng: LatLng): String? {
+    private fun reverseGeocode(latLng: LatLng) {
         val geocoder = Geocoder(this, Locale.KOREA)
 
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1) { addresses ->
                 val address = addresses.firstOrNull()?.getAddressLine(0)
                 selectedAddress = address
 
+                // 필요 시 메인 스레드에서 UI 업데이트 가능
                 runOnUiThread {
-
+                    if (address != null) {
+                        // Toast.makeText(this, "선택된 주소: $address", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
-            selectedAddress // 이전 값을 반환하거나 일단 null 반환
         } else {
-            // 구형 방식 (API 33 미만)
             try {
                 @Suppress("DEPRECATION")
                 val results = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
-                results?.firstOrNull()?.getAddressLine(0)
+                selectedAddress = results?.firstOrNull()?.getAddressLine(0)
             } catch (e: Exception) {
-                null
+                selectedAddress = null
             }
         }
-    }
-
-    // MapView 생명주기 연결
-    override fun onStart() { super.onStart(); mapView.onStart() }
-    override fun onResume() { super.onResume(); mapView.onResume() }
-    override fun onPause() { mapView.onPause(); super.onPause() }
-    override fun onStop() { mapView.onStop(); super.onStop() }
-    override fun onDestroy() { mapView.onDestroy(); super.onDestroy() }
-    override fun onLowMemory() { super.onLowMemory(); mapView.onLowMemory() }
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        mapView.onSaveInstanceState(outState)
     }
 }

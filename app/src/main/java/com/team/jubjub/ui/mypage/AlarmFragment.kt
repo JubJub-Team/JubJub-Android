@@ -7,8 +7,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.team.jubjub.R
+import com.team.jubjub.data.model.enums.PostType
 import com.team.jubjub.data.repository.AuthRepository
 import com.team.jubjub.databinding.FragmentAlarmBinding
+import com.team.jubjub.ui.post.PostDetailFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -35,7 +37,23 @@ class AlarmFragment : Fragment(R.layout.fragment_alarm) {
 
         alarmAdapter = AlarmAdapter { alarm ->
             val userId = authRepository.getCurrentUserUid() ?: return@AlarmAdapter
+
+            // 1) 읽음 처리
             viewModel.markRead(userId, alarm)
+
+            //  2) 게시글 이동
+            if (alarm.targetPostId.isNotBlank()) {
+                parentFragmentManager.beginTransaction()
+                    .replace(
+                        R.id.fragmentContainer,
+                        PostDetailFragment.newInstance(
+                            type = PostType.LOST,          // 일단 기본값
+                            postId = alarm.targetPostId
+                        )
+                    )
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
 
         binding.rvAlarm.apply {
