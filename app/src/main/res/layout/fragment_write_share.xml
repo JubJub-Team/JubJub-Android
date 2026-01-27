@@ -40,7 +40,6 @@
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
         </RelativeLayout>
     </com.google.android.material.appbar.MaterialToolbar>
 
@@ -102,6 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="30dp"
                 android:orientation="vertical">
+
 
                 <!-- 사진/장소 버튼 줄 -->
                 <LinearLayout

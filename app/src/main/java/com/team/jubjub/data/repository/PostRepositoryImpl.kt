@@ -5,7 +5,6 @@ import com.google.firebase.firestore.Query
 import com.team.jubjub.data.model.Comment
 import com.team.jubjub.data.model.Notification
 import com.team.jubjub.data.model.Post
-import com.team.jubjub.data.model.Scrap
 import com.team.jubjub.data.model.enums.NotificationType
 import com.team.jubjub.data.model.enums.PostType
 import kotlinx.coroutines.tasks.await
@@ -26,21 +25,25 @@ class PostRepositoryImpl @Inject constructor(
         type: PostType
     ): Result<List<Post>> {
         return try {
+            // ❌ orderBy 제거 (Firestore 인덱스 문제 해결)
             val snapshot = postRef
-                .whereEqualTo("school", schoolName) // 학교 필터링
-                .whereEqualTo("postType", type.name)         // 타입 필터링
-                .orderBy("createdAt", Query.Direction.DESCENDING) // 최신순 정렬
+                .whereEqualTo("school", schoolName)
+                .whereEqualTo("postType", type.name)
                 .get()
                 .await()
 
-            val list = snapshot.toObjects(Post::class.java)
+            // ⭐ 클라이언트에서 정렬
+            val list = snapshot
+                .toObjects(Post::class.java)
+                .sortedByDescending { it.createdAt }
             Result.success(list)
         } catch (e: Exception) {
+            e.printStackTrace()
             Result.failure(e)
         }
     }
 
-    // 2. [홈] 게시물 검색 (제목 및 내용 기준)
+    // 2. [홈] 게시물 검색
     override suspend fun searchPosts(
         schoolName: String,
         keyword: String
@@ -51,20 +54,21 @@ class PostRepositoryImpl @Inject constructor(
                 .get()
                 .await()
 
-            val filteredList = snapshot.toObjects(Post::class.java).filter { post ->
-                post.title.contains(keyword, ignoreCase = true) ||
-                        post.content.contains(keyword, ignoreCase = true)
-            }
+            val filteredList = snapshot
+                .toObjects(Post::class.java)
+                .filter {
+                    it.title.contains(keyword, ignoreCase = true) ||
+                            it.content.contains(keyword, ignoreCase = true)
+                }
+
             Result.success(filteredList)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    // 3. [마이페이지] 사용자가 작성한 게시물 목록 조회
-    override suspend fun getMyPostList(
-        userId: String
-    ): Result<List<Post>> {
+    // 3. [마이페이지] 내가 작성한 게시물
+    override suspend fun getMyPostList(userId: String): Result<List<Post>> {
         return try {
             val snapshot = postRef
                 .whereEqualTo("writerUserId", userId)
@@ -72,36 +76,28 @@ class PostRepositoryImpl @Inject constructor(
                 .get()
                 .await()
 
-            val list = snapshot.toObjects(Post::class.java)
-            Result.success(list)
+            Result.success(snapshot.toObjects(Post::class.java))
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    // 4. [마이페이지] 사용자가 스크랩한 게시물 목록 조회
-    override suspend fun getScrappedPostList(
-        userId: String
-    ): Result<List<Post>> {
+    // 4. [마이페이지] 스크랩한 게시물
+    override suspend fun getScrappedPostList(userId: String): Result<List<Post>> {
         return try {
-            // ID 목록 가져오기
-            val scrapSnapshot = db.collection("users").document(userId)
+            val scrapSnapshot = db.collection("users")
+                .document(userId)
                 .collection("scraps")
                 .get()
                 .await()
 
             val scrapIds = scrapSnapshot.documents.map { it.id }
+            if (scrapIds.isEmpty()) return Result.success(emptyList())
 
-            if (scrapIds.isEmpty()) {
-                return Result.success(emptyList())
-            }
-
-            // 실제 게시물 조회
             val resultList = mutableListOf<Post>()
 
-            // 10개씩 묶어서 처리 (Firestore whereIn 제한 해결)
-            val chunks = scrapIds.chunked(10)
 
+            val chunks = scrapIds.chunked(10)
             for (chunk in chunks) {
                 val postsSnapshot = postRef
                     .whereIn("postId", chunk)
@@ -110,25 +106,17 @@ class PostRepositoryImpl @Inject constructor(
                 resultList.addAll(postsSnapshot.toObjects(Post::class.java))
             }
 
-            // 최신순 정렬 (Client side)
-            val sortedList = resultList.sortedByDescending { it.createdAt }
-
-            Result.success(sortedList)
+            Result.success(resultList.sortedByDescending { it.createdAt })
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    // 5. [작성] 게시물 업로드
-    override suspend fun uploadPost(
-        post: Post
-    ): Result<Boolean> {
+    // 5. 게시물 업로드
+    override suspend fun uploadPost(post: Post): Result<Boolean> {
         return try {
-            val newDoc = postRef.document() // 새 문서 ID 생성
-
-            // ID만 주입 (createdAt은 @ServerTimestamp가 자동 처리)
+            val newDoc = postRef.document()
             val newPost = post.copy(postId = newDoc.id)
-
             newDoc.set(newPost).await()
             Result.success(true)
         } catch (e: Exception) {
@@ -136,23 +124,18 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 6. [상세] 게시물 상세 정보 조회
-    override suspend fun getPostDetail(
-        postId: String
-    ): Result<Post?> {
+    // 6. 게시물 상세 조회
+    override suspend fun getPostDetail(postId: String): Result<Post?> {
         return try {
             val doc = postRef.document(postId).get().await()
-            val post = doc.toObject(Post::class.java)
-            Result.success(post)
+            Result.success(doc.toObject(Post::class.java))
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    // 7. [수정] 게시물 내용 수정
-    override suspend fun updatePost(
-        post: Post
-    ): Result<Boolean> {
+    // 7. 게시물 수정
+    override suspend fun updatePost(post: Post): Result<Boolean> {
         return try {
             postRef.document(post.postId).set(post).await()
             Result.success(true)
@@ -161,10 +144,8 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 8. [삭제] 게시물 삭제
-    override suspend fun deletePost(
-        postId: String
-    ): Result<Boolean> {
+    // 8. 게시물 삭제
+    override suspend fun deletePost(postId: String): Result<Boolean> {
         return try {
             postRef.document(postId).delete().await()
             Result.success(true)
@@ -173,11 +154,8 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 9. [상세] 게시물 상태 변경
-    override suspend fun updatePostStatus(
-        postId: String,
-        status: String
-    ): Result<Boolean> {
+    // 9. 게시물 상태 변경
+    override suspend fun updatePostStatus(postId: String, status: String): Result<Boolean> {
         return try {
             postRef.document(postId).update("status", status).await()
             Result.success(true)
@@ -186,63 +164,64 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 10. [상세] 게시물 스크랩 상태 변경
+    // 10. 스크랩 토글
     override suspend fun toggleScrap(
         postId: String,
         userId: String,
         isScrap: Boolean
     ): Result<Boolean> {
         return try {
-            val scrapRef = db.collection("users").document(userId)
-                .collection("scraps").document(postId)
+            val scrapRef = db.collection("users")
+                .document(userId)
+                .collection("scraps")
+                .document(postId)
 
             if (isScrap) {
-                val data = mapOf(
-                    "postId" to postId,
-                    "scrappedAt" to java.util.Date()
-                )
-                scrapRef.set(data).await()
+                scrapRef.set(
+                    mapOf(
+                        "postId" to postId,
+                        "scrappedAt" to java.util.Date()
+                    )
+                ).await()
             } else {
                 scrapRef.delete().await()
             }
+
             Result.success(true)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    // 11. [상세] 댓글 목록 조회
-    override suspend fun getCommentList(
-        postId: String
-    ): Result<List<Comment>> {
+    // 11. 댓글 목록
+    override suspend fun getCommentList(postId: String): Result<List<Comment>> {
         return try {
             val snapshot = postRef.document(postId)
                 .collection("comments")
-                .orderBy("createdAt", Query.Direction.ASCENDING) // 작성순 정렬
+                .orderBy("createdAt", Query.Direction.ASCENDING)
                 .get()
                 .await()
 
-            val list = snapshot.toObjects(Comment::class.java)
-            Result.success(list)
+            Result.success(snapshot.toObjects(Comment::class.java))
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    // 12. [상세] 댓글 작성 및 알림 발송
+    // 12. 댓글 작성 + 알림
     override suspend fun addComment(
         postId: String,
         comment: Comment,
         postWriterId: String
     ): Result<Boolean> {
         return try {
-            // 댓글 저장 (자동 문서 ID 생성)
-            val commentDoc = postRef.document(postId).collection("comments").document()
+            val commentDoc = postRef.document(postId)
+                .collection("comments")
+                .document()
+
             val newComment = comment.copy(commentId = commentDoc.id)
             commentDoc.set(newComment).await()
 
-            // 게시글 작성자에게 보낼 알림 객체 생성
-            // 본인이 본인 글에 댓글을 남긴 경우에는 알림을 보내지 않도록 처리
             if (comment.writerUserId != postWriterId) {
                 val notification = Notification(
                     notificationType = NotificationType.COMMENT,
@@ -251,7 +230,6 @@ class PostRepositoryImpl @Inject constructor(
                     isRead = false,
                     createdAt = java.util.Date()
                 )
-                // UserRepository의 알림 전송 함수 호출
                 userRepository.sendNotification(postWriterId, notification)
             }
 
@@ -261,7 +239,7 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 13. [상세] 댓글 삭제
+    // 13. 댓글 삭제
     override suspend fun deleteComment(
         postId: String,
         commentId: String

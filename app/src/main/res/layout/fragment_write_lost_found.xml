@@ -110,7 +110,6 @@
                     android:paddingVertical="12dp">
 
                     <!-- 사진 -->
-
                     <LinearLayout
                         android:id="@+id/layout_add_photo"
                         android:layout_width="wrap_content"

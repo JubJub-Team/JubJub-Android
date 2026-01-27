@@ -120,7 +120,6 @@ class WriteShareFragment : Fragment(R.layout.fragment_write_share) {
             else -> PostType.SHARING
         }
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentWriteShareBinding.bind(view)
