@@ -11,7 +11,6 @@ import com.team.jubjub.R
 import com.team.jubjub.data.model.Post
 import com.team.jubjub.data.model.enums.PostType
 import com.team.jubjub.data.model.enums.PostStatus
-import com.team.jubjub.data.model.enums.PostType
 import com.team.jubjub.databinding.FragmentLostFoundBinding
 import com.team.jubjub.ui.home.HomeFragment
 import com.team.jubjub.ui.post.PostDetailFragment
@@ -95,7 +94,7 @@ class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
 
             MaterialAlertDialogBuilder(
                 requireContext(),
-                R.style.WhiteDialogTheme   // ✅ 화이트 배경 적용
+                R.style.WhiteDialogTheme   // 화이트 배경 적용
             )
                 .setItems(filters) { _, which ->
                     selectedFilterIndex = which
@@ -134,19 +133,12 @@ class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
             .replace(
                 R.id.fragmentContainer,
                 PostDetailFragment.newInstance(
-<<<<<<< HEAD
-                    PostType.SHARING,
-                    post.postId
-                )
-=======
                     PostType.LOST,
                     post.postId)
->>>>>>> 6c5849704163b1b4cd5bb33b28a9ab2fe0ff540a
             )
             .addToBackStack(null)
             .commit()
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -39,8 +39,10 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
         setupSearch()
         setupFilter()
         observeViewModel()
+    }
 
-        // 최초 나눔 게시물 로드
+    override fun onResume() {
+        super.onResume()
         viewModel.loadSharePosts("서울여자대학교")
     }
 
@@ -94,7 +96,7 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
 
             MaterialAlertDialogBuilder(
                 requireContext(),
-                R.style.WhiteDialogTheme   // LostFound랑 동일
+                R.style.WhiteDialogTheme
             )
                 .setItems(filters) { _, which ->
                     selectedFilterIndex = which
@@ -126,7 +128,7 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
             Log.d("ShareFragment", "받아온 게시물 수: ${list.size}")
 
             originList = list
-            applyFilter(selectedFilterIndex) // 현재 필터 유지
+            applyFilter(selectedFilterIndex)
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { message ->

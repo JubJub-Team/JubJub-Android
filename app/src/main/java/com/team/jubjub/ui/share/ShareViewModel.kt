@@ -31,10 +31,7 @@ class ShareViewModel @Inject constructor(
                 _postList.value = it
             }.onFailure { e ->
                 e.printStackTrace()
-
-                // ⭐ 실제 에러 메시지 표시
-                _errorMessage.value =
-                    e.message ?: e.toString()
+                _errorMessage.value = e.message ?: e.toString()
             }
         }
     }
@@ -42,11 +39,12 @@ class ShareViewModel @Inject constructor(
     fun searchPosts(schoolName: String, keyword: String) {
         viewModelScope.launch {
             postRepository.searchPosts(schoolName, keyword)
-                .onSuccess {
-                    _postList.value = it
+                .onSuccess { list ->
+                    _postList.value = list.filter { it.postType == PostType.SHARING }
                 }
-                .onFailure {
-                    _errorMessage.value = "검색 실패"
+                .onFailure { e ->
+                    e.printStackTrace()
+                    _errorMessage.value = e.message ?: "검색 실패"
                 }
         }
     }
