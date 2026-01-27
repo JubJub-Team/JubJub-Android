@@ -167,6 +167,33 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <FrameLayout
+                    android:id="@+id/layout_photo_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="12dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/iv_photo_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:adjustViewBounds="true"
+                        android:background="#EEEEEE"
+                        android:contentDescription="@null"
+                        android:scaleType="centerCrop" />
+
+                    <ImageButton
+                        android:id="@+id/btn_remove_photo"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="top|end"
+                        android:layout_margin="10dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_x" />
+                </FrameLayout>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"

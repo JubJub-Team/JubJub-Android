@@ -102,6 +102,8 @@
                 android:layout_marginHorizontal="30dp"
                 android:orientation="vertical">
 
+
+                <!-- 사진/장소 버튼 줄 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -167,6 +169,34 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- ✅ 선택한 사진 미리보기(버튼 줄 밖, 아래) -->
+                <FrameLayout
+                    android:id="@+id/layout_photo_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:layout_marginTop="12dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/iv_photo_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:adjustViewBounds="true"
+                        android:background="#EEEEEE"
+                        android:contentDescription="@null"
+                        android:scaleType="centerCrop" />
+
+                    <ImageButton
+                        android:id="@+id/btn_remove_photo"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="top|end"
+                        android:layout_margin="10dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_x" />
+                </FrameLayout>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -192,8 +222,8 @@
                         android:id="@+id/img_add"
                         android:layout_width="18dp"
                         android:layout_height="18dp"
-                        android:src="@drawable/ic_add"
-                        android:contentDescription="@null" />
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_add" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -218,11 +248,11 @@
                         android:id="@+id/layout_category"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingVertical="6dp"
                         android:clickable="true"
                         android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground">
+                        android:foreground="?attr/selectableItemBackground"
+                        android:orientation="horizontal"
+                        android:paddingVertical="6dp">
 
                         <TextView
                             android:layout_width="80dp"
@@ -245,11 +275,11 @@
                         android:id="@+id/layout_condition"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingVertical="6dp"
                         android:clickable="true"
                         android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground">
+                        android:foreground="?attr/selectableItemBackground"
+                        android:orientation="horizontal"
+                        android:paddingVertical="6dp">
 
                         <TextView
                             android:layout_width="80dp"
@@ -272,11 +302,11 @@
                         android:id="@+id/layout_count"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingVertical="6dp"
                         android:clickable="true"
                         android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground">
+                        android:foreground="?attr/selectableItemBackground"
+                        android:orientation="horizontal"
+                        android:paddingVertical="6dp">
 
                         <TextView
                             android:layout_width="80dp"
@@ -299,11 +329,11 @@
                         android:id="@+id/layout_method"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingVertical="6dp"
                         android:clickable="true"
                         android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground">
+                        android:foreground="?attr/selectableItemBackground"
+                        android:orientation="horizontal"
+                        android:paddingVertical="6dp">
 
                         <TextView
                             android:layout_width="80dp"

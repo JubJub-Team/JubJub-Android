@@ -10,9 +10,9 @@
         android:id="@+id/iv_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="40dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="44dp"
+        android:contentDescription="@null"
+        app:layout_constraintStart_toStartOf="@id/tv_intro"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_logo" />
 
@@ -116,6 +116,7 @@
             android:layout_width="1dp"
             android:layout_height="12dp"
             android:layout_marginHorizontal="6dp"
+            android:layout_marginTop="4dp"
             android:background="#767676"/>
 
         <TextView
