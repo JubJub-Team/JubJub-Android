@@ -33,8 +33,6 @@ android {
 
         buildConfigField("String", "NAVER_CLIENT_ID", "\"${localProperties["NAVER_CLIENT_ID"]}\"")
         buildConfigField("String", "NAVER_CLIENT_SECRET", "\"${localProperties["NAVER_CLIENT_SECRET"]}\"")
-
-        manifestPlaceholders["NAVER_CLIENT_ID"] = localProperties["NAVER_CLIENT_ID"] as String
     }
 
     buildTypes {

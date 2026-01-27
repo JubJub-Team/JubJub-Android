@@ -28,7 +28,7 @@ fragmentKtx = "1.8.6"
 hilt = "2.51.1"
 #noinspection NewerVersionAvailable
 coroutinesPlayServices = "1.8.1"
-naverMap = "3.18.0"
+naverMap = "3.23.1"
 androidxHilt = "1.2.0"
 splashscreen = "1.0.1"
 
