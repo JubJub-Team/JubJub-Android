@@ -6,7 +6,8 @@ data class Alarm(
     val id: String,
     val title: String,
     val createdAtMillis: Long,
-    val isRead: Boolean
+    val isRead: Boolean,
+    val targetPostId: String = ""
 )
 
 sealed class AlarmUiItem {
