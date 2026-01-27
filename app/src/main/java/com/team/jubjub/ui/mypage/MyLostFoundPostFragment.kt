@@ -19,6 +19,10 @@ import com.team.jubjub.databinding.PopupMenuLostfoundBinding
 import com.team.jubjub.ui.post.PostDetailFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import android.net.Uri
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+
 
 @AndroidEntryPoint
 class MyLostFoundPostFragment : Fragment(R.layout.fragment_my_lost_found_post) {
@@ -28,6 +32,7 @@ class MyLostFoundPostFragment : Fragment(R.layout.fragment_my_lost_found_post) {
 
     private val viewModel: MyLostFoundPostViewModel by viewModels()
     private lateinit var adapter: MyPostAdapter
+    private var selectedImageUri: Uri? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -113,6 +118,13 @@ class MyLostFoundPostFragment : Fragment(R.layout.fragment_my_lost_found_post) {
             }
         }
     }
+
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri == null) return@registerForActivityResult
+            selectedImageUri = uri
+            Toast.makeText(requireContext(), "사진 1장 선택됨", Toast.LENGTH_SHORT).show()
+        }
 
     private fun showLostFoundMenuPopup(
         anchor: View,

@@ -11,6 +11,9 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import com.team.jubjub.data.repository.ImageUploadRepository
+import com.team.jubjub.data.repository.ImageUploadRepositoryImpl
+
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -51,4 +54,16 @@ abstract class RepositoryModule {
     abstract fun bindPostRepository(
         postRepositoryImpl: PostRepositoryImpl
     ): PostRepository
+
+    /**
+     * 4. ImageUploadRepository 의존성 주입
+     * Firebase Storage에 이미지 업로드 후 다운로드 URL 반환
+     */
+    @Binds
+    @Singleton
+    abstract fun bindImageUploadRepository(
+        impl: ImageUploadRepositoryImpl
+    ): ImageUploadRepository
+
+
 }

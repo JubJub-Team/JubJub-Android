@@ -30,7 +30,7 @@ class MyPageFragment : Fragment() {
     private val binding get() = _binding!!
 
     companion object {
-        private const val REQ_POST_TYPE = "req_post_type"
+        private const val REQ_MY_POST_SELECT = "req_my_post_select"
         private const val REQ_LOGOUT = "req_logout"
         private const val REQ_WITHDRAW = "req_withdraw"
     }
@@ -55,7 +55,7 @@ class MyPageFragment : Fragment() {
         // -----------------------------
         // 내 게시물 종류 선택 다이얼로그 결과
         // -----------------------------
-        parentFragmentManager.setFragmentResultListener(REQ_POST_TYPE, viewLifecycleOwner) { _, bundle ->
+        parentFragmentManager.setFragmentResultListener(REQ_MY_POST_SELECT, viewLifecycleOwner) { _, bundle ->
             val choice = ConfirmDialogFragment.readChoice(bundle)
             when (choice) {
                 DialogChoice.LEFT -> openMyLostFoundPost()
@@ -141,16 +141,16 @@ class MyPageFragment : Fragment() {
     }
 
     private fun openMySharePost() {
-        (activity as? MainActivity)?.openOverlay(MySharePost(), "MySharePost")
+        (activity as? MainActivity)?.openOverlay(MySharePostFragment(), "MySharePost")
     }
 
     private fun openMyLostFoundPost() {
-        (activity as? MainActivity)?.openOverlay(MyLostFoundPost(), "MyLostFoundPost")
+        (activity as? MainActivity)?.openOverlay(MyLostFoundPostFragment(), "MyLostFoundPost")
     }
 
     private fun showPostTypeDialog() {
         ConfirmDialogFragment.newInstance(
-            requestKey = REQ_POST_TYPE,
+            requestKey = REQ_MY_POST_SELECT,
             specKey = ConfirmDialogSpec.PostType.key
         ).show(parentFragmentManager, "postTypeDialog")
     }
