@@ -30,14 +30,14 @@ class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityLocationPickerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 1. MapFragment 얻어오기
+        // MapFragment 얻어오기
         val fm = supportFragmentManager
         val mapFragment = fm.findFragmentById(R.id.map_fragment) as MapFragment?
             ?: MapFragment.newInstance().also {
                 fm.beginTransaction().add(R.id.map_fragment, it).commit()
             }
 
-        // 2. 비동기로 NaverMap 객체 요청
+        // 비동기로 NaverMap 객체 요청
         mapFragment.getMapAsync(this)
 
         binding.btnConfirm.setOnClickListener {
