@@ -4,31 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- 로고 -->
+    <!-- 뒤로가기 아이콘 -->
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="35dp"
+        android:contentDescription="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_back" />
+
+    <!-- 줍줍 로고 -->
     <ImageView
         android:id="@+id/iv_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="45dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="47dp"
+        android:layout_marginTop="44dp"
+        android:contentDescription="@null"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.022"
-        app:srcCompat="@drawable/ic_logo"
-        android:contentDescription="@null" />
+        app:layout_constraintHorizontal_bias="0.17"
+        app:srcCompat="@drawable/ic_logo" />
 
     <!-- 줍줍 소개 멘트 -->
     <TextView
         android:id="@+id/tv_intro_service"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="캠퍼스에서 발견한 분실물과\n나눔 물품을 공유하는 공간, 줍줍"
-        android:layout_marginStart="28dp"
         android:layout_marginTop="16dp"
+        android:text="캠퍼스에서 발견한 분실물과\n나눔 물품을 공유하는 공간, 줍줍"
         app:layout_constraintTop_toBottomOf="@id/iv_logo"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@id/tv_intro_find" />
 
     <!-- 비밀번호 찾기 안내 문구 -->
     <TextView

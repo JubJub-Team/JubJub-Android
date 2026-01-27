@@ -1,5 +1,6 @@
 package com.team.jubjub.ui.write
 
+import android.os.Build
 import android.app.Activity
 import android.content.Intent
 import android.location.Geocoder
@@ -100,6 +101,4 @@ class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
     }
-
-    // 💡 MapFragment 사용 시 별도의 생명주기 호출 메서드가 필요하지 않습니다!
 }

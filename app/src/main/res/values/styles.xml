@@ -21,6 +21,12 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="WhiteDialogTheme"
+        parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+
     <style name="CircleImage">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
