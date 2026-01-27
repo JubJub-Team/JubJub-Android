@@ -1,3 +1,5 @@
+package com.team.jubjub
+
 enum class DialogChoice { LEFT, RIGHT }
 
 sealed class ConfirmDialogSpec(

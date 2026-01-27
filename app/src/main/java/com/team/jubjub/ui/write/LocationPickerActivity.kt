@@ -1,5 +1,6 @@
-/*package com.team.jubjub.ui.write
+package com.team.jubjub.ui.write
 
+import android.os.Build
 import android.app.Activity
 import android.content.Intent
 import android.location.Geocoder
@@ -54,7 +55,7 @@ class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(map: NaverMap) {
         naverMap = map
 
-        // 초기 위치(원하면 학교/기본 중심좌표로)
+        // 초기 위치
         val init = LatLng(37.5666102, 126.9783881) // 서울시청
         map.moveCamera(CameraUpdate.scrollTo(init))
 
@@ -63,18 +64,32 @@ class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
             marker.position = latLng
             marker.map = map
 
-            // 주소는 선택 사항: Android Geocoder로 간단히 변환(기기/환경 따라 실패 가능)
             selectedAddress = reverseGeocode(latLng)
         }
     }
 
     private fun reverseGeocode(latLng: LatLng): String? {
-        return try {
-            val geocoder = Geocoder(this, Locale.KOREA)
-            val results = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
-            results?.firstOrNull()?.getAddressLine(0)
-        } catch (t: Throwable) {
-            null
+        val geocoder = Geocoder(this, Locale.KOREA)
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1) { addresses ->
+                val address = addresses.firstOrNull()?.getAddressLine(0)
+                selectedAddress = address
+
+                runOnUiThread {
+
+                }
+            }
+            selectedAddress // 이전 값을 반환하거나 일단 null 반환
+        } else {
+            // 구형 방식 (API 33 미만)
+            try {
+                @Suppress("DEPRECATION")
+                val results = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+                results?.firstOrNull()?.getAddressLine(0)
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 
@@ -89,4 +104,4 @@ class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)
     }
-}*/
+}
