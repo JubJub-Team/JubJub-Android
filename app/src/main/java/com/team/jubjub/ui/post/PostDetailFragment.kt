@@ -1,5 +1,6 @@
 package com.team.jubjub.ui.post
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -51,8 +52,13 @@ class PostDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 데이터 enum(PostType.SHARING/LOST) 그대로 받기
-        val postType = (arguments?.getSerializable(ARG_POST_TYPE) as? PostType) ?: PostType.SHARING
+        val postType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getSerializable(ARG_POST_TYPE, PostType::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getSerializable(ARG_POST_TYPE) as? PostType
+        } ?: PostType.LOST // 기본값 설정
+
         val postId = arguments?.getString(ARG_POST_ID).orEmpty()
 
         // 뒤로가기(툴바)

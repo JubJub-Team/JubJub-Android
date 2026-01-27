@@ -1,5 +1,5 @@
 package com.team.jubjub
-import DialogChoice
+
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
