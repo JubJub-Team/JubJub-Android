@@ -19,6 +19,7 @@ import com.team.jubjub.data.model.Comment
 import com.team.jubjub.data.model.Post
 import com.team.jubjub.data.model.enums.PostType
 import com.team.jubjub.data.model.enums.TradeMethod
+import com.team.jubjub.data.repository.AuthRepository
 import com.team.jubjub.data.repository.PostRepository
 import com.team.jubjub.databinding.FragmentPostDetailBinding
 import com.team.jubjub.ui.lostfound.LostFoundFragment
@@ -37,11 +38,11 @@ class PostDetailFragment : Fragment() {
     private val binding get() = _binding!!
 
     @Inject lateinit var postRepository: PostRepository
+    @Inject lateinit var authRepository: AuthRepository
 
     private lateinit var adapter: DetailAdapter
     private val comments = mutableListOf<Comment>()
 
-    // 현재 게시글 객체 (댓글 작성 시 사용)
     private var currentPost: Post? = null
 
     override fun onCreateView(
@@ -56,7 +57,6 @@ class PostDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1. 인자 받기 (Enum 타입 안전하게)
         val postType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arguments?.getSerializable(ARG_POST_TYPE, PostType::class.java)
         } else {
@@ -66,12 +66,10 @@ class PostDetailFragment : Fragment() {
 
         val postId = arguments?.getString(ARG_POST_ID).orEmpty()
 
-        // 2. 툴바 뒤로가기
         binding.toolBar.setNavigationOnClickListener {
             goBackToBoard(postType)
         }
 
-        // 3. 툴바 메뉴 (알림/프로필)
         binding.toolBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_alarm -> {
@@ -92,15 +90,11 @@ class PostDetailFragment : Fragment() {
             }
         }
 
-        // 4. 시스템 뒤로가기
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             goBackToBoard(postType)
         }
 
-        // 5. 실제 데이터 로드 및 UI 표시
         loadPostDetail(postId, postType)
-
-        // 6. 키보드/인셋 처리
         setupKeyboardHandling()
     }
 
@@ -108,14 +102,20 @@ class PostDetailFragment : Fragment() {
         val rv = binding.rvDetail
         val inputBar = binding.commentInputBar
 
+        // doOnLayout 내부에서 리스너 설정
         inputBar.doOnLayout {
             val inputBarHeight = inputBar.height
+
             ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
                 val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
                 inputBar.updatePadding(bottom = ime.bottom)
                 rv.updatePadding(bottom = inputBarHeight + ime.bottom)
-                insets
+                insets // 리스너는 반드시 WindowInsetsCompat을 반환해야 함
             }
+        }
+
+        // 레이아웃이 잡힌 후 인셋 적용 요청
+        binding.root.post {
             ViewCompat.requestApplyInsets(binding.root)
         }
     }
@@ -138,9 +138,8 @@ class PostDetailFragment : Fragment() {
                     currentPost = post
 
                     val header = makeHeaderFromPost(post)
-                    setupAdapter(header)
+                    setupAdapter(header, post)
 
-                    // 댓글 데이터 로드
                     loadComments(post.postId)
                 }
                 .onFailure { e ->
@@ -164,8 +163,6 @@ class PostDetailFragment : Fragment() {
 
     private fun makeHeaderFromPost(post: Post): DetailHeader {
         val idDate = "${post.writerCustomId} • ${formatTs(post.createdAt)}"
-
-        // ★ [수정] images 리스트의 첫 번째를 썸네일로 사용
         val imageUrl = post.images.firstOrNull()
 
         return when (post.postType) {
@@ -180,7 +177,7 @@ class PostDetailFragment : Fragment() {
                     deliveryEnabled = post.tradeMethods?.contains(TradeMethod.DELIVERY) == true,
                     directEnabled = post.tradeMethods?.contains(TradeMethod.DIRECT) == true,
                     location = post.hopeLocation ?: "장소 미정",
-                    imageUrl = imageUrl // 이미지 URL 전달
+                    imageUrl = imageUrl
                 )
             }
             PostType.LOST -> {
@@ -192,37 +189,36 @@ class PostDetailFragment : Fragment() {
                     foundDate = formatTs(post.foundDate),
                     content = post.content,
                     entrustedPlace = post.storageLocation ?: "보관 장소 없음",
-                    imageUrl = imageUrl // 이미지 URL 전달
+                    imageUrl = imageUrl
                 )
             }
         }
     }
 
-    private fun setupAdapter(header: DetailHeader) {
-        adapter = DetailAdapter(header, comments)
+    private fun setupAdapter(header: DetailHeader, post: Post) {
+        val currentUserId = authRepository.getCurrentUserUid() ?: ""
+        val postWriterId = post.writerUserId
+
+        adapter = DetailAdapter(header, comments, currentUserId, postWriterId)
         binding.rvDetail.layoutManager = LinearLayoutManager(requireContext())
         binding.rvDetail.adapter = adapter
 
-        // 댓글 전송 버튼
         binding.btnSend.setOnClickListener {
             val text = binding.etComment.text.toString().trim()
-            val post = currentPost
-            if (text.isNotEmpty() && post != null) {
-                // TODO: 내 정보(프로필, 아이디) 로드 필요. 현재는 더미 데이터
+            if (text.isNotEmpty()) {
                 val newComment = Comment(
-                    writerUserId = "my_uid_test",
+                    writerUserId = currentUserId,
                     writerNickname = "나",
-                    writerProfileImageUrl = "", // 내 프로필 이미지
+                    writerProfileImageUrl = "",
                     content = text,
+                    isSecret = false,
                     createdAt = java.util.Date()
                 )
 
-                // 화면 즉시 반영
                 adapter.addComment(newComment)
                 binding.etComment.setText("")
                 binding.rvDetail.scrollToPosition(adapter.itemCount - 1)
 
-                // 서버 전송
                 viewLifecycleOwner.lifecycleScope.launch {
                     postRepository.addComment(post.postId, newComment, post.writerUserId)
                 }
