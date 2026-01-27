@@ -1,5 +1,6 @@
 package com.team.jubjub.data.repository
 
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.team.jubjub.data.model.Comment
@@ -239,6 +240,7 @@ class PostRepositoryImpl @Inject constructor(
 
     /**
      * 12. 댓글 작성 및 알림 전송
+     * - 트랜잭션을 사용하여 댓글 저장과 게시글의 댓글 수 증가(+1)를 동시에 처리
      */
     override suspend fun addComment(
         postId: String,
@@ -246,14 +248,22 @@ class PostRepositoryImpl @Inject constructor(
         postWriterId: String
     ): Result<Boolean> {
         return try {
-            val commentDoc = postRef.document(postId)
-                .collection("comments")
-                .document()
+            val postDocRef = postRef.document(postId)
+            val commentColRef = postDocRef.collection("comments")
 
-            val newComment = comment.copy(commentId = commentDoc.id)
-            commentDoc.set(newComment).await()
+            db.runTransaction { transaction ->
+                // 1. 새로운 댓글 문서 생성
+                val newCommentDoc = commentColRef.document()
+                val newComment = comment.copy(commentId = newCommentDoc.id)
 
-            // 작성자가 본인이 아닐 경우에만 알림 전송
+                // 2. 댓글 저장
+                transaction.set(newCommentDoc, newComment)
+
+                // 3. 게시글의 commentCount +1 증가
+                transaction.update(postDocRef, "commentCount", FieldValue.increment(1))
+            }.await()
+
+            // 작성자가 본인이 아닐 경우 알림 전송
             if (comment.writerUserId != postWriterId) {
                 val notification = Notification(
                     notificationType = NotificationType.COMMENT,
@@ -272,17 +282,24 @@ class PostRepositoryImpl @Inject constructor(
 
     /**
      * 13. 댓글 삭제
+     * - 트랜잭션을 사용하여 댓글 삭제와 게시글의 댓글 수 감소(-1)를 동시에 처리
      */
     override suspend fun deleteComment(
         postId: String,
         commentId: String
     ): Result<Boolean> {
         return try {
-            postRef.document(postId)
-                .collection("comments")
-                .document(commentId)
-                .delete()
-                .await()
+            val postDocRef = postRef.document(postId)
+            val commentDocRef = postDocRef.collection("comments").document(commentId)
+
+            db.runTransaction { transaction ->
+                // 1. 댓글 삭제
+                transaction.delete(commentDocRef)
+
+                // 2. 게시글의 commentCount -1 감소
+                transaction.update(postDocRef, "commentCount", FieldValue.increment(-1))
+            }.await()
+
             Result.success(true)
         } catch (e: Exception) {
             Result.failure(e)
