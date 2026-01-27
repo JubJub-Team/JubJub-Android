@@ -103,4 +103,5 @@ dependencies {
 
     implementation("androidx.hilt:hilt-navigation-fragment:1.2.0")
     kapt("androidx.hilt:hilt-compiler:1.2.0")
+    implementation("com.naver.maps:map-sdk:3.18.0")
 }
