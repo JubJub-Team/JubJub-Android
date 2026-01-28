@@ -6,14 +6,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.team.jubjub.R
 import com.team.jubjub.data.model.Post
-import com.team.jubjub.data.model.enums.PostStatus
+import com.team.jubjub.data.model.enums.PostType
 import com.team.jubjub.databinding.FragmentLostFoundBinding
-import com.team.jubjub.ui.home.HomeFragment
 import com.team.jubjub.ui.post.PostDetailFragment
 import dagger.hilt.android.AndroidEntryPoint
+import com.team.jubjub.MainActivity
 
 @AndroidEntryPoint
 class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
@@ -24,9 +23,6 @@ class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
     private val viewModel: LostFoundViewModel by viewModels()
 
     private lateinit var lostAdapter: LostAdapter
-    private var originList: List<Post> = emptyList()
-
-    private var selectedFilterIndex = 0 // 0: 전체, 1: 찾는 중, 2: 찾음 완료
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,18 +34,20 @@ class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
         setupFilter()
         observeViewModel()
 
-        // 최초 분실물 게시물 로드
-        viewModel.loadLostPosts("서울여자대학교")
+        viewModel.loadLostPosts()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadLostPosts()
     }
 
     /**
-     * 🔙 백 버튼 → 홈 화면으로 이동
+     * 백 버튼 → 홈 화면으로 이동
      */
     private fun setupBackButton() {
         binding.icBack.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, HomeFragment())
-                .commit()
+            (requireActivity() as MainActivity).selectTab(R.id.nav_home)
         }
     }
 
@@ -73,46 +71,43 @@ class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
                 return@setOnClickListener
             }
 
-            viewModel.searchPosts("서울여자대학교", keyword)
+            viewModel.searchPosts(keyword)
         }
     }
 
     /**
-     * 🎛 필터 다이얼로그 (화이트 배경)
+     * 필터 (바텀 시트 적용)
      */
     private fun setupFilter() {
         binding.icFilter.setOnClickListener {
-            val filters = arrayOf("전체", "찾는 중", "찾음 완료")
+            val bottomSheet = com.google.android.material.bottomsheet.BottomSheetDialog(requireContext())
+            val view = layoutInflater.inflate(R.layout.filter_lost_found, null)
+            bottomSheet.setContentView(view)
 
-            MaterialAlertDialogBuilder(
-                requireContext(),
-                R.style.WhiteDialogTheme   // ✅ 화이트 배경 적용
-            )
-                .setItems(filters) { _, which ->
-                    selectedFilterIndex = which
-                    applyFilter(which)
-                }
-                .show()
-        }
-    }
+            // 전체
+            view.findViewById<View>(R.id.tv_filter_all).setOnClickListener {
+                viewModel.filterByStatus(0)
+                bottomSheet.dismiss()
+            }
+            // 찾는 중
+            view.findViewById<View>(R.id.tv_filter_finding).setOnClickListener {
+                viewModel.filterByStatus(1)
+                bottomSheet.dismiss()
+            }
+            // 찾음 완료
+            view.findViewById<View>(R.id.tv_filter_found).setOnClickListener {
+                viewModel.filterByStatus(2)
+                bottomSheet.dismiss()
+            }
 
-    private fun applyFilter(filterIndex: Int) {
-        val filteredList = when (filterIndex) {
-            1 -> originList.filter { it.status == PostStatus.AVAILABLE }  // 찾는 중
-            2 -> originList.filter { it.status == PostStatus.COMPLETED }  // 찾음 완료
-            else -> originList
+            bottomSheet.show()
         }
-
-        lostAdapter = LostAdapter(filteredList) { post ->
-            moveToDetail(post)
-        }
-        binding.rvPost.adapter = lostAdapter
     }
 
     private fun observeViewModel() {
         viewModel.postList.observe(viewLifecycleOwner) { list ->
-            originList = list
-            applyFilter(selectedFilterIndex)
+            lostAdapter = LostAdapter(list) { moveToDetail(it) }
+            binding.rvPost.adapter = lostAdapter
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
@@ -121,13 +116,12 @@ class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
     }
 
     private fun moveToDetail(post: Post) {
-        parentFragmentManager.beginTransaction()
-            .replace(
-                R.id.fragmentContainer,
-                PostDetailFragment.newInstance(PostDetailFragment.PostType.LOST_FOUND)
-            )
-            .addToBackStack(null)
-            .commit()
+        val detailFragment = PostDetailFragment.newInstance(
+            type = PostType.LOST,
+            postId = post.postId
+        )
+
+        (requireActivity() as MainActivity).openOverlay(detailFragment)
     }
 
     override fun onDestroyView() {
@@ -135,5 +129,3 @@ class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
         _binding = null
     }
 }
-
-

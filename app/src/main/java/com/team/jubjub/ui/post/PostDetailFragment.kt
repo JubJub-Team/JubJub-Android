@@ -33,7 +33,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class PostDetailFragment : Fragment() {
-
     private var _binding: FragmentPostDetailBinding? = null
     private val binding get() = _binding!!
 
@@ -57,14 +56,15 @@ class PostDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val args = arguments
         val postType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getSerializable(ARG_POST_TYPE, PostType::class.java)
+            args?.getSerializable(ARG_POST_TYPE, PostType::class.java)
         } else {
             @Suppress("DEPRECATION")
-            arguments?.getSerializable(ARG_POST_TYPE) as? PostType
+            args?.getSerializable(ARG_POST_TYPE) as? PostType
         } ?: PostType.LOST
 
-        val postId = arguments?.getString(ARG_POST_ID).orEmpty()
+        val postId = args?.getString(ARG_POST_ID).orEmpty()
 
         binding.toolBar.setNavigationOnClickListener {
             goBackToBoard(postType)
@@ -242,9 +242,15 @@ class PostDetailFragment : Fragment() {
             PostType.SHARING -> ShareFragment()
             PostType.LOST -> LostFoundFragment()
         }
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, targetFragment)
-            .commit()
+
+        if (parentFragmentManager.backStackEntryCount > 0) {
+            parentFragmentManager.popBackStack()
+        } else {
+            // 스택이 없을 경우에만 새로운 리스트 프래그먼트로 교체
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, targetFragment)
+                .commit()
+        }
     }
 
     override fun onDestroyView() {

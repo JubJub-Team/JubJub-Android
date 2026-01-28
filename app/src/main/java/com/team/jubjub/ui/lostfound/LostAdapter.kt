@@ -40,7 +40,7 @@ class LostAdapter(
 
             val imageUrl = post.images.firstOrNull()
 
-            if (!imageUrl.isNullOrEmpty()) {
+            if (!imageUrl.isNullOrEmpty() && imageUrl.startsWith("http")) {
                 Glide.with(itemView.context)
                     .load(imageUrl)
                     .transform(CenterCrop(), RoundedCorners(16))
@@ -48,6 +48,7 @@ class LostAdapter(
                     .error(R.drawable.ic_grid_blue)
                     .into(binding.ivThumbnail)
             } else {
+                // 주소가 잘못되었거나 비어있으면 기본 이미지를 보여줌
                 binding.ivThumbnail.setImageResource(R.drawable.ic_grid_blue)
             }
 
