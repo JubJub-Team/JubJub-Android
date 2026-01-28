@@ -16,9 +16,12 @@ import com.naver.maps.map.overlay.Marker
 import com.team.jubjub.R
 import com.team.jubjub.databinding.ActivityLocationPickerBinding
 import java.util.Locale
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
-
     private lateinit var binding: ActivityLocationPickerBinding
     private var naverMap: NaverMap? = null
     private val marker = Marker()
@@ -60,19 +63,66 @@ class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(map: NaverMap) {
         this.naverMap = map
 
-        // 초기 위치 설정 (서울시청)
-        val init = LatLng(37.5666102, 126.9783881)
-        map.moveCamera(CameraUpdate.scrollTo(init))
+        // Intent로 학교 이름 받기
+        val schoolName = intent.getStringExtra("school")
+
+        // 학교 이름으로 위치 검색 후 이동 (비동기 처리)
+        if (!schoolName.isNullOrBlank()) {
+            searchLocationFromName(schoolName)
+        } else {
+            // 학교 이름이 없으면 기본값(서울시청) 이동
+            moveToLocation(LatLng(37.5666102, 126.9783881))
+        }
 
         // 지도 클릭 리스너
         map.setOnMapClickListener { _, latLng ->
             selectedLatLng = latLng
             marker.position = latLng
             marker.map = map
-
-            // 주소 변환 호출
             reverseGeocode(latLng)
         }
+    }
+
+    private fun searchLocationFromName(name: String) {
+        lifecycleScope.launch(Dispatchers.IO) { // 네트워크 작업은 IO 스레드에서
+            try {
+                val geocoder = Geocoder(this@LocationPickerActivity, Locale.KOREA)
+
+                // 이름으로 주소 목록 가져오기 (최대 1개)
+                // Android 13(Tiramisu) 이상과 이하 버전에 따라 방식이 조금 다르지만,
+                // 간단한 구현을 위해 동기식 메서드를 Coroutine 안에서 호출
+                @Suppress("DEPRECATION")
+                val addresses = geocoder.getFromLocationName(name, 1)
+
+                if (!addresses.isNullOrEmpty()) {
+                    val location = addresses[0]
+                    val latLng = LatLng(location.latitude, location.longitude)
+
+                    // UI 업데이트는 Main 스레드에서
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@LocationPickerActivity, "$name 위치로 이동합니다.", Toast.LENGTH_SHORT).show()
+                        moveToLocation(latLng)
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@LocationPickerActivity, "학교 위치를 찾을 수 없어요.", Toast.LENGTH_SHORT).show()
+                        // 못 찾으면 기본값 이동
+                        moveToLocation(LatLng(37.5666102, 126.9783881))
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@LocationPickerActivity, "위치 검색 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    // 카메라 이동 함수 분리
+    private fun moveToLocation(latLng: LatLng) {
+        val cameraUpdate = CameraUpdate.scrollAndZoomTo(latLng, 16.0)
+        naverMap?.moveCamera(cameraUpdate)
     }
 
     private fun reverseGeocode(latLng: LatLng) {

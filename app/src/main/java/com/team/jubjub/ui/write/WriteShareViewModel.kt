@@ -18,6 +18,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
 class WriteShareViewModel @Inject constructor(
@@ -35,6 +37,36 @@ class WriteShareViewModel @Inject constructor(
 
     private val _event = Channel<Event>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
+    private val _userSchool = MutableStateFlow<String?>(null)
+    val userSchool = _userSchool.asStateFlow()
+
+    init {
+        loadUserInfo()
+    }
+
+    private fun loadUserInfo() {
+        viewModelScope.launch {
+            val uid = authRepository.getCurrentUserUid()
+
+            // 로그인이 안 된 상태
+            if (uid.isNullOrBlank()) {
+                // 로그를 남기고 종료
+                android.util.Log.e("WriteViewModel", "로그인되지 않은 사용자입니다.")
+                return@launch
+            }
+
+            userRepository.getUserProfile(uid)
+                .onSuccess { user ->
+                    // 학교 정보가 비어있으면 null로 두어 기본값(서울시청)을 쓰게 유도
+                    _userSchool.value = user.school.ifBlank { null }
+                }
+                .onFailure { e ->
+                    // 로드 실패 시 처리 (로그 출력)
+                    e.printStackTrace()
+                    android.util.Log.e("WriteViewModel", "유저 정보 로드 실패: ${e.message}")
+                }
+        }
+    }
 
     fun uploadSharingPostWithImage(
         title: String,

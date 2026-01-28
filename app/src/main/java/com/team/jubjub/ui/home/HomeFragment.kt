@@ -60,6 +60,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
+                    android.util.Log.d("HomeFragment", "나눔 데이터 개수: ${state.sharingTop2.size}")
+                    android.util.Log.d("HomeFragment", "분실 데이터 개수: ${state.lostTop2.size}")
+
                     bindSharing(state.sharingTop2) // 나눔 최신 2개 바인딩
                     bindLost(state.lostTop2)       // 분실 최신 2개 바인딩
                 }

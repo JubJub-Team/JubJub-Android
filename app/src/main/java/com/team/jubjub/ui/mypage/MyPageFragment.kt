@@ -139,11 +139,11 @@ class MyPageFragment : Fragment() {
     }
 
     private fun openMySharePost() {
-        (activity as? MainActivity)?.openOverlay(MySharePost(), "MySharePost")
+        (activity as? MainActivity)?.openOverlay(MySharePostFragment(), "MySharePost")
     }
 
     private fun openMyLostFoundPost() {
-        (activity as? MainActivity)?.openOverlay(MyLostFoundPost(), "MyLostFoundPost")
+        (activity as? MainActivity)?.openOverlay(MyLostFoundPostFragment(), "MyLostFoundPost")
     }
 
     private fun showPostTypeDialog() {

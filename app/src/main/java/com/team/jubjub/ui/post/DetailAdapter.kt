@@ -84,13 +84,15 @@ class DetailAdapter(
             binding.tvSharePostDetailMethodDelivery.alpha = if (h.deliveryEnabled) 1f else 0.3f
             binding.tvSharePostDetailMethodDirect.alpha = if (h.directEnabled) 1f else 0.3f
 
-            if (!h.imageUrl.isNullOrEmpty()) {
+            if (!h.imageUrl.isNullOrEmpty() && h.imageUrl.startsWith("http")) {
                 binding.ivSharePostDetailImage.visibility = View.VISIBLE
                 Glide.with(itemView.context)
                     .load(h.imageUrl)
                     .transform(CenterCrop(), RoundedCorners(16))
+                    .error(R.drawable.ic_photo) // 에러 시 보여줄 기본 이미지
                     .into(binding.ivSharePostDetailImage)
             } else {
+                // 주소가 비어있거나 잘못된 주소면 이미지를 숨김
                 binding.ivSharePostDetailImage.visibility = View.GONE
             }
         }
@@ -109,13 +111,15 @@ class DetailAdapter(
             binding.tvLostFoundPostDetailContent.text = h.content
             binding.tvLostFoundPostDetailEntrustedPlace.text = h.entrustedPlace
 
-            if (!h.imageUrl.isNullOrEmpty()) {
+            if (!h.imageUrl.isNullOrEmpty() && h.imageUrl.startsWith("http")) {
                 binding.ivLostFoundPostDetailImage.visibility = View.VISIBLE
                 Glide.with(itemView.context)
                     .load(h.imageUrl)
                     .transform(CenterCrop(), RoundedCorners(16))
+                    .error(R.drawable.ic_photo) // 에러 시 보여줄 기본 이미지
                     .into(binding.ivLostFoundPostDetailImage)
             } else {
+                // 주소가 비어있거나 잘못된 주소면 이미지를 숨김
                 binding.ivLostFoundPostDetailImage.visibility = View.GONE
             }
         }
@@ -147,7 +151,7 @@ class DetailAdapter(
                 binding.tvBody.setTextColor(Color.BLACK)
             }
 
-            if (!item.writerProfileImageUrl.isNullOrEmpty()) {
+            if (!item.writerProfileImageUrl.isNullOrEmpty() && item.writerProfileImageUrl.startsWith("http")) {
                 Glide.with(itemView.context)
                     .load(item.writerProfileImageUrl)
                     .circleCrop()

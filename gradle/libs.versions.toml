@@ -29,8 +29,11 @@ hilt = "2.51.1"
 #noinspection NewerVersionAvailable
 coroutinesPlayServices = "1.8.1"
 naverMap = "3.23.1"
+#noinspection GradleDependency
 androidxHilt = "1.2.0"
+#noinspection GradleDependency
 splashscreen = "1.0.1"
+#noinspection NewerVersionAvailable
 glide = "4.16.0"
 
 [libraries]

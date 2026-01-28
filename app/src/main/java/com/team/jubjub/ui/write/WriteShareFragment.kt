@@ -228,7 +228,12 @@ class WriteShareFragment : Fragment(R.layout.fragment_write_share) {
         }
 
         binding.layoutAddLocation.setOnClickListener {
-            val intent = Intent(requireContext(), LocationPickerActivity::class.java)
+            // ViewModel의 값이 없으면 "서울시청" 사용
+            val schoolName = viewModel.userSchool.value ?: "서울시청"
+
+            val intent = Intent(requireContext(), LocationPickerActivity::class.java).apply {
+                putExtra("school", schoolName)
+            }
             pickLocationLauncher.launch(intent)
         }
     }

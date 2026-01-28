@@ -120,7 +120,7 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun uploadPost(post: Post): Result<Boolean> {
         return try {
             val newDoc = postRef.document()
-            val newPost = post.copy(postId = newDoc.id)
+            val newPost = post.copy(id = newDoc.id)
             newDoc.set(newPost).await()
             Result.success(true)
         } catch (e: Exception) {
@@ -141,7 +141,7 @@ class PostRepositoryImpl @Inject constructor(
     // 7. 게시물 수정
     override suspend fun updatePost(post: Post): Result<Boolean> {
         return try {
-            postRef.document(post.postId).set(post).await()
+            postRef.document(post.id).set(post).await()
             Result.success(true)
         } catch (e: Exception) {
             Result.failure(e)

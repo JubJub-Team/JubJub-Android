@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class ShareAdapter(
-    private val posts: List<Post>,
+    private var posts: List<Post>,
     private val onClick: (Post) -> Unit
 ) : RecyclerView.Adapter<ShareAdapter.PostViewHolder>() {
 
@@ -40,7 +40,7 @@ class ShareAdapter(
 
             val imageUrl = post.images.firstOrNull()
 
-            if (!imageUrl.isNullOrEmpty()) {
+            if (!imageUrl.isNullOrEmpty() && imageUrl.startsWith("http")) {
                 Glide.with(itemView.context)
                     .load(imageUrl)
                     .transform(CenterCrop(), RoundedCorners(16))
@@ -69,4 +69,10 @@ class ShareAdapter(
     }
 
     override fun getItemCount(): Int = posts.size
+
+    // 리스트 갱신 함수
+    fun updateList(newPosts: List<Post>) {
+        this.posts = newPosts
+        notifyDataSetChanged() // 리스트뷰 새로고침
+    }
 }
