@@ -54,4 +54,14 @@
         android:padding="16dp"
         android:background="?attr/selectableItemBackground"/>
 
+    <TextView
+        android:id="@+id/tv_filter_with_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="위치 등록됨"
+        android:textSize="16sp"
+        android:textColor="#333333"
+        android:padding="16dp"
+        android:background="?attr/selectableItemBackground"/>
+
 </LinearLayout>

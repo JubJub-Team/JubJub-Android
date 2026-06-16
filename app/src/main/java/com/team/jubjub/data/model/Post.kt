@@ -78,4 +78,6 @@ data class Post(
     val storageLocation: String? = null // 물품 보관 장소
 ) {
     val postId: String get() = id
+    val hasLocation: Boolean
+        get() = locationLatitude != null && locationLongitude != null
 }

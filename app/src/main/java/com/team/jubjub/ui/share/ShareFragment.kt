@@ -93,6 +93,10 @@ class ShareFragment : Fragment(R.layout.fragment_share) {
                 viewModel.filterByStatus(3)
                 bottomSheet.dismiss()
             }
+            view.findViewById<View>(R.id.tv_filter_with_location).setOnClickListener {
+                viewModel.filterByStatus(4)
+                bottomSheet.dismiss()
+            }
             bottomSheet.show()
         }
     }

@@ -99,6 +99,10 @@ class LostFoundFragment : Fragment(R.layout.fragment_lost_found) {
                 viewModel.filterByStatus(2)
                 bottomSheet.dismiss()
             }
+            view.findViewById<View>(R.id.tv_filter_with_location).setOnClickListener {
+                viewModel.filterByStatus(3)
+                bottomSheet.dismiss()
+            }
 
             bottomSheet.show()
         }
