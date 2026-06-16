@@ -30,3 +30,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "JubJub"
 include(":app")
+include(":backend")

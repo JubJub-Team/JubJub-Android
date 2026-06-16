@@ -19,3 +19,10 @@ google-services.json
 
 build/
 **/build/
+.gradle-user-home/
+
+backend/.env
+backend/.env.*
+!backend/.env.example
+backend/docker-compose.override.yml
+backend/src/main/resources/application-local.yml
