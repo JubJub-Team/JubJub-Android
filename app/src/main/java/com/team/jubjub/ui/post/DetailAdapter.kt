@@ -21,7 +21,8 @@ class DetailAdapter(
     private var header: DetailHeader,
     private val comments: MutableList<Comment>,
     private val currentUserId: String,
-    private val postWriterId: String
+    private val postWriterId: String,
+    private val onLocationClick: (String, Double, Double) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private companion object {
@@ -45,10 +46,16 @@ class DetailAdapter(
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             TYPE_HEADER_SHARE ->
-                ShareHeaderVH(ItemSharePostDetailHeaderBinding.inflate(inflater, parent, false))
+                ShareHeaderVH(
+                    ItemSharePostDetailHeaderBinding.inflate(inflater, parent, false),
+                    onLocationClick
+                )
 
             TYPE_HEADER_LOST_FOUND ->
-                LostFoundHeaderVH(ItemLostFoundPostDetailHeaderBinding.inflate(inflater, parent, false))
+                LostFoundHeaderVH(
+                    ItemLostFoundPostDetailHeaderBinding.inflate(inflater, parent, false),
+                    onLocationClick
+                )
 
             else ->
                 CommentVH(ItemCommentBinding.inflate(inflater, parent, false))
@@ -69,7 +76,8 @@ class DetailAdapter(
     }
 
     class ShareHeaderVH(
-        private val binding: ItemSharePostDetailHeaderBinding
+        private val binding: ItemSharePostDetailHeaderBinding,
+        private val onLocationClick: (String, Double, Double) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(h: DetailHeader.Share) {
@@ -80,6 +88,19 @@ class DetailAdapter(
             binding.tvSharePostDetailCount.text = h.count
             binding.tvSharePostDetailContent.text = h.content
             binding.tvSharePostDetailLocation.text = h.location
+            val canOpenLocation = h.locationLatitude != null && h.locationLongitude != null
+            binding.tvSharePostDetailViewMap.visibility = if (canOpenLocation) View.VISIBLE else View.GONE
+            binding.layoutSharePostDetailLocation.isEnabled = canOpenLocation
+            binding.layoutSharePostDetailLocation.setOnClickListener {
+                val lat = h.locationLatitude ?: return@setOnClickListener
+                val lng = h.locationLongitude ?: return@setOnClickListener
+                onLocationClick(h.location, lat, lng)
+            }
+            binding.tvSharePostDetailViewMap.setOnClickListener {
+                val lat = h.locationLatitude ?: return@setOnClickListener
+                val lng = h.locationLongitude ?: return@setOnClickListener
+                onLocationClick(h.location, lat, lng)
+            }
 
             binding.tvSharePostDetailMethodDelivery.alpha = if (h.deliveryEnabled) 1f else 0.3f
             binding.tvSharePostDetailMethodDirect.alpha = if (h.directEnabled) 1f else 0.3f
@@ -99,7 +120,8 @@ class DetailAdapter(
     }
 
     class LostFoundHeaderVH(
-        private val binding: ItemLostFoundPostDetailHeaderBinding
+        private val binding: ItemLostFoundPostDetailHeaderBinding,
+        private val onLocationClick: (String, Double, Double) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(h: DetailHeader.LostFound) {
@@ -110,6 +132,19 @@ class DetailAdapter(
             binding.tvLostFoundPostDetailFoundDate.text = h.foundDate
             binding.tvLostFoundPostDetailContent.text = h.content
             binding.tvLostFoundPostDetailEntrustedPlace.text = h.entrustedPlace
+            val canOpenLocation = h.locationLatitude != null && h.locationLongitude != null
+            binding.tvLostFoundPostDetailViewMap.visibility = if (canOpenLocation) View.VISIBLE else View.GONE
+            binding.layoutLostFoundPostDetailFoundPlace.isEnabled = canOpenLocation
+            binding.layoutLostFoundPostDetailFoundPlace.setOnClickListener {
+                val lat = h.locationLatitude ?: return@setOnClickListener
+                val lng = h.locationLongitude ?: return@setOnClickListener
+                onLocationClick(h.foundPlace, lat, lng)
+            }
+            binding.tvLostFoundPostDetailViewMap.setOnClickListener {
+                val lat = h.locationLatitude ?: return@setOnClickListener
+                val lng = h.locationLongitude ?: return@setOnClickListener
+                onLocationClick(h.foundPlace, lat, lng)
+            }
 
             if (!h.imageUrl.isNullOrEmpty() && h.imageUrl.startsWith("http")) {
                 binding.ivLostFoundPostDetailImage.visibility = View.VISIBLE

@@ -27,6 +27,7 @@ class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
     private val marker = Marker()
     private var selectedLatLng: LatLng? = null
     private var selectedAddress: String? = null
+    private val isReadOnly: Boolean by lazy { intent.getBooleanExtra("readOnly", false) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +44,16 @@ class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
         // 비동기로 NaverMap 객체 요청
         mapFragment.getMapAsync(this)
 
+        if (isReadOnly) {
+            binding.btnConfirm.text = "닫기"
+        }
+
         binding.btnConfirm.setOnClickListener {
+            if (isReadOnly) {
+                finish()
+                return@setOnClickListener
+            }
+
             val latLng = selectedLatLng
             if (latLng == null) {
                 Toast.makeText(this, "지도를 눌러 위치를 선택해줘!", Toast.LENGTH_SHORT).show()
@@ -62,6 +72,10 @@ class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: NaverMap) {
         this.naverMap = map
+        if (isReadOnly) {
+            showPinnedLocation(map)
+            return
+        }
 
         // Intent로 학교 이름 받기
         val schoolName = intent.getStringExtra("school")
@@ -81,6 +95,22 @@ class LocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
             marker.map = map
             reverseGeocode(latLng)
         }
+    }
+
+    private fun showPinnedLocation(map: NaverMap) {
+        val latitude = intent.getDoubleExtra("lat", Double.NaN)
+        val longitude = intent.getDoubleExtra("lng", Double.NaN)
+        if (latitude.isNaN() || longitude.isNaN()) {
+            moveToLocation(LatLng(37.5666102, 126.9783881))
+            return
+        }
+
+        val latLng = LatLng(latitude, longitude)
+        selectedLatLng = latLng
+        selectedAddress = intent.getStringExtra("address").orEmpty()
+        marker.position = latLng
+        marker.map = map
+        moveToLocation(latLng)
     }
 
     private fun searchLocationFromName(name: String) {

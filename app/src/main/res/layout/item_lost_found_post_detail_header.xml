@@ -39,6 +39,7 @@
 
         <!-- 발견 장소 -->
         <LinearLayout
+            android:id="@+id/layout_lost_found_post_detail_found_place"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -64,6 +65,16 @@
         </LinearLayout>
 
         <!-- 상세 장소 -->
+        <TextView
+            android:id="@+id/tv_lost_found_post_detail_view_map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="6dp"
+            android:text="지도 보기"
+            android:textColor="#03C75A"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
