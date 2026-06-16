@@ -44,6 +44,11 @@ data class Post(
     @get:PropertyName("keywords")
     val keywords: List<String> = emptyList(), // 검색용 키워드 리스트
 
+    @get:PropertyName("locationLatitude")
+    val locationLatitude: Double? = null,
+    @get:PropertyName("locationLongitude")
+    val locationLongitude: Double? = null,
+
     @ServerTimestamp // 업로드 시 서버 시간 자동 기록
     @get:PropertyName("createdAt")
     val createdAt: Timestamp? = null,

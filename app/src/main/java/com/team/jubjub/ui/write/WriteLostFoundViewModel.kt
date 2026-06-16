@@ -73,6 +73,8 @@ class WriteLostFoundViewModel @Inject constructor(
         foundDetailLocation: String?,
         foundDate: Timestamp?,
         storageLocation: String?,
+        locationLatitude: Double?,
+        locationLongitude: Double?,
         imageUri: Uri?,
         keywords: List<String> = emptyList() // Fragment에서 합친 최종 키워드
     ) {
@@ -136,6 +138,8 @@ class WriteLostFoundViewModel @Inject constructor(
 
                 // Fragment에서 해시태그 + AI태그 합쳐서 넘겨준 최종 키워드 사용
                 keywords = keywords,
+                locationLatitude = locationLatitude,
+                locationLongitude = locationLongitude,
 
                 foundLocation = foundLocation?.trim().takeIf { !it.isNullOrBlank() },
                 foundDetailLocation = foundDetailLocation?.trim().takeIf { !it.isNullOrBlank() },

@@ -37,6 +37,8 @@ class WriteShareFragment : Fragment(R.layout.fragment_write_share) {
     private val aiViewModel: WriteViewModel by viewModels()
 
     private var selectedImageUri: Uri? = null
+    private var selectedLatitude: Double? = null
+    private var selectedLongitude: Double? = null
 
     // AI 태그 결과 임시 저장 (업로드 때 keywords로 합칠 예정)
     private var aiTags: List<String> = emptyList()
@@ -101,8 +103,11 @@ class WriteShareFragment : Fragment(R.layout.fragment_write_share) {
             val lat = data.getDoubleExtra("lat", 0.0)
             val lng = data.getDoubleExtra("lng", 0.0)
             val address = data.getStringExtra("address").orEmpty()
+            val locationText = if (address.isNotBlank()) address else "$lat, $lng"
 
-            binding.tvLocation.text = if (address.isNotBlank()) address else "$lat, $lng"
+            selectedLatitude = lat
+            selectedLongitude = lng
+            binding.tvLocation.text = locationText
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -376,7 +381,9 @@ class WriteShareFragment : Fragment(R.layout.fragment_write_share) {
             val conditionText = binding.tvCondition.text?.toString().orEmpty()
             val countText = binding.tvCount.text?.toString().orEmpty()
             val methodText = binding.tvMethod.text?.toString().orEmpty()
-            val hopeLocation = binding.tvLocation.text?.toString().orEmpty()
+            val hopeLocation = binding.tvLocation.text?.toString()
+                ?.trim()
+                ?.takeIf { it.isNotBlank() && it != "장소" }
 
             val quantity: Int? = countText.trim().toIntOrNull()
 
@@ -403,6 +410,8 @@ class WriteShareFragment : Fragment(R.layout.fragment_write_share) {
                 quantity = quantity,
                 methodTexts = methodTexts,
                 hopeLocation = hopeLocation,
+                locationLatitude = selectedLatitude,
+                locationLongitude = selectedLongitude,
                 imageUri = imageUri,
                 keywords = mergedKeywords
             )

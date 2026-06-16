@@ -38,6 +38,8 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
     private val aiViewModel: WriteViewModel by viewModels()
 
     private var selectedImageUri: Uri? = null
+    private var selectedLatitude: Double? = null
+    private var selectedLongitude: Double? = null
 
     // AI 태그 결과 임시 저장 (업로드 때 keywords로 합칠 예정)
     private var aiTags: List<String> = emptyList()
@@ -92,8 +94,13 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
             val lat = data.getDoubleExtra("lat", 0.0)
             val lng = data.getDoubleExtra("lng", 0.0)
             val address = data.getStringExtra("address").orEmpty()
+            val locationText = if (address.isNotBlank()) address else "$lat, $lng"
 
-            binding.tvLocation.text = if (address.isNotBlank()) address else "$lat, $lng"
+            selectedLatitude = lat
+            selectedLongitude = lng
+            binding.tvLocation.text = locationText
+            // 지도에서 고른 위치가 실제 저장 필드에도 반영되게 기본값을 맞춘다.
+            binding.tvFoundPlace.text = locationText
         }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -298,14 +305,20 @@ class WriteLostFoundFragment : Fragment(R.layout.fragment_write_lost_found) {
                 .map { it.trim() }
                 .filter { it.isNotBlank() }
                 .distinct()
+            val foundLocationText = binding.tvFoundPlace.text?.toString()
+                ?.trim()
+                ?.takeIf { it.isNotBlank() }
+                ?: binding.tvLocation.text?.toString()?.trim()?.takeIf { it.isNotBlank() && it != "장소" }
 
             viewModel.uploadLostPostWithImage(
                 title = title,
                 content = content,
-                foundLocation = binding.tvFoundPlace.text?.toString(),
+                foundLocation = foundLocationText,
                 foundDetailLocation = binding.tvPlaceDetail.text?.toString(),
                 foundDate = foundDateTimestamp,
                 storageLocation = binding.tvStoragePlace.text?.toString(),
+                locationLatitude = selectedLatitude,
+                locationLongitude = selectedLongitude,
                 imageUri = imageUri,
                 keywords = mergedKeywords
             )
