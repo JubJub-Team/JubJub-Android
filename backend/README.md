@@ -20,3 +20,4 @@
 - `GIST` 공간 인덱스 기반 좌표 검색 최적화
 - `ST_DWithin` 기반 반경 검색
 - `ST_Intersects` 기반 지도 영역 검색
+- `ST_DWithin` 기반 분실글/습득글 주변 매칭 검색

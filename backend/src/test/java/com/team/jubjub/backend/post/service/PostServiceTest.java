@@ -14,6 +14,7 @@ import com.team.jubjub.backend.post.repository.PostSearchProjection;
 import com.team.jubjub.backend.post.repository.PostSpatialQueryRepository;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -96,6 +97,37 @@ class PostServiceTest {
         assertThat(responses).hasSize(1);
         assertThat(responses.get(0).id()).isEqualTo(postId);
         assertThat(responses.get(0).distanceMeters()).isEqualTo(128.4);
+    }
+
+    @Test
+    void getMatchedPostsReturnsOppositeTypeNearbyResults() {
+        UUID sourcePostId = UUID.randomUUID();
+        OffsetDateTime createdAt = OffsetDateTime.parse("2026-06-17T11:00:00+09:00");
+        PostEntity sourcePost = new PostEntity();
+        sourcePost.setPostType(PostType.LOST);
+        sourcePost.setSchool("Konkuk");
+
+        when(postJpaRepository.findById(sourcePostId)).thenReturn(Optional.of(sourcePost));
+        when(postSpatialQueryRepository.findMatches(sourcePostId, 1000, 5))
+                .thenReturn(List.of(new PostSearchProjection(
+                        UUID.randomUUID(),
+                        PostType.FOUND,
+                        "Konkuk",
+                        "Found Wallet",
+                        "Main gate",
+                        "Gate 1",
+                        37.5412,
+                        127.0722,
+                        createdAt,
+                        220.0)));
+
+        List<PostResponse> responses = postService.getMatchedPosts(sourcePostId, 1000, 5);
+
+        verify(postJpaRepository).findById(sourcePostId);
+        verify(postSpatialQueryRepository).findMatches(sourcePostId, 1000, 5);
+        assertThat(responses).hasSize(1);
+        assertThat(responses.get(0).postType()).isEqualTo(PostType.FOUND);
+        assertThat(responses.get(0).distanceMeters()).isEqualTo(220.0);
     }
 
     private void setId(PostEntity post, UUID id) {

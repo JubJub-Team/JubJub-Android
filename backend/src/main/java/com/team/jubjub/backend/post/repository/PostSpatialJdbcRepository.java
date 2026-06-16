@@ -40,6 +40,44 @@ public class PostSpatialJdbcRepository implements PostSpatialQueryRepository {
     }
 
     @Override
+    public List<PostSearchProjection> findMatches(UUID sourcePostId, int radiusMeters, int limit) {
+        String sql =
+                """
+                SELECT
+                    candidate.id,
+                    candidate.post_type,
+                    candidate.school,
+                    candidate.title,
+                    candidate.content,
+                    candidate.location_name,
+                    ST_Y(candidate.location) AS latitude,
+                    ST_X(candidate.location) AS longitude,
+                    candidate.created_at,
+                    ST_Distance(
+                        candidate.location::geography,
+                        source.location::geography
+                    ) AS distance_meters
+                FROM posts source
+                JOIN posts candidate
+                  ON candidate.id <> source.id
+                 AND candidate.school = source.school
+                 AND candidate.post_type <> source.post_type
+                WHERE source.id = :sourcePostId
+                  -- Pair lost/found posts by the same campus radius in meter units.
+                  AND ST_DWithin(
+                      candidate.location::geography,
+                      source.location::geography,
+                      :radiusMeters
+                  )
+                ORDER BY distance_meters ASC, candidate.created_at DESC
+                LIMIT :limit
+                """;
+
+        return namedParameterJdbcTemplate.query(
+                sql, Map.of("sourcePostId", sourcePostId, "radiusMeters", radiusMeters, "limit", limit), ROW_MAPPER);
+    }
+
+    @Override
     public List<PostSearchProjection> findNearby(
             String school, PostType postType, double latitude, double longitude, int radiusMeters, int limit) {
         String sql =

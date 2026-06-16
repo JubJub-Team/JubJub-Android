@@ -50,11 +50,14 @@ public class PostService {
     }
 
     public PostResponse getPost(UUID postId) {
-        PostEntity post =
-                postJpaRepository
-                        .findById(postId)
-                        .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Post not found"));
-        return toResponse(post);
+        return toResponse(getRequiredPost(postId));
+    }
+
+    public List<PostResponse> getMatchedPosts(UUID postId, int radiusMeters, int limit) {
+        getRequiredPost(postId);
+        return postSpatialQueryRepository.findMatches(postId, radiusMeters, limit).stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     public List<PostResponse> getNearbyPosts(
@@ -112,5 +115,11 @@ public class PostService {
                 projection.longitude(),
                 projection.createdAt(),
                 projection.distanceMeters());
+    }
+
+    private PostEntity getRequiredPost(UUID postId) {
+        return postJpaRepository
+                .findById(postId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Post not found"));
     }
 }

@@ -38,6 +38,14 @@ public class PostController {
         return postService.getPost(postId);
     }
 
+    @GetMapping("/{postId}/matches")
+    public List<PostResponse> getMatchedPosts(
+            @PathVariable UUID postId,
+            @RequestParam(defaultValue = "1000") @Min(100) @Max(10000) int radiusMeters,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(50) int limit) {
+        return postService.getMatchedPosts(postId, radiusMeters, limit);
+    }
+
     @GetMapping("/nearby")
     public List<PostResponse> getNearbyPosts(
             @RequestParam(required = false) String school,
