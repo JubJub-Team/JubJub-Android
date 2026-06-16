@@ -1,5 +1,6 @@
 package com.team.jubjub.ui.post
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,6 +27,7 @@ import com.team.jubjub.ui.lostfound.LostFoundFragment
 import com.team.jubjub.ui.mypage.AlarmFragment
 import com.team.jubjub.ui.mypage.MyPageFragment
 import com.team.jubjub.ui.share.ShareFragment
+import com.team.jubjub.ui.write.LocationPickerActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -177,6 +179,8 @@ class PostDetailFragment : Fragment() {
                     deliveryEnabled = post.tradeMethods?.contains(TradeMethod.DELIVERY) == true,
                     directEnabled = post.tradeMethods?.contains(TradeMethod.DIRECT) == true,
                     location = post.hopeLocation ?: "장소 미정",
+                    locationLatitude = post.locationLatitude,
+                    locationLongitude = post.locationLongitude,
                     imageUrl = imageUrl
                 )
             }
@@ -185,6 +189,8 @@ class PostDetailFragment : Fragment() {
                     idDate = idDate,
                     title = post.title,
                     foundPlace = post.foundLocation ?: "장소 미정",
+                    locationLatitude = post.locationLatitude,
+                    locationLongitude = post.locationLongitude,
                     detailPlace = post.foundDetailLocation ?: "",
                     foundDate = formatTs(post.foundDate),
                     content = post.content,
@@ -199,7 +205,9 @@ class PostDetailFragment : Fragment() {
         val currentUserId = authRepository.getCurrentUserUid() ?: ""
         val postWriterId = post.writerUserId
 
-        adapter = DetailAdapter(header, comments, currentUserId, postWriterId)
+        adapter = DetailAdapter(header, comments, currentUserId, postWriterId) { address, lat, lng ->
+            openLocationPreview(address, lat, lng)
+        }
         binding.rvDetail.layoutManager = LinearLayoutManager(requireContext())
         binding.rvDetail.adapter = adapter
 
@@ -235,6 +243,16 @@ class PostDetailFragment : Fragment() {
         val hh = cal.get(Calendar.HOUR_OF_DAY).toString().padStart(2, '0')
         val mi = cal.get(Calendar.MINUTE).toString().padStart(2, '0')
         return "$mm/$dd $hh:$mi"
+    }
+
+    private fun openLocationPreview(address: String, latitude: Double, longitude: Double) {
+        val intent = Intent(requireContext(), LocationPickerActivity::class.java).apply {
+            putExtra("readOnly", true)
+            putExtra("lat", latitude)
+            putExtra("lng", longitude)
+            putExtra("address", address)
+        }
+        startActivity(intent)
     }
 
     private fun goBackToBoard(postType: PostType) {

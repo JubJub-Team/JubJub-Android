@@ -76,6 +76,8 @@ class WriteShareViewModel @Inject constructor(
         quantity: Int?,
         methodTexts: List<String>,
         hopeLocation: String?,
+        locationLatitude: Double?,
+        locationLongitude: Double?,
         imageUri: Uri?,
         keywords: List<String> = emptyList()
     ) {
@@ -155,6 +157,8 @@ class WriteShareViewModel @Inject constructor(
                 status = PostStatus.AVAILABLE,
 
                 keywords = keywords,
+                locationLatitude = locationLatitude,
+                locationLongitude = locationLongitude,
 
                 //나눔 전용 필드
                 category = categoryEnum,

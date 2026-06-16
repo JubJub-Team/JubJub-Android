@@ -12,6 +12,8 @@ sealed class DetailHeader {
         val deliveryEnabled: Boolean,
         val directEnabled: Boolean,
         val location: String,
+        val locationLatitude: Double?,
+        val locationLongitude: Double?,
         val imageUrl: String?
     ) : DetailHeader()
 
@@ -19,6 +21,8 @@ sealed class DetailHeader {
         val idDate: String,
         val title: String,
         val foundPlace: String,
+        val locationLatitude: Double?,
+        val locationLongitude: Double?,
         val detailPlace: String,
         val foundDate: String,
         val content: String,

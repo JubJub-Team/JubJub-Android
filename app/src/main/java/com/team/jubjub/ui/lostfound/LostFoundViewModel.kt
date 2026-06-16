@@ -21,7 +21,7 @@ class LostFoundViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private var _cachedList: List<Post> = emptyList()
+    private var _sourceList: List<Post> = emptyList()
     private val _postList = MutableLiveData<List<Post>>()
     val postList: LiveData<List<Post>> = _postList
 
@@ -30,6 +30,7 @@ class LostFoundViewModel @Inject constructor(
 
     // 학교 이름을 저장해둘 변수
     private var currentSchoolName: String? = null
+    private var currentFilter: Int = FILTER_ALL
 
     fun loadLostPosts() {
         viewModelScope.launch {
@@ -53,8 +54,8 @@ class LostFoundViewModel @Inject constructor(
     private suspend fun fetchPostsInternal(school: String) {
         postRepository.getPostList(schoolName = school, type = PostType.LOST)
             .onSuccess {
-                _cachedList = it
-                _postList.value = it
+                _sourceList = it
+                applyFilter()
             }
             .onFailure {
                 _errorMessage.value = it.message
@@ -68,7 +69,8 @@ class LostFoundViewModel @Inject constructor(
         viewModelScope.launch {
             postRepository.searchPosts(school, keyword)
                 .onSuccess { list ->
-                    _postList.value = list.filter { it.postType == PostType.LOST }
+                    _sourceList = list.filter { it.postType == PostType.LOST }
+                    applyFilter()
                 }
                 .onFailure {
                     _errorMessage.value = "검색 실패"
@@ -77,13 +79,25 @@ class LostFoundViewModel @Inject constructor(
     }
 
     fun filterByStatus(statusIndex: Int) {
-        val currentSource = _cachedList
-        val filtered = when (statusIndex) {
-            0 -> currentSource
-            1 -> currentSource.filter { it.status == PostStatus.AVAILABLE }
-            2 -> currentSource.filter { it.status == PostStatus.COMPLETED }
-            else -> currentSource
+        currentFilter = statusIndex
+        applyFilter()
+    }
+
+    private fun applyFilter() {
+        val filtered = when (currentFilter) {
+            FILTER_ALL -> _sourceList
+            FILTER_AVAILABLE -> _sourceList.filter { it.status == PostStatus.AVAILABLE }
+            FILTER_COMPLETED -> _sourceList.filter { it.status == PostStatus.COMPLETED }
+            FILTER_WITH_LOCATION -> _sourceList.filter { it.hasLocation }
+            else -> _sourceList
         }
         _postList.value = filtered
+    }
+
+    private companion object {
+        const val FILTER_ALL = 0
+        const val FILTER_AVAILABLE = 1
+        const val FILTER_COMPLETED = 2
+        const val FILTER_WITH_LOCATION = 3
     }
 }

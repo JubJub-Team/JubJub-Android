@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: ${JUBJUB_DB_URL}
+    username: ${JUBJUB_DB_USERNAME}
+    password: ${JUBJUB_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: ${JUBJUB_BACKEND_PORT:8080}
